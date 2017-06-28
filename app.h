@@ -83,7 +83,7 @@ extern "C" {
 
 extern void	task(intptr_t exinf);
 extern void	main_task(intptr_t exinf);
-extern void BluetoothTask(intptr_t exinf);
+extern void serial_send_task(intptr_t exinf);
 extern void balance_task(intptr_t exinf);
 extern void idle_task(intptr_t exinf);
 //extern void	tex_routine(TEXPTN texptn, intptr_t exinf);
