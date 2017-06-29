@@ -4,8 +4,8 @@
 #pragma pack(push, 1) // アライメント1に設定
 
 #define HEADER_HEAD_VALUE 0xFF
-#define COMMAND_OUTPUT_SIGNAL_DATA 0x01
-#define COMMAND_INPUT_SIGNAL_DATA 0x02
+#define COMMAND_INPUT_SIGNAL_DATA 0x01
+#define COMMAND_OUTPUT_SIGNAL_DATA 0x02
 
 #define HEADER_BYTE_SIZE 4
 struct Header {

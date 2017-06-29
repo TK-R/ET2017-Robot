@@ -64,13 +64,13 @@ void serial_send_task(intptr_t exinf)
 		//入力電文構造体にAPIの取得値を代入
 		InputSignalData input_signal_data;
 		input_signal_data.FrontMotorAngle = front_motor->getCount();
-		front_motor->setCount(input_signal_data.FrontMotorAngle);
+		front_motor->setCount(0);
 		input_signal_data.RightMotorAngle = right_motor->getCount();
-		right_motor->setCount(input_signal_data.RightMotorAngle);
+		right_motor->setCount(0);
 		input_signal_data.LeftMotorAngle = left_motor->getCount();
-		left_motor->setCount(input_signal_data.LeftMotorAngle);
+		left_motor->setCount(0);
 		input_signal_data.BackMotorAngle = back_motor->getCount();
-		back_motor->setCount(input_signal_data.BackMotorAngle);
+		back_motor->setCount(0);
 		
 		input_signal_data.TouchSensor = touch_sensor->isPressed();
 		input_signal_data.SonarDistance = sonar_sensor->getDistance();
