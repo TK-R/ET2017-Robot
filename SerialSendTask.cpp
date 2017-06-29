@@ -9,6 +9,7 @@
 #include <TouchSensor.h>
 #include <SonarSensor.h>
 #include <GyroSensor.h>
+//#include <ev3api_sensor.h>
 
 using ev3api::Motor;
 using ev3api::TouchSensor;
@@ -22,7 +23,7 @@ void serial_send_task(intptr_t exinf)
 //	FILE *bt = ev3_serial_open_file(EV3_SERIAL_BT);
 //   fprintf(bt, "\r\nEcho test is started.\r\n");
 
-	//ƒ|[ƒgŠ„‚è“–‚Ä
+	//ãƒãƒ¼ãƒˆå‰²ã‚Šå½“ã¦
 	static const ePortM front_motor_port = PORT_A;
 	static const ePortM right_motor_port = PORT_B;
 	static const ePortM left_motor_port = PORT_C;
@@ -40,7 +41,7 @@ void serial_send_task(intptr_t exinf)
 	static const ePortS color_sensor_port = PORT_3;
 	static const ePortS gyro_sensor_port = PORT_4;
 
-	//ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+	//ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 	Motor* front_motor = new Motor(front_motor_port, front_motor_brake_mode, front_motor_type);
 	Motor* right_motor = new Motor(right_motor_port, right_motor_brake_mode, right_motor_type);
 	Motor* left_motor = new Motor(left_motor_port, left_motor_brake_mode, left_motor_type);
@@ -55,30 +56,53 @@ void serial_send_task(intptr_t exinf)
 		if (!ev3_bluetooth_is_connected())
 			continue;
 
+		//ãƒ˜ãƒƒãƒ€ã®ä½œæˆ
 		Header header;
 		header.Head = HEADER_HEAD_VALUE;
-		header.Size = OUTPUT_SIGNAL_DATA_BYTE_SIZE;
-		header.Command = COMMAND_OUTPUT_SIGNAL_DATA;
+		header.Size = INPUT_SIGNAL_DATA_BYTE_SIZE;
+		header.Command = COMMAND_INPUT_SIGNAL_DATA;
+		//å…¥åŠ›é›»æ–‡æ§‹é€ ä½“ã«APIã®å–å¾—å€¤ã‚’ä»£å…¥
+		InputSignalData input_signal_data;
+		input_signal_data.FrontMotorAngle = front_motor->getCount();
+		front_motor->setCount(input_signal_data.FrontMotorAngle);
+		input_signal_data.RightMotorAngle = right_motor->getCount();
+		right_motor->setCount(input_signal_data.RightMotorAngle);
+		input_signal_data.LeftMotorAngle = left_motor->getCount();
+		left_motor->setCount(input_signal_data.LeftMotorAngle);
+		input_signal_data.BackMotorAngle = back_motor->getCount();
+		back_motor->setCount(input_signal_data.BackMotorAngle);
+		
+		input_signal_data.TouchSensor = touch_sensor->isPressed();
+		input_signal_data.SonarDistance = sonar_sensor->getDistance();
+		rgb_raw_t rgb;
+		color_sensor->getRawColor(rgb);
+		input_signal_data.ColorRed = rgb.r;
+		input_signal_data.ColorGreen = rgb.g;
+		input_signal_data.ColorBlue = rgb.b;
+		input_signal_data.AmbientLight = color_sensor->getAmbient();
+		input_signal_data.ReflectLight = color_sensor->getBrightness();
+		input_signal_data.AccelX = gyro_sensor->getAnglerVelocity();
+		input_signal_data.AccelY = gyro_sensor->getAngle();
+		input_signal_data.AccelZ = 0;
+		input_signal_data.Temperature = 0;
+		input_signal_data.BatteryCurrent = ev3_battery_current_mA();
+		input_signal_data.BatteryVoltage = ev3_battery_voltage_mV();
+		//å‡ºåŠ›é›»æ–‡æ§‹é€ ä½“ã¨åŒã‚µã‚¤ã‚ºã®å‡ºåŠ›é›»æ–‡ãƒãƒƒãƒ•ã‚¡ã«å‡ºåŠ›é›»æ–‡ã‚’ã‚³ãƒ”ãƒ¼
+		uint8_t buff_input_signal[sizeof(InputSignalData)];
+		memcpy(buff_input_signal, &input_signal_data, sizeof(InputSignalData));
+		//å‡ºåŠ›é›»æ–‡ãƒãƒƒãƒ•ã‚¡ã®ãƒã‚§ãƒƒã‚¯ã‚µãƒ ã‚’è¨ˆç®—
+		uint8_t checksum = 0;
+		for(uint8_t elm : buff_input_signal){
+			checksum += elm;
+		}
+		//ãƒ˜ãƒƒãƒ€ãƒ»å‡ºåŠ›é›»æ–‡ãƒãƒƒãƒ•ã‚¡ãƒ»ãƒã‚§ãƒƒã‚¯ã‚µãƒ ã‚’é€ä¿¡ãƒãƒƒãƒ•ã‚¡ã«ã‚³ãƒ”ãƒ¼
+		char buff_send[sizeof(Header)+sizeof(InputSignalData)+sizeof(uint8_t)];
+		memcpy(buff_send, &header, sizeof(Header));
+		memcpy(buff_send+sizeof(Header), &input_signal_data, sizeof(InputSignalData));
+		memcpy(buff_send+sizeof(Header)+sizeof(InputSignalData), &checksum, sizeof(checksum));
+		//é€ä¿¡ãƒãƒƒãƒ•ã‚¡ã‚’é€ä¿¡
+		serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
 
-		OutputSignalData out_data;
-		/*
-		out_data.FrontMotorPower = front_motor->getPWM();
-		out_data.RightMotorPower = right_motor->getPWM();
-		out_data.LeftMotorPower = left_motor->getPWM();
-		out_data.BackMotorPower = back_motor->getPWM();
-*/
-		char buff[sizeof(Header)+sizeof(OutputSignalData)+sizeof(uint8_t)];
-		memcpy(buff, &header, sizeof(Header));
-		memcpy(buff+sizeof(Header), &out_data, sizeof(OutputSignalData));
-		buff[7] = 6;
-
-		//ƒwƒbƒ_‚ğƒVƒŠƒAƒ‰ƒCƒY
-		//ƒf[ƒ^‚ğƒVƒŠƒAƒ‰ƒCƒY
-		//ƒf[ƒ^‚Ìƒ`ƒFƒbƒNƒTƒ€‚ğŒvZ
-		//ƒwƒbƒ_‚Æƒf[ƒ^‚Æƒ`ƒFƒbƒNƒTƒ€‚ğŒ‹‡
-		//‘—M
-
-		serial_wri_dat(SIO_PORT_BT, buff, 8);
 //		fprintf(bt, "\r\nEcho test is started.\r\n");
 
 		tslp_tsk(100);
