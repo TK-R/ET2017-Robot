@@ -77,8 +77,8 @@ void serial_send_task(intptr_t exinf)
 		input_signal_data.ColorRed = rgb.r;
 		input_signal_data.ColorGreen = rgb.g;
 		input_signal_data.ColorBlue = rgb.b;
-		input_signal_data.AmbientLight = color_sensor->getAmbient();
-		input_signal_data.ReflectLight = color_sensor->getBrightness();
+	//	input_signal_data.AmbientLight = color_sensor->getAmbient();
+	//	input_signal_data.ReflectLight = color_sensor->getBrightness();
 		input_signal_data.Angle = gyro_sensor->getAngle();
 		input_signal_data.AnglarSpeed = gyro_sensor->getAnglerVelocity();
 		input_signal_data.reserved1 = 0;
