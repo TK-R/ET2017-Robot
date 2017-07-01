@@ -48,6 +48,8 @@ void serial_send_task(intptr_t exinf)
 	ColorSensor* color_sensor = new ColorSensor(color_sensor_port);
 	GyroSensor *gyro_sensor = new GyroSensor(gyro_sensor_port);
 
+	gyro_sensor->reset();
+
 	while(true)
 	{
 		if (!ev3_bluetooth_is_connected())
