@@ -9,7 +9,6 @@
 #include <TouchSensor.h>
 #include <SonarSensor.h>
 #include <GyroSensor.h>
-//#include <ev3api_sensor.h>
 
 using ev3api::Motor;
 using ev3api::TouchSensor;
@@ -20,8 +19,6 @@ using ev3api::ColorSensor;
 void serial_send_task(intptr_t exinf)
 {
 
-//	FILE *bt = ev3_serial_open_file(EV3_SERIAL_BT);
-//   fprintf(bt, "\r\nEcho test is started.\r\n");
 
 	//ポート割り当て
 	static const ePortM front_motor_port = PORT_A;
@@ -61,6 +58,7 @@ void serial_send_task(intptr_t exinf)
 		header.Head = HEADER_HEAD_VALUE;
 		header.Size = INPUT_SIGNAL_DATA_BYTE_SIZE;
 		header.Command = COMMAND_INPUT_SIGNAL_DATA;
+
 		//入力電文構造体にAPIの取得値を代入
 		InputSignalData input_signal_data;
 		input_signal_data.FrontMotorAngle = front_motor->getCount();
@@ -81,30 +79,31 @@ void serial_send_task(intptr_t exinf)
 		input_signal_data.ColorBlue = rgb.b;
 		input_signal_data.AmbientLight = color_sensor->getAmbient();
 		input_signal_data.ReflectLight = color_sensor->getBrightness();
-		input_signal_data.AccelX = gyro_sensor->getAnglerVelocity();
-		input_signal_data.AccelY = gyro_sensor->getAngle();
-		input_signal_data.AccelZ = 0;
-		input_signal_data.Temperature = 0;
+		input_signal_data.Angle = gyro_sensor->getAngle();
+		input_signal_data.AnglarSpeed = gyro_sensor->getAnglerVelocity();
+		input_signal_data.reserved1 = 0;
+		input_signal_data.reserved2 = 0;
 		input_signal_data.BatteryCurrent = ev3_battery_current_mA();
 		input_signal_data.BatteryVoltage = ev3_battery_voltage_mV();
+
 		//出力電文構造体と同サイズの出力電文バッファに出力電文をコピー
 		uint8_t buff_input_signal[sizeof(InputSignalData)];
 		memcpy(buff_input_signal, &input_signal_data, sizeof(InputSignalData));
+		
 		//出力電文バッファのチェックサムを計算
 		uint8_t checksum = 0;
 		for(uint8_t elm : buff_input_signal){
 			checksum += elm;
 		}
+
 		//ヘッダ・出力電文バッファ・チェックサムを送信バッファにコピー
 		char buff_send[sizeof(Header)+sizeof(InputSignalData)+sizeof(uint8_t)];
 		memcpy(buff_send, &header, sizeof(Header));
 		memcpy(buff_send+sizeof(Header), &input_signal_data, sizeof(InputSignalData));
 		memcpy(buff_send+sizeof(Header)+sizeof(InputSignalData), &checksum, sizeof(checksum));
+		
 		//送信バッファを送信
 		serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
-
-//		fprintf(bt, "\r\nEcho test is started.\r\n");
-
 		tslp_tsk(100);
 	}
 }

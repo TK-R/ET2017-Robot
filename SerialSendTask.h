@@ -35,10 +35,10 @@ struct InputSignalData {
 	uint8_t ColorBlue;		//カラーセンサ（青）
 	uint8_t AmbientLight;	//環境光
 	uint8_t ReflectLight;	//反射光
-	uint16_t AccelX;		//加速度[x]……ジャイロセンサ角速度を代入
-	uint16_t AccelY;		//加速度[y]……ジャイロセンサ角位置を代入
-	uint16_t AccelZ;		//加速度[z]……0（固定）
-	float Temperature;		//温度……0（固定）
+	int16_t Angle;			//角位置……ジャイロセンサ角速度を代入
+	int16_t AnglarSpeed;	//角速度…ジャイロセンサ角位置を代入
+	int16_t reserved1;		//予備1……0（固定）
+	float reserved2;		//予備2……0（固定）
 	uint16_t BatteryCurrent;	//バッテリ電流[mA]
 	uint16_t BatteryVoltage;	//バッテリ電圧[mV]
 };
