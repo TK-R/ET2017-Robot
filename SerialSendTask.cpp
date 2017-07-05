@@ -22,8 +22,6 @@ InputSignalData input_signal_data;
 
 void serial_send_task(intptr_t exinf)
 {
-
-
 	//ポート割り当て
 	static const ePortM front_motor_port = PORT_A;
 	static const ePortM right_motor_port = PORT_B;
@@ -56,9 +54,6 @@ void serial_send_task(intptr_t exinf)
 
 	while(true)
 	{
-				
-	
-
 		//ヘッダの作成
 		Header header;
 		header.Head = HEADER_HEAD_VALUE;
@@ -112,7 +107,7 @@ void serial_send_task(intptr_t exinf)
 		if (ev3_bluetooth_is_connected())
 			serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
 	
-		tslp_tsk(100);
+		dly_tsk(100);
 
 	}
 }

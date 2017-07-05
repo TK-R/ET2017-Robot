@@ -8,7 +8,8 @@
 
 #include "ev3api.h"
 #include "app.h"
-
+#include "SerialData.h"
+#include "SerialReceiveTask.h"
 #include "libcpp-test.h"
 
 #define DEBUG
@@ -31,7 +32,7 @@ public:
     void testMethod() {
         static char buf[256];
         sprintf(buf, "Member is 0x%08x.", member);
-        ev3_lcd_draw_string(buf, 0, 32);
+   //   ev3_lcd_draw_string(buf, 0, 32);
     }
 private:
     int member;
@@ -49,6 +50,18 @@ void main_task(intptr_t unused) {
     // Test class in static library
     LibSampleClass a;
     a.draw();
+    
+    static char buf[256];
+    int i = 0;
+    while(1)
+    {
+        sprintf(buf, "Power is %d,  %d, %d",i, OutputData.LeftMotorPower, OutputData.RightMotorPower);
+        ev3_lcd_draw_string(buf, 0, 32);
+	    //syslog(0, "Power is %d, %d", OutputData.LeftMotorPower, OutputData.RightMotorPower);
+        i++;
+		dly_tsk(1000);
+
+    }
 
     //auto obj = new TestClass();
 }

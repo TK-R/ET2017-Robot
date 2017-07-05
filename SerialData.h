@@ -8,6 +8,7 @@
 #define HEADER_HEAD_VALUE 0xFF
 #define COMMAND_INPUT_SIGNAL_DATA 0x01
 #define COMMAND_OUTPUT_SIGNAL_DATA 0x02
+#define COMMAND_PID_DATA 0x10
 
 #define HEADER_BYTE_SIZE 4
 struct Header {
@@ -18,10 +19,10 @@ struct Header {
 
 #define OUTPUT_SIGNAL_DATA_BYTE_SIZE 4
 struct OutputSignalData {
-	int8_t FrontMotorPower;		//前モータ-パワー[%]
-	int8_t RightMotorPower;		//右モータ-パワー[%]
 	int8_t LeftMotorPower;		//左モータ-パワー[%]
-	int8_t BackMotorPower;		//後モータ-パワー[%]
+	int8_t RightMotorPower;		//右モータ-パワー[%]
+	int8_t ARMMotorPower;		//アームモータ-パワー[%]
+	int8_t TailMotorPower;		//後モータ-パワー[%]
 };
 
 #define INPUT_SIGNAL_DATA_BYTE_SIZE 30

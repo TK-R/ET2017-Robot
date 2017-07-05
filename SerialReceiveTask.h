@@ -11,9 +11,13 @@ class SerialState;
 
 class SerialManager
 {
-	public:
-		// 現在のシリアル受信ステート
-		SerialState *CurrentState;
+public:
+	// 現在のシリアル受信ステート
+	SerialState *CurrentState;
+
+	SerialManager(){
+		CurrentState = new HeaderState(this);
+	}
 };
 
 #endif
