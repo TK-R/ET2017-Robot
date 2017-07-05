@@ -53,13 +53,20 @@ void main_task(intptr_t unused) {
     
     static char buf[256];
     int i = 0;
+
+    ev3_motor_config(EV3_PORT_A, LARGE_MOTOR);
+    ev3_motor_config(EV3_PORT_B, LARGE_MOTOR);
+
     while(1)
     {
-        sprintf(buf, "Power is %d,  %d, %d",i, OutputData.LeftMotorPower, OutputData.RightMotorPower);
+        sprintf(buf, " %d, Power: %4d, %4d",i, OutputData.LeftMotorPower, OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 32);
-	    //syslog(0, "Power is %d, %d", OutputData.LeftMotorPower, OutputData.RightMotorPower);
+
+        ev3_motor_set_power(EV3_PORT_A, OutputData.LeftMotorPower);
+        ev3_motor_set_power(EV3_PORT_B, OutputData.RightMotorPower);
+
         i++;
-		dly_tsk(1000);
+		dly_tsk(200);
 
     }
 
