@@ -1,5 +1,6 @@
 #include "ev3api.h"
 #include "app.h"
+#include "SerialData.h"
 #include "SerialSendTask.h"
 #include <string.h>
 #include <syssvc/serial.h>
@@ -15,6 +16,9 @@ using ev3api::TouchSensor;
 using ev3api::SonarSensor;
 using ev3api::GyroSensor;
 using ev3api::ColorSensor;
+
+//
+InputSignalData input_signal_data;
 
 void serial_send_task(intptr_t exinf)
 {
@@ -52,8 +56,8 @@ void serial_send_task(intptr_t exinf)
 
 	while(true)
 	{
-		if (!ev3_bluetooth_is_connected())
-			continue;
+				
+	
 
 		//ヘッダの作成
 		Header header;
@@ -62,7 +66,6 @@ void serial_send_task(intptr_t exinf)
 		header.Command = COMMAND_INPUT_SIGNAL_DATA;
 
 		//入力電文構造体にAPIの取得値を代入
-		InputSignalData input_signal_data;
 		input_signal_data.FrontMotorAngle = front_motor->getCount();
 		front_motor->setCount(0);
 		input_signal_data.RightMotorAngle = right_motor->getCount();
@@ -104,8 +107,12 @@ void serial_send_task(intptr_t exinf)
 		memcpy(buff_send+sizeof(Header), &input_signal_data, sizeof(InputSignalData));
 		memcpy(buff_send+sizeof(Header)+sizeof(InputSignalData), &checksum, sizeof(checksum));
 		
-		//送信バッファを送信
-		serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
+		
+		// 接続中なら、送信バッファを送信
+		if (ev3_bluetooth_is_connected())
+			serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
+	
 		tslp_tsk(100);
+
 	}
 }
