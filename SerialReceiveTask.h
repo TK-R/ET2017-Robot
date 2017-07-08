@@ -11,17 +11,19 @@
 // 出力信号電文のデータ領域。本体はSerialReceive.cppにて定義
 extern OutputSignalData OutputData;
 
+// 現在のPIDゲイン情報
+extern PIDData CurrentPID;
+
 class SerialState;
 
 class SerialManager
 {
 
 private:
-
 	// 現在のシリアル受信ステート
 	SerialState *CurrentState;
-public:
 
+public:
 	SerialManager(){
 		CurrentState = new HeaderState(this);
 	}

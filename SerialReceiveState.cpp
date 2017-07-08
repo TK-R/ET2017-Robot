@@ -33,7 +33,7 @@ void HeaderDataState::Receive(uint8_t data)
 			Context->SetState(new OutputDataState(Context));
 			break;
 		case COMMAND_PID_DATA:
-//			Context->CurrentState = new PIDDataState(Context);
+			Context->SetState(new PIDDataState(Context));
 			break;
 		default:
 			Context->SetState(new HeaderState(Context));
@@ -80,6 +80,29 @@ void OutputDataState::Receive(uint8_t data)
 
 void PIDDataState:: Receive(uint8_t data)
 {
-	syslog(0, "PID Received!");
+	buff.push_back(data);
+	if (buff.size() < sizeof(PIDData) + 1) return;
 
+	// ヘッダデータ受信完了のため、チェックサムを取得
+	uint8_t checkSum = buff.back();
+	// 末尾を削除
+	buff.pop_back();
+	
+	// チェックサムを計算
+	uint8_t calcCheckSum = 0;
+	for(uint8_t elm : buff)
+	{
+		calcCheckSum += elm; 
+	}
+
+
+	if (calcCheckSum == checkSum)
+	{
+		// チェックサムが一致したら、構造体を構築
+		PIDData data;
+		memcpy(&data, buff.data(), sizeof(PIDData));
+		CurrentPID = data;
+	}
+
+	Context->SetState(new HeaderState(Context));
 }

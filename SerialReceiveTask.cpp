@@ -18,6 +18,9 @@
 // 出力信号電文のデータ領域
 OutputSignalData OutputData;
 
+// PID電文のデータ領域
+PIDData CurrentPID;
+
 void serial_receive_task(intptr_t exinf)
 {
 	// 受信に用いるバッファ領域
