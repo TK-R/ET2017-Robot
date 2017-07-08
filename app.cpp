@@ -66,7 +66,7 @@ void main_task(intptr_t unused) {
         ev3_motor_set_power(EV3_PORT_B, OutputData.RightMotorPower);
 
         i++;
-		dly_tsk(200);
+		dly_tsk(20);
 
     }
 

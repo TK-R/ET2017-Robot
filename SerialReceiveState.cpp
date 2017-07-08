@@ -11,7 +11,7 @@ void HeaderState::Receive(uint8_t data)
 	// ヘッダコードを受信したら、ヘッダデータ領域受信ステートに遷移
 	if(data == 0xff) 
 	{
-		Context->CurrentState = new HeaderDataState(Context);
+		Context->SetState(new HeaderDataState(Context));
 	}
 }
 
@@ -27,16 +27,16 @@ void HeaderDataState::Receive(uint8_t data)
 	switch (header.Command)
 	{
 		case COMMAND_INPUT_SIGNAL_DATA:
-			Context->CurrentState = new InputDataState(Context);
+			Context->SetState(new InputDataState(Context));
 			break;
 		case COMMAND_OUTPUT_SIGNAL_DATA:
-			Context->CurrentState = new OutputDataState(Context);
+			Context->SetState(new OutputDataState(Context));
 			break;
 		case COMMAND_PID_DATA:
 //			Context->CurrentState = new PIDDataState(Context);
 			break;
 		default:
-			Context->CurrentState = new HeaderState(Context);
+			Context->SetState(new HeaderState(Context));
 			break;
 	}
 }
@@ -73,7 +73,7 @@ void OutputDataState::Receive(uint8_t data)
 		OutputData = data;
 	}
 
-	Context->CurrentState = new HeaderState(Context);
+	Context->SetState(new HeaderState(Context));
 
 
 }

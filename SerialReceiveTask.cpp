@@ -26,8 +26,8 @@ void serial_receive_task(intptr_t exinf)
 
 	while(1)
 	{
-		dly_tsk(10);
 		int recvSize;
+//		dly_tsk(1);
 
 		// 接続中でなければ、何もしない
 		if (!ev3_bluetooth_is_connected())
@@ -38,10 +38,8 @@ void serial_receive_task(intptr_t exinf)
 		if(recvSize < 0)
 			continue;
 
-		for(int i = 0; i < recvSize; i++)
-		{	
-			Context->CurrentState->Receive((uint8_t)ReceiveBuff[i]);
-		}
+		Context->Receive((uint8_t)ReceiveBuff[0]);
+	
 	}	
 }
 

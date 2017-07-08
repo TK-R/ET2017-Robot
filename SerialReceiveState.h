@@ -19,7 +19,8 @@ public:
 	}
 
  	virtual void Receive(uint8_t data) { syslog(0, "ERROR CALL..."); }
-
+	virtual ~SerialState(){}
+	
 };
 
 class HeaderState : public SerialState
