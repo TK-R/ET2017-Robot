@@ -1,5 +1,5 @@
 APPL_COBJS += 
-APPL_CXXOBJS += SerialSendTask.o SerialReceiveState.o SerialReceiveTask.o 
+APPL_CXXOBJS += SerialSendTask.o SerialReceiveState.o SerialReceiveTask.o HSLColor.o
 
 SRCLANG := c++
 

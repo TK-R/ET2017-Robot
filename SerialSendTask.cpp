@@ -1,7 +1,10 @@
+
 #include "ev3api.h"
 #include "app.h"
 #include "SerialData.h"
 #include "SerialSendTask.h"
+#include "HSLColor.h"
+
 #include <string.h>
 #include <syssvc/serial.h>
 #include <ColorSensor.h>
@@ -78,8 +81,15 @@ void serial_send_task(intptr_t exinf)
 		input_signal_data.ColorRed = rgb.r;
 		input_signal_data.ColorGreen = rgb.g;
 		input_signal_data.ColorBlue = rgb.b;
+		
+		// 反射光を輝度値から変換
+		int light = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
+		if(light > 255) light = 255;
+
+		input_signal_data.ReflectLight = light;  
+
+		syslog(0, "Light is %d", input_signal_data.ReflectLight);
 	//	input_signal_data.AmbientLight = color_sensor->getAmbient();
-	//	input_signal_data.ReflectLight = color_sensor->getBrightness();
 		input_signal_data.Angle = gyro_sensor->getAngle();
 		input_signal_data.AnglarSpeed = gyro_sensor->getAnglerVelocity();
 		input_signal_data.reserved1 = 0;
@@ -108,7 +118,7 @@ void serial_send_task(intptr_t exinf)
 		if (ev3_bluetooth_is_connected())
 			serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
 	
-		dly_tsk(100);
+		dly_tsk(20);
 
 	}
 }
