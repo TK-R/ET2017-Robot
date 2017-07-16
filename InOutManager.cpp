@@ -17,6 +17,12 @@ InOutManager::InOutManager()
 	Gyro = new GyroSensor(PORT_4);
 }
 
+InOutManager* InOutManager::GetInstance()
+{
+	static InOutManager manager; 
+	return &manager;
+}
+
 
 void InOutManager::ReadInputSensor()
 {
@@ -59,6 +65,14 @@ void InOutManager::ReadInputSensor()
 
 
 	//出力電文構造体と同サイズの出力電文バッファに出力電文をコピー
-	memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));}
+	memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));
+}
+
+void InOutManager::WriteOutputMotor()
+{
+	LeftMotor->setPWM(OutputData.LeftMotorPower);
+	RightMotor->setPWM(OutputData.RightMotorPower);
+
+}
 
 

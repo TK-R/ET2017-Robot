@@ -9,7 +9,7 @@
 
 
 // 出力信号電文のデータ領域。本体はSerialReceive.cppにて定義
-extern OutputSignalData OutputData;
+extern OutputSignalData TargetOutputData;
 
 // 現在のPIDゲイン情報
 extern PIDData CurrentPID;

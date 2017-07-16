@@ -31,12 +31,17 @@ private:
 	ColorSensor* Color;
 	GyroSensor *Gyro;
 
-public:
-	InputSignalData InputData;
 	InOutManager();
 
+
+public:
+	InputSignalData InputData;
+	OutputSignalData OutputData;
+
+	static InOutManager* GetInstance();
+
 	void ReadInputSensor();
-	
+	void WriteOutputMotor();
 };
 
 

@@ -20,7 +20,7 @@
 
 void main_task(intptr_t unused) 
 {
-    InOutManager* IOManager = new InOutManager();
+    InOutManager* IOManager = InOutManager::GetInstance();
     
 
     static char buf[256];
@@ -33,21 +33,20 @@ void main_task(intptr_t unused)
     {
         IOManager->ReadInputSensor();
 
-        sprintf(buf, "%d, Power: %4d, %4d ",i, OutputData.LeftMotorPower, OutputData.RightMotorPower);
+        sprintf(buf, "%d, Power: %4d, %4d ",i, IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
 
         sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
         ev3_lcd_draw_string(buf, 0, 12);
 
         if(IOManager->InputData.TouchSensor == 1){
-            OutputData.LeftMotorPower = 0;
-            OutputData.RightMotorPower = 0;    
+            IOManager->OutputData.LeftMotorPower = 0;
+            IOManager->OutputData.RightMotorPower = 0;    
         }
 
-        ev3_motor_set_power(EV3_PORT_A, OutputData.LeftMotorPower);
-        ev3_motor_set_power(EV3_PORT_B, OutputData.RightMotorPower);
-
         i++;
+
+        IOManager->WriteOutputMotor();
 		dly_tsk(20);
 
     }

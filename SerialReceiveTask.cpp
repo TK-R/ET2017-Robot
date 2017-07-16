@@ -16,7 +16,7 @@
 #define RECEIVE_BUFF_SIZE 1024
 
 // 出力信号電文のデータ領域
-OutputSignalData OutputData;
+OutputSignalData TargetOutputData;
 // PID電文のデータ領域
 PIDData CurrentPID;
 

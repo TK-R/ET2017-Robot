@@ -3,7 +3,7 @@
 #include "ev3api.h"
 #include "SerialReceiveState.h"
 #include "SerialReceiveTask.h"
-
+#include "InOutManager.h"
 
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
@@ -70,12 +70,12 @@ void OutputDataState::Receive(uint8_t data)
 		// チェックサムが一致したら、構造体を構築
 		OutputSignalData data;
 		memcpy(&data, buff.data(), sizeof(OutputSignalData));
-		OutputData = data;
+		TargetOutputData = data;
+
+		InOutManager::GetInstance()->OutputData = data;
 	}
 
 	Context->SetState(new HeaderState(Context));
-
-
 }
 
 void PIDDataState:: Receive(uint8_t data)
