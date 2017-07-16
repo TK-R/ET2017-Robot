@@ -14,9 +14,6 @@ extern OutputSignalData OutputData;
 // 現在のPIDゲイン情報
 extern PIDData CurrentPID;
 
-
-
-
 class SerialState;
 
 class SerialManager

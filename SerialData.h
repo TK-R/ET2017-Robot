@@ -21,16 +21,16 @@ struct Header {
 struct OutputSignalData {
 	int8_t LeftMotorPower;		//左モータ-パワー[%]
 	int8_t RightMotorPower;		//右モータ-パワー[%]
-	int8_t ARMMotorPower;		//アームモータ-パワー[%]
+	int8_t ArmMotorPower;		//アームモータ-パワー[%]
 	int8_t TailMotorPower;		//後モータ-パワー[%]
 };
 
 #define INPUT_SIGNAL_DATA_BYTE_SIZE 29
 struct InputSignalData {
-	int8_t FrontMotorAngle;		//前モータ-角位置[deg]
+	int8_t LeftMotorAngle;		//前モータ-角位置[deg]
 	int8_t RightMotorAngle;		//右モータ-角位置[deg]
-	int8_t LeftMotorAngle;		//左モータ-角位置[deg]
-	int8_t BackMotorAngle;		//後モータ-角位置[deg]
+	int8_t TailMotorAngle;		//左モータ-角位置[deg]
+	int8_t ArmMotorAngle;		//後モータ-角位置[deg]
 	int8_t TouchSensor;		//タッチセンサ
 	uint16_t SonarDistance;	//超音波センサ（距離）[cm]
 	uint16_t ColorRed;		//カラーセンサ（赤）

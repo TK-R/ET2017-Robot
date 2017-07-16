@@ -1,17 +1,12 @@
-/**
- * This sample program balances a two-wheeled Segway type robot such as Gyroboy in EV3 core set.
- *
- * References:
- * http://www.hitechnic.com/blog/gyro-sensor/htway/
- * http://www.cs.bgu.ac.il/~ami/teaching/Lejos-2013/classes/src/lejos/robotics/navigation/Segoway.java
- */
 
 #include "ev3api.h"
 #include "app.h"
 #include "SerialData.h"
 #include "SerialSendTask.h"
 #include "SerialReceiveTask.h"
-#include "libcpp-test.h"
+#include "InOutManager.h"
+
+//#include "libcpp-test.h"
 
 #define DEBUG
 
@@ -21,56 +16,30 @@
 #define _debug(x)
 #endif
 
-class TestClass {
-public:
-    TestClass() {
-        //static char buf[256];
-        //sprintf(buf, "Object has been created.");
-        //ev3_lcd_draw_string(buf, 0, 16);
-        member = 0x12345678;
-    }
 
-    void testMethod() {
-        static char buf[256];
-        sprintf(buf, "Member is 0x%08x.", member);
-   //   ev3_lcd_draw_string(buf, 0, 32);
-    }
-private:
-    int member;
-};
 
-auto obj2 = new TestClass();
-
-void main_task(intptr_t unused) {
-    // Test global constructor
-    obj2->testMethod();
-
-    // Test function in static library
-    libcpp_test_c_echo_function(777);
-
-    // Test class in static library
-    LibSampleClass a;
-    a.draw();
+void main_task(intptr_t unused) 
+{
+    InOutManager* IOManager = new InOutManager();
     
+
     static char buf[256];
     int i = 0;
 
-    ev3_motor_config(EV3_PORT_A, LARGE_MOTOR);
-    ev3_motor_config(EV3_PORT_B, LARGE_MOTOR);
-    ev3_motor_config(EV3_PORT_C, LARGE_MOTOR);
-    
-    // 起動時にはブレーキモードで固定
-    ev3_motor_stop(EV3_PORT_C, true);
+            
+
 
     while(1)
     {
+        IOManager->ReadInputSensor();
+
         sprintf(buf, "%d, Power: %4d, %4d ",i, OutputData.LeftMotorPower, OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
 
         sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
         ev3_lcd_draw_string(buf, 0, 12);
 
-        if(InputData.TouchSensor == 1){
+        if(IOManager->InputData.TouchSensor == 1){
             OutputData.LeftMotorPower = 0;
             OutputData.RightMotorPower = 0;    
         }

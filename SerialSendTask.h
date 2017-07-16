@@ -3,6 +3,6 @@
 
 #include "SerialData.h"
 // 入力信号電文のデータ領域
-extern InputSignalData InputData;
+extern uint8_t buff_input_signal[sizeof(InputSignalData)];
 
 #endif
