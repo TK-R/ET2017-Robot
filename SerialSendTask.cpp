@@ -20,8 +20,9 @@ using ev3api::SonarSensor;
 using ev3api::GyroSensor;
 using ev3api::ColorSensor;
 
-//
-InputSignalData input_signal_data;
+// 入力信号電文のデータ領域
+InputSignalData InputData;
+
 
 void serial_send_task(intptr_t exinf)
 {
@@ -65,41 +66,45 @@ void serial_send_task(intptr_t exinf)
 		header.Command = COMMAND_INPUT_SIGNAL_DATA;
 
 		//入力電文構造体にAPIの取得値を代入
-		input_signal_data.FrontMotorAngle = left_motor->getCount();
+		InputData.FrontMotorAngle = left_motor->getCount();
 		left_motor->setCount(0);
-		input_signal_data.RightMotorAngle = right_motor->getCount();
+		InputData.RightMotorAngle = right_motor->getCount();
 		right_motor->setCount(0);
-		input_signal_data.LeftMotorAngle = arm_motor->getCount();
+		InputData.LeftMotorAngle = arm_motor->getCount();
 		arm_motor->setCount(0);
-		input_signal_data.BackMotorAngle = tail_motor->getCount();
+		InputData.BackMotorAngle = tail_motor->getCount();
 		tail_motor->setCount(0);
 		
-		input_signal_data.TouchSensor = touch_sensor->isPressed();
-		input_signal_data.SonarDistance = sonar_sensor->getDistance();
+		InputData.TouchSensor = touch_sensor->isPressed();
+		InputData.SonarDistance = sonar_sensor->getDistance();
 		rgb_raw_t rgb;
 		color_sensor->getRawColor(rgb);
-		input_signal_data.ColorRed = rgb.r;
-		input_signal_data.ColorGreen = rgb.g;
-		input_signal_data.ColorBlue = rgb.b;
+		rgb.r = uint16_t(rgb.r * (255.0  / 194.0)); 
+		rgb.g = uint16_t(rgb.g * (255.0  / 318.0)); 
+		rgb.b = uint16_t(rgb.b * (255.0  / 104.0));  
+	
+		InputData.ColorRed = rgb.r;
+		InputData.ColorGreen = rgb.g;
+		InputData.ColorBlue = rgb.b;
 		
 		// 反射光を輝度値から変換
 		int light = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
 		if(light > 255) light = 255;
 
-		input_signal_data.ReflectLight = light;  
+		InputData.ReflectLight = light;  
 
-		syslog(0, "Light is %d", input_signal_data.ReflectLight);
-	//	input_signal_data.AmbientLight = color_sensor->getAmbient();
-		input_signal_data.Angle = gyro_sensor->getAngle();
-		input_signal_data.AnglarSpeed = gyro_sensor->getAnglerVelocity();
-		input_signal_data.reserved1 = 0;
-		input_signal_data.reserved2 = 0;
-		input_signal_data.BatteryCurrent = ev3_battery_current_mA();
-		input_signal_data.BatteryVoltage = ev3_battery_voltage_mV();
+		syslog(0, "Light is %d", InputData.ReflectLight);
+	//	InputData.AmbientLight = color_sensor->getAmbient();
+		InputData.Angle = gyro_sensor->getAngle();
+		InputData.AnglarSpeed = gyro_sensor->getAnglerVelocity();
+		InputData.reserved1 = 0;
+		InputData.reserved2 = 0;
+		InputData.BatteryCurrent = ev3_battery_current_mA();
+		InputData.BatteryVoltage = ev3_battery_voltage_mV();
 
 		//出力電文構造体と同サイズの出力電文バッファに出力電文をコピー
 		uint8_t buff_input_signal[sizeof(InputSignalData)];
-		memcpy(buff_input_signal, &input_signal_data, sizeof(InputSignalData));
+		memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));
 		
 		//出力電文バッファのチェックサムを計算
 		uint8_t checksum = 0;
@@ -110,7 +115,7 @@ void serial_send_task(intptr_t exinf)
 		//ヘッダ・出力電文バッファ・チェックサムを送信バッファにコピー
 		char buff_send[sizeof(Header)+sizeof(InputSignalData)+sizeof(uint8_t)];
 		memcpy(buff_send, &header, sizeof(Header));
-		memcpy(buff_send+sizeof(Header), &input_signal_data, sizeof(InputSignalData));
+		memcpy(buff_send+sizeof(Header), &InputData, sizeof(InputSignalData));
 		memcpy(buff_send+sizeof(Header)+sizeof(InputSignalData), &checksum, sizeof(checksum));
 		
 		

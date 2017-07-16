@@ -25,7 +25,7 @@ struct OutputSignalData {
 	int8_t TailMotorPower;		//後モータ-パワー[%]
 };
 
-#define INPUT_SIGNAL_DATA_BYTE_SIZE 30
+#define INPUT_SIGNAL_DATA_BYTE_SIZE 29
 struct InputSignalData {
 	int8_t FrontMotorAngle;		//前モータ-角位置[deg]
 	int8_t RightMotorAngle;		//右モータ-角位置[deg]
@@ -33,9 +33,9 @@ struct InputSignalData {
 	int8_t BackMotorAngle;		//後モータ-角位置[deg]
 	int8_t TouchSensor;		//タッチセンサ
 	uint16_t SonarDistance;	//超音波センサ（距離）[cm]
-	uint8_t ColorRed;		//カラーセンサ（赤）
-	uint8_t ColorGreen;		//カラーセンサ（緑）
-	uint8_t ColorBlue;		//カラーセンサ（青）
+	uint16_t ColorRed;		//カラーセンサ（赤）
+	uint16_t ColorGreen;		//カラーセンサ（緑）
+	uint16_t ColorBlue;		//カラーセンサ（青）
 	uint8_t AmbientLight;	//環境光
 	uint8_t ReflectLight;	//反射光
 	int16_t Angle;			//角位置……ジャイロセンサ角速度を代入

@@ -17,7 +17,6 @@
 
 // 出力信号電文のデータ領域
 OutputSignalData OutputData;
-
 // PID電文のデータ領域
 PIDData CurrentPID;
 
