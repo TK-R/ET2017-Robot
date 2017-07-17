@@ -5,6 +5,7 @@
 #include "SerialSendTask.h"
 #include "SerialReceiveTask.h"
 #include "InOutManager.h"
+#include "Strategy.h"
 
 //#include "libcpp-test.h"
 
@@ -21,17 +22,16 @@
 void main_task(intptr_t unused) 
 {
     InOutManager* IOManager = InOutManager::GetInstance();
-    
+    StrategyManager *StManager = new StrategyManager();
+    StManager->SetStrategy(new LineTraceStrategy());
 
     static char buf[256];
     int i = 0;
 
-            
-
-
     while(1)
     {
         IOManager->ReadInputSensor();
+        StManager->Run();
 
         sprintf(buf, "%d, Power: %4d, %4d ",i, IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
@@ -47,7 +47,7 @@ void main_task(intptr_t unused)
         i++;
 
         IOManager->WriteOutputMotor();
-		dly_tsk(20);
+		dly_tsk(5);
 
     }
 

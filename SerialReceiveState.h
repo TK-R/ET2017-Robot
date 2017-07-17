@@ -20,7 +20,6 @@ public:
 
  	virtual void Receive(uint8_t data) { syslog(0, "ERROR CALL..."); }
 	virtual ~SerialState(){}
-	
 };
 
 class HeaderState : public SerialState
@@ -39,7 +38,6 @@ public:
 		// ヘッダコードを追記
 		buff.push_back(0xff);
 	}
-
 };
 
 class OutputDataState : public SerialState
