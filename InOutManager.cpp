@@ -64,7 +64,7 @@ void InOutManager::ReadInputSensor()
 	InputData.BatteryVoltage = ev3_battery_voltage_mV();
 
 
-	//出力電文構造体と同サイズの出力電文バッファに出力電文をコピー
+	//入力信号電文構造体と同サイズの出力電文バッファに出力電文をコピー
 	memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));
 }
 
@@ -73,6 +73,8 @@ void InOutManager::WriteOutputMotor()
 	LeftMotor->setPWM(OutputData.LeftMotorPower);
 	RightMotor->setPWM(OutputData.RightMotorPower);
 
+	//出力信号電文構造体と同サイズの出力電文バッファに出力電文をコピー
+	memcpy(buff_output_signal, &OutputData, sizeof(OutputSignalData));
 }
 
 
