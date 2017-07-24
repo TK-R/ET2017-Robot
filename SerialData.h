@@ -9,6 +9,7 @@
 #define COMMAND_INPUT_SIGNAL_DATA 0x01
 #define COMMAND_OUTPUT_SIGNAL_DATA 0x02
 #define COMMAND_PID_DATA 0x10
+#define COMMAND_SELF_POSITION_DATA 0x30
 
 #define HEADER_BYTE_SIZE 4
 struct Header {
@@ -53,6 +54,13 @@ struct PIDData {
 	float IGain; // 積分ゲイン
 	float DGain; // 微分ゲイン
 	int State; // 変更を適用するステートNo
+};
+
+#define SELF_POSITION_BYTE_SIZE 18
+struct SelfPositionData {
+	long PositionX; // X座標(mm/左上原点)
+	long PositionY; // Y座標(mm/左上原点)
+	ushort Angle; // 角度(右向きを0度)
 };
 
 #pragma pack(pop)

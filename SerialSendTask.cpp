@@ -29,6 +29,7 @@ uint8_t buff_output_signal[sizeof(OutputSignalData)];
 // 自己位置情報電文のデータ領域
 uint8_t buff_self_position[sizeof(SelfPositionData)];
 
+// 電文送信処理
 void send_data(uint8_t buff[], uint8_t Command, int dataSize)
 {
 	//ヘッダの作成
@@ -54,8 +55,6 @@ void send_data(uint8_t buff[], uint8_t Command, int dataSize)
 	// 接続中なら、送信バッファを送信
 	if (ev3_bluetooth_is_connected())
 		serial_wri_dat(SIO_PORT_BT, buff_send, sizeof(buff_send));
-
-
 }
 
 
@@ -65,6 +64,8 @@ void serial_send_task(intptr_t exinf)
 	{
 		send_data(buff_input_signal, COMMAND_INPUT_SIGNAL_DATA, sizeof(InputSignalData));
 		send_data(buff_output_signal, COMMAND_OUTPUT_SIGNAL_DATA, sizeof(OutputSignalData));
+		send_data(buff_self_position, COMMAND_SELF_POSITION_DATA, sizeof(SelfPositionData));
+
 		dly_tsk(20);
 
 	}
