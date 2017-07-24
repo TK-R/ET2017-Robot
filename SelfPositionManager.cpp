@@ -18,5 +18,5 @@ void SelfPositionManager::UpdatePosition(uint8_t leftMotorCount, uint8_t rightMo
 
 void SelfPositionManager::ResetPosition(SelfPositionData p)
 {
-
+	PositionData = p;
 }

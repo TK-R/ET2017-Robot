@@ -56,10 +56,10 @@ struct PIDData {
 	int State; // 変更を適用するステートNo
 };
 
-#define SELF_POSITION_BYTE_SIZE 18
+#define SELF_POSITION_BYTE_SIZE 10
 struct SelfPositionData {
-	long PositionX; // X座標(mm/左上原点)
-	long PositionY; // Y座標(mm/左上原点)
+	uint PositionX; // X座標(mm/左上原点)
+	uint PositionY; // Y座標(mm/左上原点)
 	ushort Angle; // 角度(右向きを0度)
 };
 

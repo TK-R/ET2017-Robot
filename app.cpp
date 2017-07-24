@@ -41,14 +41,22 @@ void main_task(intptr_t unused)
     {
         // 入力情報更新
         IOManager->ReadInputSensor();
+        pData.PositionX+=1;
+        pData.PositionY+=1;
+        pData.Angle+=1;
+        SpManager->ResetPosition(pData);
         SpManager->UpdatePosition(0, 0);
+        
         StManager->Run();
 
         sprintf(buf, "%d, Power: %4d, %4d ",i, IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
 
-        sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
+        sprintf(buf, "X:%5d, Y:%5d ",pData.PositionX, pData.PositionY);
         ev3_lcd_draw_string(buf, 0, 12);
+
+        sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
+        ev3_lcd_draw_string(buf, 0, 24);
 
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;
