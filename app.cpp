@@ -43,7 +43,7 @@ void main_task(intptr_t unused)
         IOManager->ReadInputSensor();
         pData.PositionX+=1;
         pData.PositionY+=1;
-        pData.Angle+=1;
+        pData.Angle+=10;
         SpManager->ResetPosition(pData);
         SpManager->UpdatePosition(0, 0);
         
@@ -52,7 +52,7 @@ void main_task(intptr_t unused)
         sprintf(buf, "%d, Power: %4d, %4d ",i, IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
 
-        sprintf(buf, "X:%5d, Y:%5d ",pData.PositionX, pData.PositionY);
+        sprintf(buf, "X:%5d, Y:%5d. A:%3d ",pData.PositionX, pData.PositionY, pData.Angle);
         ev3_lcd_draw_string(buf, 0, 12);
 
         sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
