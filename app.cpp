@@ -26,6 +26,15 @@ void main_task(intptr_t unused)
     StrategyManager *StManager = new StrategyManager();
     StManager->SetStrategy(new LineTraceStrategy());
 
+    // 音声再生
+    const char* path = "/ev3rt/sound/S_01.wav";
+
+    memfile_t mem;
+    ER load = ev3_memfile_load(path, &mem);
+    ev3_speaker_set_volume(10);
+    ER play = ev3_speaker_play_file(&mem, SOUND_MANUAL_STOP);
+
+
     // 初期位置
     SelfPositionData pData;
     pData.Angle = 270;
@@ -36,7 +45,7 @@ void main_task(intptr_t unused)
 
     static char buf[256];
     int i = 0;
-
+        
     while(1)
     {
         // 入力情報更新

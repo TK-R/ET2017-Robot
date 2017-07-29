@@ -54,7 +54,7 @@ void InOutManager::ReadInputSensor()
 
 	InputData.ReflectLight = light;  
 
-	syslog(0, "Light is %d", InputData.ReflectLight);
+//	syslog(0, "Light is %d", InputData.ReflectLight);
 //	InputData.AmbientLight = color_sensor->getAmbient();
 	InputData.Angle = Gyro->getAngle();
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
