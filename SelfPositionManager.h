@@ -7,11 +7,10 @@ class SelfPositionManager
 {
 	private:
 	public:
-		SelfPositionData PositionData;
-
+		double PositionX, PositionY, Angle;
 		SelfPositionManager(SelfPositionData p);
 
-		void UpdatePosition(uint8_t leftMotorCount, uint8_t rightMotorCount);
+		void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);
 		void ResetPosition(SelfPositionData p);
 };
 
