@@ -4,7 +4,7 @@
 #include "SerialReceiveState.h"
 #include "SerialReceiveTask.h"
 #include "InOutManager.h"
-
+#include "BlockMoveManager.h"
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
 {
@@ -112,5 +112,59 @@ void PIDDataState::Receive(uint8_t data)
 
 void BlockMoveRuleState::Receive(uint8_t data)
 {
+	buff.push_back(data);
+	if (buff.size() < Size + 1) return;
+
+	// ヘッダデータ受信完了のため、チェックサムを取得
+	uint8_t checkSum = buff.back();
+
+	// 末尾を削除
+	buff.pop_back();
+	
+	// チェックサムを計算
+	uint8_t calcCheckSum = 0;
+	for(uint8_t elm : buff)
+	{
+		calcCheckSum += elm; 
+	}
+
+	if (calcCheckSum == checkSum)
+	{
+		// チェックサムが一致したら、構造体を構築
+		BlockMoveRuleData rule;
+		
+		rule.CommandSize = buff[0];
+		int offset = 1;
+		for(int i = 0; i < rule.CommandSize; i++) {
+			BlockMoveCommandData command;
+			
+			// 運搬元/運搬先のブロック置き場を登録
+			command.BlockColor = buff[offset++];
+			command.SourceBlockPosition = buff[offset++];
+			command.DestinationBlockPosition = buff[offset++];
+
+			// 運搬元ブロック置き場へ向かう際の経路を登録
+			command.ApproachWaypointCount = buff[offset++];
+			for(int j = 0; j < command.ApproachWaypointCount; j++) {
+				command.ApproachWayPoint[j] = buff[offset++];
+			}
+
+			// 運搬先ブロック置き場へ向かう際の経路を登録　
+			command.BlockMoveWaypointCount = buff[offset++];
+			for(int k = 0; k < command.BlockMoveWaypointCount; k++) {
+				command.BlockMoveWayPoint[k] = buff[offset++];
+			}
+
+			// 構築したブロック運搬コマンドをブロック運搬ルールに追加
+			rule.Command.push_back(command);
+		}
+		
+		// 構築したブロック運搬ルールをブロック運搬管理クラスに登録
+		BlockMoveManager::GetInstance()->SetBlockMoveRule(rule);
+
+	}
+
+
+	Context->SetState(new HeaderState(Context));
 
 }

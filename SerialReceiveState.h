@@ -10,7 +10,7 @@ class SerialState
 {
 protected:
 	SerialManager* Context;
-	int Size;
+	uint Size;
 	std::vector<uint8_t> buff;
 
 public:

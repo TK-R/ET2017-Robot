@@ -7,6 +7,7 @@
 #include "InOutManager.h"
 #include "Strategy.h"
 #include "SelfPositionManager.h"
+#include "BlockMoveManager.h"
 
 //#include "libcpp-test.h"
 
@@ -62,6 +63,13 @@ void main_task(intptr_t unused)
 
         sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
         ev3_lcd_draw_string(buf, 0, 24);
+
+        BlockMoveManager * BmManager = BlockMoveManager::GetInstance();
+        sprintf(buf, "C:%d src:%2d, dst:%2d, way:%2d", BmManager->CurrentBlockColor(),
+                                                  BmManager->CurrentSourcePosition(),
+                                                  BmManager->CurrentDestinationPosition(),
+                                                  BmManager->CurrentTargetWayPoint());
+        ev3_lcd_draw_string(buf, 0, 36);
 
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;

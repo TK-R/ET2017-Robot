@@ -67,18 +67,19 @@ struct SelfPositionData {
 
 #pragma pack(pop)
 
-struct BlockMoveCommand{
+struct BlockMoveCommandData{
+	uint8_t BlockColor;					// 運搬対象のブロック色
 	uint8_t SourceBlockPosition;		// 運搬元ブロック置き場の番号
 	uint8_t DestinationBlockPosition;	// 運搬先ブロック置き場の番号
 	uint8_t ApproachWaypointCount;		// ブロック確保時の経路数
-	uint8_t* ApproachWayPoint;			// ブロック確保時の経路
+	uint8_t ApproachWayPoint[32];		// ブロック確保時の経路
 	uint8_t BlockMoveWaypointCount;		// ブロック運搬時の経路数
-	uint8_t* BlockMoveWayPoint;		// ブロック運搬時の経路
+	uint8_t BlockMoveWayPoint[32];		// ブロック運搬時の経路
 };
 
-struct BlockMoveRule{
+struct BlockMoveRuleData{
 	uint8_t CommandSize;
-	std::vector<BlockMoveCommand> Command;
+	std::vector<BlockMoveCommandData> Command;
 };
 
 #endif
