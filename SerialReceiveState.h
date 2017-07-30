@@ -10,12 +10,19 @@ class SerialState
 {
 protected:
 	SerialManager* Context;
+	int Size;
 	std::vector<uint8_t> buff;
 
 public:
 	SerialState(SerialManager* manager)
 	{
 		Context = manager;
+	}
+	
+	SerialState(SerialManager* manager, int size)
+	{	
+		Context = manager;
+		Size = size;
 	}
 
  	virtual void Receive(uint8_t data) { syslog(0, "ERROR CALL..."); }
@@ -60,6 +67,13 @@ public:
 	virtual void Receive(uint8_t data);
 	using SerialState::SerialState;
 
+};
+
+class BlockMoveRuleState : public SerialState
+{
+public:
+	virtual void Receive(uint8_t data);
+	using SerialState::SerialState;
 };
 
 #endif

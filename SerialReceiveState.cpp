@@ -35,6 +35,9 @@ void HeaderDataState::Receive(uint8_t data)
 		case COMMAND_PID_DATA:
 			Context->SetState(new PIDDataState(Context));
 			break;
+		case COMMAND_BLOCK_MOVE_RULE_DATA:
+			Context->SetState(new BlockMoveRuleState(Context, header.Size));
+			break;
 		default:
 			Context->SetState(new HeaderState(Context));
 			break;
@@ -78,7 +81,7 @@ void OutputDataState::Receive(uint8_t data)
 	Context->SetState(new HeaderState(Context));
 }
 
-void PIDDataState:: Receive(uint8_t data)
+void PIDDataState::Receive(uint8_t data)
 {
 	buff.push_back(data);
 	if (buff.size() < sizeof(PIDData) + 1) return;
@@ -105,4 +108,9 @@ void PIDDataState:: Receive(uint8_t data)
 	}
 
 	Context->SetState(new HeaderState(Context));
+}
+
+void BlockMoveRuleState::Receive(uint8_t data)
+{
+
 }

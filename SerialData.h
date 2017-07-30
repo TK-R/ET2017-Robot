@@ -2,6 +2,7 @@
 #define  __SERIAL_DATA__
 
 #include "ev3api.h"
+#include <vector>
 
 #pragma pack(push, 1) // アライメント1に設定
 
@@ -9,6 +10,7 @@
 #define COMMAND_INPUT_SIGNAL_DATA 0x01
 #define COMMAND_OUTPUT_SIGNAL_DATA 0x02
 #define COMMAND_PID_DATA 0x10
+#define COMMAND_BLOCK_MOVE_RULE_DATA 0x20
 #define COMMAND_SELF_POSITION_DATA 0x30
 
 #define HEADER_BYTE_SIZE 4
@@ -64,5 +66,19 @@ struct SelfPositionData {
 };
 
 #pragma pack(pop)
+
+struct BlockMoveCommand{
+	uint8_t SourceBlockPosition;		// 運搬元ブロック置き場の番号
+	uint8_t DestinationBlockPosition;	// 運搬先ブロック置き場の番号
+	uint8_t ApproachWaypointCount;		// ブロック確保時の経路数
+	uint8_t* ApproachWayPoint;			// ブロック確保時の経路
+	uint8_t BlockMoveWaypointCount;		// ブロック運搬時の経路数
+	uint8_t* BlockMoveWayPoint;		// ブロック運搬時の経路
+};
+
+struct BlockMoveRule{
+	uint8_t CommandSize;
+	std::vector<BlockMoveCommand> Command;
+};
 
 #endif
