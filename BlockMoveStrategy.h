@@ -15,10 +15,12 @@ enum BlockMoveStateEnum
 
 class AbstractMoveState
 {
-private:
-	BlockMoveStateEnum State;
-
+protected:
+	// サブステートの最初は必ず初回旋回
+	BlockMoveStateEnum SubState = FirstTurn;
 public:
+	// 初回旋回時の目標角度
+	int FirstTargetAngle;
 	virtual void Run(){}
 };
 

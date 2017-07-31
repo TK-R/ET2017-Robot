@@ -5,10 +5,11 @@
 #include "SerialSendTask.h"
 #include "SelfPositionManager.h"
 
-SelfPositionManager::SelfPositionManager(SelfPositionData p)
-{
-	ResetPosition(p);
+SelfPositionManager* SelfPositionManager::GetInstance(){
+	static SelfPositionManager manager;
+	return &manager;
 }
+
 
 void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount)
 {

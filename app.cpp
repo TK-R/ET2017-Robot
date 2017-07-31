@@ -43,7 +43,8 @@ void main_task(intptr_t unused)
     pData.PositionX = 1000;
     pData.PositionY = 1000;
 
-    SelfPositionManager* SpManager = new SelfPositionManager(pData);
+    SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
+    SpManager->ResetPosition(pData);
 
     static char buf[256];
     int i = 0;
@@ -72,11 +73,12 @@ void main_task(intptr_t unused)
                                                   BmManager->GetTargetAngle(SpManager->PositionX, SpManager->PositionY));
         ev3_lcd_draw_string(buf, 0, 36);
 
+/*
         if(i > 150)
         {   i = 0;
             BmManager->ArrivalBlockPosition();
         }
-
+*/
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;
             IOManager->OutputData.RightMotorPower = 0;    
@@ -88,6 +90,4 @@ void main_task(intptr_t unused)
         IOManager->WriteOutputMotor();
 		dly_tsk(5);
     }
-
-    //auto obj = new TestClass();
 }
