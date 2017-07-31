@@ -86,7 +86,6 @@ void main_task(intptr_t unused)
         // 出力情報更新
         IOManager->WriteOutputMotor();
 		dly_tsk(5);
-
     }
 
     //auto obj = new TestClass();

@@ -18,12 +18,10 @@ public:
 	void Run();
 };
 
-
 class StrategyManager
 {
 public:
 	AbstractStrategy* CurrentStrategy;
-
 	void Run();
 	void SetStrategy(AbstractStrategy* nextStrategy);
 };
