@@ -48,12 +48,14 @@ public:
 class BlockMoveStrategy: public AbstractStrategy
 {
 private:
-	AbstractMoveState* State;
+	AbstractMoveState* State = new ApproachState();
+
 public:
 	BlockMoveStrategy();
 	void ChangeState(AbstractMoveState* nextState);
 	void Run();
-};
+	using AbstractStrategy::AbstractStrategy;
 
+};
 
 #endif

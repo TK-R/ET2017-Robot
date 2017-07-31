@@ -1,12 +1,6 @@
 #include "BlockMoveManager.h"
 #include "BlockMoveStrategy.h"
 
-// コンストラクタで初期ステートをブロックまで移動中に設定する
-BlockMoveStrategy::BlockMoveStrategy()
-{
-	State = new ApproachState();
-}
-
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
 {

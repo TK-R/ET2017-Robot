@@ -6,6 +6,7 @@
 #include "SerialReceiveTask.h"
 #include "InOutManager.h"
 #include "Strategy.h"
+#include "StrategyManager.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 
@@ -25,7 +26,7 @@ void main_task(intptr_t unused)
 {
     InOutManager* IOManager = InOutManager::GetInstance();
     StrategyManager *StManager = new StrategyManager();
-    StManager->SetStrategy(new LineTraceStrategy());
+    StManager->SetStrategy(new LineTraceStrategy(StManager));
 
     // 音声再生
     const char* path = "/ev3rt/sound/S_01.wav";

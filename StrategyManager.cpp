@@ -1,5 +1,5 @@
 #include "Strategy.h"
-
+#include "StrategyManager.h"
 
 void StrategyManager::Run()
 {
