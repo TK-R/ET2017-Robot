@@ -4,6 +4,7 @@
 #include "SerialReceiveState.h"
 #include "SerialReceiveTask.h"
 #include "InOutManager.h"
+#include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
@@ -35,6 +36,9 @@ void HeaderDataState::Receive(uint8_t data)
 		case COMMAND_PID_DATA:
 			Context->SetState(new PIDDataState(Context));
 			break;
+		case COMMAND_SELF_POSITION_DATA:
+			Context->SetState(new PositionDataState(Context));
+			break;
 		case COMMAND_BLOCK_MOVE_RULE_DATA:
 			Context->SetState(new BlockMoveRuleState(Context, header.Size));
 			break;
@@ -44,12 +48,12 @@ void HeaderDataState::Receive(uint8_t data)
 	}
 }
 
-
 void InputDataState::Receive(uint8_t data)
 {
 	syslog(0, "InputData Received!");
 }
 
+// 出力信号電文ステートにおける受信処理
 void OutputDataState::Receive(uint8_t data)
 {
 	buff.push_back(data);
@@ -81,6 +85,7 @@ void OutputDataState::Receive(uint8_t data)
 	Context->SetState(new HeaderState(Context));
 }
 
+// PID電文受信ステートにおける受信処理
 void PIDDataState::Receive(uint8_t data)
 {
 	buff.push_back(data);
@@ -110,6 +115,37 @@ void PIDDataState::Receive(uint8_t data)
 	Context->SetState(new HeaderState(Context));
 }
 
+// PID電文受信ステートにおける受信処理
+void PositionDataState::Receive(uint8_t data)
+{
+	buff.push_back(data);
+	if (buff.size() < sizeof(SelfPositionData) + 1) return;
+
+	// ヘッダデータ受信完了のため、チェックサムを取得
+	uint8_t checkSum = buff.back();
+	// 末尾を削除
+	buff.pop_back();
+	
+	// チェックサムを計算
+	uint8_t calcCheckSum = 0;
+	for(uint8_t elm : buff)
+	{
+		calcCheckSum += elm; 
+	}
+
+
+	if (calcCheckSum == checkSum)
+	{
+		// チェックサムが一致したら、構造体を構築
+		SelfPositionData pData;
+		memcpy(&data, buff.data(), sizeof(SelfPositionData));
+		SelfPositionManager::GetInstance()->ResetPosition(pData);
+	}
+
+	Context->SetState(new HeaderState(Context));
+}
+
+// 運搬ルール受信ステートにおける受信処理
 void BlockMoveRuleState::Receive(uint8_t data)
 {
 	buff.push_back(data);

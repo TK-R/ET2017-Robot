@@ -69,6 +69,13 @@ public:
 
 };
 
+class PositionDataState : public SerialState
+{
+public:
+	virtual void Receive(uint8_t data);
+	using SerialState::SerialState;
+};
+
 class BlockMoveRuleState : public SerialState
 {
 public:

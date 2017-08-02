@@ -59,6 +59,7 @@ bool BlockMoveManager::ArrivalBlockPosition(){
 	return false;
 }
 
+
 int BlockMoveManager::GetTargetAngle(int x, int y)
 {
 
