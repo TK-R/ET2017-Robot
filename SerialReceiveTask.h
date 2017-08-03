@@ -5,8 +5,6 @@
 #include "SerialReceiveState.h"
 #include <cstdlib>
 #include <memory>
-#include <iostream>
-
 
 // 出力信号電文のデータ領域。本体はSerialReceive.cppにて定義
 extern OutputSignalData TargetOutputData;
