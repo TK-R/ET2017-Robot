@@ -83,7 +83,6 @@ void ApproachState::Run()
 	case LineTrace:
 		// 置き場色を取得
 		
-
 		break;
 	case Back:
 		break;

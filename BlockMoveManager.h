@@ -19,7 +19,8 @@ private:
 	bool HasRuleData = false;
 
 	// ブロック置き場の座標
-	Point* BlockPlaceArray[15] = {
+	Point* BlockPlaceArray[15] =
+	{
 		new Point( 385, 395),
 		new Point(1164, 395),
 		new Point(1944, 395),
@@ -34,10 +35,12 @@ private:
 		new Point( 939,1235),
 		new Point(1389,1235),
 		new Point(1719,1235),
-		new Point(2169,1235)};
+		new Point(2169,1235)
+	};
 
 	// ウェイポイントの座標
-	Point* WayPointArray[27] = {
+	Point* WayPointArray[27] = 
+	{
 		new Point( 775, 395),
 		new Point(1554, 395),
 		new Point(2334, 395),
@@ -64,7 +67,8 @@ private:
 		new Point(1164,1235),
 		new Point(1554,1235),
 		new Point(1944,1235),
-		new Point( 446,1168)};
+		new Point( 446,1168)
+	};
 
 
 public:

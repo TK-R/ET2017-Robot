@@ -15,6 +15,7 @@ int BlockMoveManager::MyAtan2(double x, double y)
 	return (val + 270) % 360;
 }
 
+// 運搬ルールを初期化する
 void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 	RuleData = data;
 	CurrentCommandNo = 0;

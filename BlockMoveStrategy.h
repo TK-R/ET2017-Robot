@@ -30,7 +30,6 @@ protected:
 	BlockMoveStateEnum SubState = FirstTurn;
 public:
 	// 初回旋回時の目標角度
-	int FirstTargetAngle;
 	bool StateMachine();
 	virtual void Run(){}
 };
