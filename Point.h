@@ -12,11 +12,5 @@ public:
     Point() : Point(0,0) {}
 };
 
-Point* WayPointArray[] = {
-    new Point( 385, 395),
-    new Point(1164, 395)};
-
-
-//Point[] BlockPlaceArray;
 
 #endif
