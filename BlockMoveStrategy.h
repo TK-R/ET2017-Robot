@@ -7,11 +7,21 @@ enum BlockMoveStateEnum
 {
 	FirstTurn = 0, // 初回旋回中
 	ImaginaryWaypoint, // 仮想ウェイポイント移動中
+	OverLine,	// ラインをまたぐまで直進中
 	LineTurn, // ライン上で旋回中
 	LineTrace, // ライントレース移動中
 	Back, // 後退中
 };
 
+enum BlockPlaceColor
+{
+	None = 0,
+	Black = 1,
+	Red,
+	Blue,
+	Yellow,
+	Green
+};
 
 class AbstractMoveState
 {
@@ -21,6 +31,7 @@ protected:
 public:
 	// 初回旋回時の目標角度
 	int FirstTargetAngle;
+	bool StateMachine();
 	virtual void Run(){}
 };
 
