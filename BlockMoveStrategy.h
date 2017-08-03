@@ -30,19 +30,17 @@ private:
 	
 public:
 	void Run();
-
-
 };
 
 class MoveState: public AbstractMoveState 
 {
 public:
 	void Run();
-
 };
 
 class PargeState: public AbstractMoveState
 {
+private: int MoveDistance(); 
 public:
 	void Run();
 };
@@ -59,7 +57,6 @@ public:
 	void ChangeState(AbstractMoveState* nextState);
 	void Run();
 	using AbstractStrategy::AbstractStrategy;
-
 };
 
 #endif

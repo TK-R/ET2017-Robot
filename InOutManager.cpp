@@ -23,6 +23,20 @@ InOutManager* InOutManager::GetInstance()
 	return &manager;
 }
 
+// 前進するように左右モータの値を更新する
+void InOutManager::Forward(int power)
+{
+	OutputData.LeftMotorPower = power;
+	OutputData.RightMotorPower = power;
+}
+
+// 後退するように左右モータの値を更新する
+void InOutManager::Back(int power)
+{
+	OutputData.LeftMotorPower = -1 * power;
+	OutputData.RightMotorPower = -1 * power;
+}
+
 // 時計回りに回転するように左右モータの値を更新する
 void InOutManager::TurnCW(int power)
 {

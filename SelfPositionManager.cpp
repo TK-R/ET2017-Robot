@@ -65,7 +65,7 @@ void SelfPositionManager::ResetPosition(SelfPositionData p)
 }
 
 // ある座標との距離を求める
-double SelfPositionManager::GetDistance(Point p)
+double SelfPositionManager::GetDistance(Point* p)
 {
-	return hypot(p.X - PositionX, p.Y - PositionY);
+	return hypot(p->X - PositionX, p->Y - PositionY);
 }

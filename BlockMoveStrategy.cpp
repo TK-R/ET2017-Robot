@@ -23,7 +23,7 @@ void ApproachState::Run()
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
 	int currentAngle = SpManager->Angle;
-//	Point nextTargetPoint = BtManager->GetTargetAngle
+	Point* waypoint = BtManager->GetSrcWaypoint();
 
 	switch(SubState){
 	// 仮想ウェイポイント間を移動中の動作
@@ -48,7 +48,17 @@ void ApproachState::Run()
 		break;
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
+		// ラインを認識した場合には、ライントレース前の旋回
+		
 		// ウェイポイント座標と自身の座標が離れている場合
+		if(SpManager->GetDistance(waypoint) > 100)
+		{
+			
+		}else
+		{
+			// ウェイポイント付近の場合
+			IoManager->Forward(10);
+		}
 
 		break;
 

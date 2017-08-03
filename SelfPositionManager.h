@@ -17,7 +17,7 @@ class SelfPositionManager
 		void ResetPosition(SelfPositionData p);
 
 		// ある座標との距離を求める
-		double GetDistance(Point p);
+		double GetDistance(Point* p);
 };
 
 
