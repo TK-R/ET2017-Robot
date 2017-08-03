@@ -40,6 +40,10 @@ public:
 
 	static InOutManager* GetInstance();
 
+	// 時計回りに回転するように左右モータの値を更新する
+	void TurnCW(int power);
+	// 反時計回りに回転するように左右モータ値を更新する
+	void TurnCCW(int power);
 	void ReadInputSensor();
 	void WriteOutputMotor();
 };

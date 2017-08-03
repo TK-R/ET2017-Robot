@@ -10,7 +10,6 @@ SelfPositionManager* SelfPositionManager::GetInstance(){
 	return &manager;
 }
 
-
 void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount)
 {
 	// 車輪直径(mm)

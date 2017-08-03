@@ -23,6 +23,19 @@ InOutManager* InOutManager::GetInstance()
 	return &manager;
 }
 
+// 時計回りに回転するように左右モータの値を更新する
+void InOutManager::TurnCW(int power)
+{
+	OutputData.LeftMotorPower = power;
+	OutputData.RightMotorPower = -1 * power;
+}
+
+// 反時計回りに回転するように左右モータ値を更新する
+void InOutManager::TurnCCW(int power)
+{
+	OutputData.LeftMotorPower = -1 * power;
+	OutputData.RightMotorPower = power;
+}
 
 void InOutManager::ReadInputSensor()
 {
@@ -62,7 +75,6 @@ void InOutManager::ReadInputSensor()
 	InputData.reserved2 = 0;
 	InputData.BatteryCurrent = ev3_battery_current_mA();
 	InputData.BatteryVoltage = ev3_battery_voltage_mV();
-
 
 	//入力信号電文構造体と同サイズの出力電文バッファに出力電文をコピー
 	memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));
