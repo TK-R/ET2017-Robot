@@ -115,7 +115,7 @@ void PIDDataState::Receive(uint8_t data)
 	Context->SetState(new HeaderState(Context));
 }
 
-// PID電文受信ステートにおける受信処理
+// 自己位置情報電文受信ステートにおける受信処理
 void PositionDataState::Receive(uint8_t data)
 {
 	buff.push_back(data);
@@ -138,7 +138,7 @@ void PositionDataState::Receive(uint8_t data)
 	{
 		// チェックサムが一致したら、構造体を構築
 		SelfPositionData pData;
-		memcpy(&data, buff.data(), sizeof(SelfPositionData));
+		memcpy(&pData, buff.data(), sizeof(SelfPositionData));
 		SelfPositionManager::GetInstance()->ResetPosition(pData);
 	}
 
