@@ -3,7 +3,7 @@
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 #include "BlockMoveStrategy.h"
-
+#include "InOutManager.h"
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -21,8 +21,9 @@ void ApproachState::Run()
 {
 	BlockMoveManager* BtManager = BlockMoveManager::GetInstance();
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-			
+	InOutManager* IoManager = InOutManager::GetInstance();			
 	int currentAngle = SpManager->Angle;
+
 
 	switch(SubState){
 	// 仮想ウェイポイント間を移動中の動作
@@ -31,17 +32,24 @@ void ApproachState::Run()
 		if(FirstTargetAngle > currentAngle)
 		{
 			// 反時計回りに旋回
+			IoManager->TurnCCW(10);
 
-		}else if(FirstTargetAngle < currentAngle){
+		}
+		else if(FirstTargetAngle < currentAngle)
+		{
 			// 時計回りに旋回
-
-		}else{
+			IoManager->TurnCW(10);
+		}
+		else
+		{
 			// 角度が一致したため、次のサブステートに遷移
-			SubState = ImaginaryWaypoint; 
+			SubState = ImaginaryWaypoint;
 		}
 		break;
-	// 最終ウェイポイントに到達したので、旋回する動作
+	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
+		// ウェイポイント座標と自身の座標が離れている場合
+
 		break;
 
 	// ライントレース前の旋回動作

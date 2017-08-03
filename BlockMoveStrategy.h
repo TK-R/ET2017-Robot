@@ -26,6 +26,8 @@ public:
 
 class ApproachState: public AbstractMoveState
 {
+private:
+	
 public:
 	void Run();
 
