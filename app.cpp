@@ -56,7 +56,7 @@ void main_task(intptr_t unused)
         SpManager->UpdatePosition(IOManager->InputData.LeftMotorAngle, IOManager->InputData.RightMotorAngle);
         
         StManager->Run();
-
+        
         sprintf(buf, "%d, Power: %4d, %4d ",i, IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
         ev3_lcd_draw_string(buf, 0, 0);
 
@@ -67,18 +67,25 @@ void main_task(intptr_t unused)
         ev3_lcd_draw_string(buf, 0, 24);
 
         BlockMoveManager * BmManager = BlockMoveManager::GetInstance();
-        sprintf(buf, "C:%d src:%2d, dst:%2d, way:%2d", BmManager->CurrentCommand.BlockColor,
-                                                  BmManager->CurrentCommand.SourceBlockPosition,
-                                                  BmManager->CurrentCommand.DestinationBlockPosition,
-                                                  BmManager->GetTargetAngle(SpManager->PositionX, SpManager->PositionY));
+        sprintf(buf, "C:%d src:%2d, dst:%2d, Ang:%3d", 
+            BmManager->CurrentCommand.BlockColor,
+            BmManager->CurrentCommand.SourceBlockPosition,
+            BmManager->CurrentCommand.DestinationBlockPosition,
+            BmManager->GetDstBlockAngle(SpManager->PositionX, SpManager->PositionY));
         ev3_lcd_draw_string(buf, 0, 36);
 
-/*
-        if(i > 150)
-        {   i = 0;
-            BmManager->ArrivalBlockPosition();
+        auto src = BmManager->GetSrcBlockPoint();
+        sprintf(buf, "srcX:%2d, srcY:%2d", 
+            src->X,
+            src->Y);
+        ev3_lcd_draw_string(buf, 0, 48);
+
+
+        if(i > 200)
+        {
+           i = 0;
+           ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
         }
-*/
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;
             IOManager->OutputData.RightMotorPower = 0;    

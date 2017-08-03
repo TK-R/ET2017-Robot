@@ -23,7 +23,7 @@ void ApproachState::Run()
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
 	int currentAngle = SpManager->Angle;
-
+//	Point nextTargetPoint = BtManager->GetTargetAngle
 
 	switch(SubState){
 	// 仮想ウェイポイント間を移動中の動作

@@ -8,12 +8,14 @@
 class BlockMoveManager {
 private:
 	BlockMoveManager(){}
+
+	static int MyAtan2(double x, double y);
+
 	BlockMoveRuleData RuleData;
 
-	// 現在の動作状態がブロック運搬中ならTrue
-	bool CurrentStatusIsMove;
 	int CurrentCommandNo = 0;
-	int CurrentWaypointNo = 0;
+	int CurrentSrcWaypointNo = 0;
+	int CurrentDstWaypointNo = 0;
 	bool HasRuleData = false;
 
 	// ブロック置き場の座標
@@ -73,16 +75,50 @@ public:
 	// 受信したブロック運搬ルールを登録する
 	void SetBlockMoveRule(BlockMoveRuleData data);
 
-	// ウェイポイント到着を通知する
+	// 運搬元ブロック置き場に向かうためのウェイポイント到着を通知する
 	// trueなら、最終ウェイポイント到着
-	bool ArrivalWayPoint();
+	bool ArrivalSrcWayPoint();
 
-	// ブロック置き場到着を通知する
+	// 運搬先ブロック置き場に向かうためのウェイポイント到着を通知する
+	// trueなら、最終ウェイポイント到着
+	bool ArrivalDstWayPoint();
+
+	// 運搬元ブロック置き場到着を通知する
 	// Trueなら、全ブロック運搬コマンド終了
-	bool ArrivalBlockPosition();
+	bool ArrivalSrcBlockPosition();
 
-	// 現在の座標より、次に向かうべき角度を取得する
-	int GetTargetAngle(int x, int y);
+	// 運搬先ブロック置き場到達を通知する
+	// Trueなら、全ブロック運搬コマンド終了
+	bool ArrivalDstBlockPosition();
+
+	// 運搬元ブロック置き場に到達するため経由する、
+	// 次のウェイポイントの角度を取得する
+	int GetSrcWaypointAngle(double x, double y);
+
+	// 運搬先ブロック置き場に到達するため経由する、
+	// 次のウェイポイントの角度を取得する
+	int GetDstWaypointAngle(double x, double y);
+
+	// 次に向かうべき運搬元ブロック置き場の角度を取得する
+	int GetSrcBlockAngle(double x, double y);
+	
+	// 次に向かうべき運搬先ブロック置き場の角度を取得する
+	int GetDstBlockAngle(double x, double y);
+	
+	// 運搬元ブロック置き場に到達するため経由する、
+	// 次のウェイポイントの座標を取得する
+	Point* GetSrcWaypoint();
+
+	// 運搬先ブロック置き場に到達するため経由する、
+	// 次のウェイポイントの座標を取得する
+	Point* GetDstWaypoint();
+
+	// 次に向かうべき運搬元ブロック置き場の座標を取得する
+	Point* GetSrcBlockPoint();
+
+	// 次に向かうべき運搬先ブロック置き場の座標を取得する
+	Point* GetDstBlockPoint();
+
 };
 
 #endif

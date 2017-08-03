@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "ev3api.h"
 #include "BlockMoveManager.h"
 
@@ -6,62 +8,140 @@ BlockMoveManager* BlockMoveManager::GetInstance(){
 	return &manager;
 }
 
+// y軸方向を0度とした、0～360の角度を求める
+int BlockMoveManager::MyAtan2(double x, double y)
+{	
+	int val = (int)(atan2(x , y) * 180 / M_PI);
+	return (val + 270) % 360;
+}
+
 void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 	RuleData = data;
 	CurrentCommandNo = 0;
-	CurrentWaypointNo = 0;
+
+	CurrentSrcWaypointNo = 0;
+	CurrentDstWaypointNo = 0;
 	CurrentCommand = RuleData.Command[CurrentCommandNo];
 
 	HasRuleData = true;
 }
 
-// ウェイポイント到着を通知する
+// 運搬元ブロック置き場に向かうためのウェイポイント到着を通知する
 // trueなら、最終ウェイポイント到着
-bool BlockMoveManager::ArrivalWayPoint()
+bool BlockMoveManager::ArrivalSrcWayPoint()
 {
-	CurrentWaypointNo++;
-
-	// 現在の動作状況におけるウェイポイントの数を取得
-	int wayPointCount = CurrentStatusIsMove == true ? 
-								CurrentCommand.BlockMoveWaypointCount : CurrentCommand.ApproachWaypointCount;
-
+	CurrentSrcWaypointNo++;
+							
 	// 最終ウェイポイントの場合
-	if(CurrentWaypointNo == wayPointCount) {
+	if(CurrentSrcWaypointNo == 
+			CurrentCommand.ApproachWaypointCount) 
+	{
 		return true;
 	}
 
 	return false;
 }
 
-// ブロック置き場到着を通知する
-// Trueなら、全ブロック運搬コマンド終了
-bool BlockMoveManager::ArrivalBlockPosition(){
-	// 現在の状態がブロック確保中だった場合
-	if(CurrentStatusIsMove == false){
-		// ブロック運搬状態に切替
-		CurrentStatusIsMove = true;
-		CurrentWaypointNo = 0;
-		return false;
-	}else{ // 現在の状態がブロック運搬中だった場合
-		
-		CurrentCommandNo++;
-		CurrentStatusIsMove = false;
-		
-		// 最終コマンド終了の場合
-		if(CurrentCommandNo == RuleData.CommandSize){
-			return true;
-		}
+// 運搬先ブロック置き場に向かうためのウェイポイント到着を通知する
+// trueなら、最終ウェイポイント到着
+bool BlockMoveManager::ArrivalDstWayPoint()
+{
+	CurrentDstWaypointNo++;
 
-		CurrentWaypointNo = 0;
-		CurrentCommand = RuleData.Command[CurrentCommandNo];
+	// 最終ウェイポイントの場合
+	if(CurrentDstWaypointNo == 
+			CurrentCommand.BlockMoveWaypointCount) 
+	{
+		return true;
 	}
 
 	return false;
 }
 
+// 運搬元ブロック置き場到着を通知する
+// Trueなら、全ブロック運搬コマンド終了
+bool BlockMoveManager::ArrivalSrcBlockPosition()
+{	
+	// ウェイポイント値をクリア	
+	CurrentSrcWaypointNo = 0;
+	CurrentDstWaypointNo = 0;
+	return false;
+}
 
-int BlockMoveManager::GetTargetAngle(int x, int y)
+// 運搬先ブロック置き場到達を通知する
+// Trueなら、全ブロック運搬コマンド終了
+bool BlockMoveManager::ArrivalDstBlockPosition()
 {
+	CurrentCommandNo++;
+	
+	// 最終コマンド終了の場合
+	if(CurrentCommandNo == RuleData.CommandSize){
+		return true;
+	}
 
-	return 0;
+	CurrentSrcWaypointNo = 0;
+	CurrentDstWaypointNo = 0;
+
+	CurrentCommand = RuleData.Command[CurrentCommandNo];
+	return false;
+}
+
+// 運搬元ブロック置き場に到達するため経由する、
+// 次のウェイポイントの角度を取得する
+int BlockMoveManager::GetSrcWaypointAngle(double x, double y)
+{	
+	Point* wayPoint = GetSrcWaypoint();
+	return MyAtan2(wayPoint->X - x, wayPoint->Y -y);
+}
+
+// 運搬先ブロック置き場に到達するため経由する、
+// 次のウェイポイントの角度を取得する
+int BlockMoveManager::GetDstWaypointAngle(double x, double y)
+{
+	Point* wayPoint = GetDstWaypoint();
+	return MyAtan2(wayPoint->X - x, wayPoint->Y -y);
+}
+
+// 次に向かうべき運搬元ブロック置き場の角度を取得する
+int BlockMoveManager::GetSrcBlockAngle(double x, double y)
+{
+	Point* blockPoint = GetSrcBlockPoint();
+	return MyAtan2(blockPoint->X - x, blockPoint->Y -y);
+}
+
+// 次に向かうべき運搬先ブロック置き場の角度を取得する
+int BlockMoveManager::GetDstBlockAngle(double x, double y)
+{
+	Point* blockPoint = GetDstBlockPoint();
+	return MyAtan2(blockPoint->X - x, blockPoint->Y -y);
+}
+
+// 運搬元ブロック置き場に到達するため経由する、
+// 次のウェイポイントの座標を取得する
+Point* BlockMoveManager::GetSrcWaypoint()
+{
+	int waypointNo = CurrentCommand.ApproachWayPoint[CurrentSrcWaypointNo];
+	return  WayPointArray[waypointNo];
+}
+
+// 運搬先ブロック置き場に到達するため経由する、
+// 次のウェイポイントの座標を取得する
+Point* BlockMoveManager::GetDstWaypoint()
+{
+	int waypointNo = CurrentCommand.BlockMoveWayPoint[CurrentDstWaypointNo];
+	return  WayPointArray[waypointNo];
+}
+
+// 次に向かうべき運搬元ブロック置き場の座標を取得する
+Point* BlockMoveManager::GetSrcBlockPoint()
+{
+	int blockNo = CurrentCommand.SourceBlockPosition;
+	return BlockPlaceArray[blockNo];
+}
+
+// 次に向かうべき運搬先ブロック置き場の座標を取得する
+Point* BlockMoveManager::GetDstBlockPoint()
+{
+	int blockNo = CurrentCommand.DestinationBlockPosition;
+	return BlockPlaceArray[blockNo];
 }

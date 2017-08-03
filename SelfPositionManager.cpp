@@ -63,3 +63,9 @@ void SelfPositionManager::ResetPosition(SelfPositionData p)
 	PositionY = p.PositionY;
 	Angle = p.Angle;
 }
+
+// ある座標との距離を求める
+double SelfPositionManager::GetDistance(Point p)
+{
+	return hypot(p.X - PositionX, p.Y - PositionY);
+}
