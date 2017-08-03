@@ -11,7 +11,7 @@ void LineTraceStrategy::Run()
 
 	int light = InOut->InputData.ReflectLight;
 
-	int diff = center - (int)light;
+	int diff =  (int)light - center;
 	int steering = pk * diff + (diff - PrevDiff) * pd;
 	
 
