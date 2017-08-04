@@ -3,5 +3,16 @@
 
 
 // 音声再生タスク
-extern void sound_play_task(intptr_t exinf);
+
+enum SoundType
+{
+	SensorInitialStart = 0,
+	SensorInitialEnd,
+	Start,
+	LineTraceEnd
+};
+
+extern void PlaySound(SoundType s);
+
+
 #endif

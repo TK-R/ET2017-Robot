@@ -85,6 +85,7 @@ extern "C" {
 extern void	main_task(intptr_t exinf);
 extern void serial_send_task(intptr_t exinf);
 extern void serial_receive_task(intptr_t exinf);
+extern void sound_play_task(intptr_t exinf);
 
 //extern void	tex_routine(TEXPTN texptn, intptr_t exinf);
 //#ifdef CPUEXC1

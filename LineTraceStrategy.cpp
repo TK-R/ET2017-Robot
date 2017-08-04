@@ -3,6 +3,7 @@
 #include "InOutManager.h"
 #include "Strategy.h"
 #include "SelfPositionManager.h"
+#include "SoundPlayTask.h"
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
@@ -30,6 +31,10 @@ void LineTraceStrategy::Run()
 	if(SelfPositionManager::GetInstance()->PositionX < 1800)
 	{
 		InOut->Forward(0);
+		InOut->WriteOutputMotor();
+		PlaySound(LineTraceEnd);
+		ext_tsk();
+
 	}
 
 }

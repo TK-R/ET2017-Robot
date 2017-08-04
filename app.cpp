@@ -67,6 +67,7 @@ void Refresh()
 
 void main_task(intptr_t unused) 
 {
+    PlaySound(SensorInitialStart);
     InOutManager* IOManager = InOutManager::GetInstance();
     StrategyManager *StManager = new StrategyManager();
     StManager->SetStrategy(new LineTraceStrategy(StManager));
@@ -89,27 +90,14 @@ void main_task(intptr_t unused)
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
+    PlaySound(SensorInitialEnd);
 
-    static char buf[256];
     int i = 0;
-    
-    T_CTSK ctsk;
-    ctsk.tskatr = TA_ACT;
-    ctsk.exinf = 0;
-    ctsk.itskpri = TMIN_APP_TPRI + 1;
-    ctsk.task = sound_play_task;
-    ctsk.stksz = STACK_SIZE;
-    ctsk.stk = NULL;
-    int res = acre_tsk(&ctsk);
-
-   sprintf(buf, "res %d", res);
-    ev3_lcd_draw_string(buf, 0, 60);
-
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
 		dly_tsk(10);
     }
-
+    PlaySound(Start);
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
  //   StManager->SetStrategy(new BlockMoveStrategy(StManager));
    StManager->SetStrategy(new LineTraceStrategy(StManager));
