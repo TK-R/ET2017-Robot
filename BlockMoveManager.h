@@ -14,8 +14,6 @@ private:
 	BlockMoveRuleData RuleData;
 
 	int CurrentCommandNo = 0;
-	int CurrentSrcWaypointNo = 0;
-	int CurrentDstWaypointNo = 0;
 	bool HasRuleData = false;
 
 	// ブロック置き場の座標
@@ -72,6 +70,9 @@ private:
 
 
 public:
+	int CurrentSrcWaypointNo = 0;
+	int CurrentDstWaypointNo = 0;
+
 	BlockMoveCommandData CurrentCommand;
 
 	// シングルトンのインスタンスを取得する

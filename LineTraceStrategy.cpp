@@ -2,7 +2,7 @@
 #include "ev3api.h"
 #include "InOutManager.h"
 #include "Strategy.h"
-
+#include "SelfPositionManager.h"
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
@@ -27,4 +27,9 @@ void LineTraceStrategy::Run()
 	}
 
 	PrevDiff = diff;
+	if(SelfPositionManager::GetInstance()->PositionX < 1800)
+	{
+		InOut->Forward(0);
+	}
+	
 }

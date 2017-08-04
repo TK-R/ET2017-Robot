@@ -16,6 +16,32 @@ void BlockMoveStrategy::Run()
 	State->Run();
 }
 
+void AbstractMoveState::LineTraceAction()
+{
+	auto InOut = InOutManager::GetInstance();
+	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
+	int center = 65;
+
+	int light = InOut->InputData.ReflectLight;
+
+	int diff = LeftEdge ? (int)light - center :  (int)center - light;
+	int steering = pk * diff + (diff - PrevDiff) * pd;
+	
+
+	if (steering > 0)
+	{
+		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering < 100 ? power + steering : 100);
+		InOut->OutputData.RightMotorPower = (int8_t)(power - steering > 0 ? power - steering : 0);
+	}
+	else
+	{
+		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering > 0 ? power + steering : 0);
+		InOut->OutputData.RightMotorPower = (int8_t)(power - steering < 100 ? power - steering : 100);
+	}
+
+	PrevDiff = diff;
+}
+
 // ブロックまで移動中の動作
 void ApproachState::Run()
 {
@@ -23,7 +49,7 @@ void ApproachState::Run()
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
 	int currentAngle = SpManager->Angle;
-	int ForwardPower = 15;
+	int ForwardPower = 10;
 	int TurnPower = 10;
 
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->PositionX, SpManager->PositionY);
@@ -33,12 +59,8 @@ void ApproachState::Run()
 	// 仮想ウェイポイント間を移動中の動作
 	case FirstTurn:
 		// 旋回動作を実行
-		if(targetWaypointAngle > currentAngle) {
-			// 反時計回りに旋回
-			IoManager->TurnCCW(TurnPower);
-		} else if(targetWaypointAngle < currentAngle) {
-			// 時計回りに旋回
-			IoManager->TurnCW(TurnPower);
+		if(targetWaypointAngle != currentAngle) {
+			IoManager->Turn(currentAngle, targetWaypointAngle, TurnPower);
 		} else {
 			// 角度が一致したため、仮想ウェイポイント間の移動に遷移
 			SubState = ImaginaryWaypoint;
@@ -57,8 +79,17 @@ void ApproachState::Run()
 	// ラインをまたぐまでの処理
 	case OverLine:
 		if(IoManager->InputData.ReflectLight > 120) {	
-			// 白認識（ラインを跨いだ）ので、ライントレース前の旋回動作に遷移
-			SubState = LineTurn;
+			// 白認識（ラインを跨いだ）ので、次の状態に繊維
+			bool last = BtManager->ArrivalSrcWayPoint();
+			
+			// 最終ウェイポイントの場合
+			if(last){
+				// ライントレース前の旋回動作に遷移
+				SubState = LineTurn;
+			} else {
+				// 初回旋回に遷移
+				SubState = FirstTurn;
+			}
 			// TODO 位置補正
 		} else {	
 			// ラインをまたぐまでは直進
@@ -68,26 +99,27 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(targetBlockAngle > currentAngle) {
-			// 反時計回りに旋回
-			IoManager->TurnCW(TurnPower);
-		} else if(targetBlockAngle < currentAngle) {
-			// 時計回りに旋回
-			IoManager -> TurnCCW(TurnPower);
+		if(abs(targetBlockAngle - currentAngle) > 20 || IoManager->InputData.ReflectLight > 40){
+			IoManager->Turn(currentAngle, targetBlockAngle, TurnPower);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
+
+			// 旋回方向によって、ラインのどちら側を走行するか決定	
+			if(targetBlockAngle > currentAngle) LeftEdge = false;
+			else LeftEdge = true;
 		}
 		break;	
 	// ライントレースする動作	
 	case LineTrace:
+		LineTraceAction();
+
 		// 置き場色を取得
-		
 		break;
+	
 	case Back:
 		break;
 	}
-	
 }
 
 void MoveState::Run()

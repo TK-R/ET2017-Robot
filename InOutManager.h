@@ -44,6 +44,8 @@ public:
 	void Forward(int power);
 	// 後退するように左右モータの値を更新する
 	void Back(int power);
+	// 目標角度になるように旋回する
+	void Turn(int currentAngle, int targetAngle, int power);
 	// 時計回りに回転するように左右モータの値を更新する
 	void TurnCW(int power);
 	// 反時計回りに回転するように左右モータ値を更新する

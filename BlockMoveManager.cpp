@@ -20,7 +20,8 @@ void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 	RuleData = data;
 	CurrentCommandNo = 0;
 
-	CurrentSrcWaypointNo = 0;
+	// 暫定の初手無視
+	CurrentSrcWaypointNo = 1;
 	CurrentDstWaypointNo = 0;
 	CurrentCommand = RuleData.Command[CurrentCommandNo];
 

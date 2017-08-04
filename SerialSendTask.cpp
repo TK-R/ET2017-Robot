@@ -66,7 +66,7 @@ void serial_send_task(intptr_t exinf)
 		send_data(buff_output_signal, COMMAND_OUTPUT_SIGNAL_DATA, sizeof(OutputSignalData));
 		send_data(buff_self_position, COMMAND_SELF_POSITION_DATA, sizeof(SelfPositionData));
 
-		dly_tsk(20);
+		dly_tsk(100);
 
 	}
 }

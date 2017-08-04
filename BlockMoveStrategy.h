@@ -26,6 +26,9 @@ enum BlockPlaceColor
 class AbstractMoveState
 {
 protected:
+	double PrevDiff = 0;
+	bool LeftEdge = false;
+	void LineTraceAction();
 	// サブステートの最初は必ず初回旋回
 	BlockMoveStateEnum SubState = FirstTurn;
 public:
@@ -63,7 +66,6 @@ private:
 	AbstractMoveState* State = new ApproachState();
 
 public:
-	BlockMoveStrategy();
 	void ChangeState(AbstractMoveState* nextState);
 	void Run();
 	using AbstractStrategy::AbstractStrategy;

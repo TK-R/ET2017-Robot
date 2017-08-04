@@ -37,6 +37,32 @@ void InOutManager::Back(int power)
 	OutputData.RightMotorPower = -1 * power;
 }
 
+
+void InOutManager::Turn(int currentAngle, int targetAngle, int power)
+{
+	if(abs(currentAngle-targetAngle) < 20) power = 2;
+
+	if(currentAngle < 180) {
+		// 回転角度が180度を必ず越えない場合
+		if(currentAngle > targetAngle) {
+			TurnCW(power);
+		} else if(targetAngle - currentAngle < 180) {
+			TurnCCW(power);
+		} else {
+			TurnCW(power);
+		}
+	} else {
+		// 回転角度が180度を必ず越えない場合
+		if(targetAngle > currentAngle) {
+			TurnCCW(power);
+		} else if(currentAngle - targetAngle < 180) {
+			TurnCW(power);
+		} else {
+			TurnCCW(power);
+		}
+	}
+}
+
 // 時計回りに回転するように左右モータの値を更新する
 void InOutManager::TurnCW(int power)
 {
