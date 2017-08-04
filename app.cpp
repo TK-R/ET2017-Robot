@@ -10,6 +10,7 @@
 #include "BlockMoveStrategy.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
+#include "SoundPlayTask.h"
 
 //#include "libcpp-test.h"
 
@@ -92,8 +93,17 @@ void main_task(intptr_t unused)
     static char buf[256];
     int i = 0;
     
-    sprintf(buf, "Press Touch Sensor! ");
-    ev3_lcd_draw_string(buf, 0, 0);
+    T_CTSK ctsk;
+    ctsk.tskatr = TA_ACT;
+    ctsk.exinf = 0;
+    ctsk.itskpri = TMIN_APP_TPRI + 1;
+    ctsk.task = sound_play_task;
+    ctsk.stksz = STACK_SIZE;
+    ctsk.stk = NULL;
+    int res = acre_tsk(&ctsk);
+
+   sprintf(buf, "res %d", res);
+    ev3_lcd_draw_string(buf, 0, 60);
 
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
