@@ -97,7 +97,7 @@ void main_task(intptr_t unused)
         Refresh();
 		dly_tsk(10);
     }
-    PlaySound(Start);
+  //  PlaySound(Start);
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
  //   StManager->SetStrategy(new BlockMoveStrategy(StManager));
    StManager->SetStrategy(new LineTraceStrategy(StManager));
