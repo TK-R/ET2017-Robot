@@ -2,6 +2,7 @@
 #define STRATEGY_H
 
 #include "ev3api.h"
+#include <vector>
 
 class StrategyManager;
 
@@ -25,6 +26,7 @@ class LineTraceStrategy: public AbstractStrategy
 {	
 private:
 	int PrevDiff = 0;
+	std::vector<int> IntegralDiff = {0};
 public:
 	void Run();
 	using AbstractStrategy::AbstractStrategy;

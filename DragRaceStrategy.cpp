@@ -13,7 +13,7 @@ void DragRaceStrategy::Run()
 	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
 	int diff =  (int)sp->PositionY - 1000;
 	int steering = pk * diff + (diff - PrevDiff) * pd;
-s
+
 	if (steering > 0)
 	{
 		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering < 100 ? power + steering : 100);

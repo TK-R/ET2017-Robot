@@ -1,4 +1,6 @@
 #include <cmath>
+#include <vector>
+
 #include "ev3api.h"
 #include "InOutManager.h"
 #include "Strategy.h"
@@ -7,13 +9,28 @@
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
-	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
+	uint IntegralCount = 5;
+
+	double pk = CurrentPID.PGain, pi = CurrentPID.IGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
 	int center = 65;
 
 	int light = InOut->InputData.ReflectLight;
 
+	// 今回の偏差
 	int diff =  (int)light - center;
-	int steering = pk * diff + (diff - PrevDiff) * pd;
+	
+	// 積分処理
+	IntegralDiff.push_back(diff);
+	if(IntegralDiff.size() > IntegralCount) IntegralDiff.erase(IntegralDiff.begin());
+
+	// 積分偏差
+	double intDiff = 0.0;
+	for(int d : IntegralDiff)
+		intDiff  += d;
+ 	intDiff /= IntegralDiff.size();	
+
+	// 	ステアリング値
+	int steering = pk * diff + pi * intDiff + (diff - PrevDiff) * pd;
 	
 
 	if (steering > 0)
