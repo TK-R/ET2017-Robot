@@ -72,16 +72,6 @@ void main_task(intptr_t unused)
     StrategyManager *StManager = new StrategyManager();
     StManager->SetStrategy(new LineTraceStrategy(StManager));
 
-    // 音声再生
-/*
-    const char* path = "/ev3rt/sound/S_01.wav";
-
-    memfile_t mem;
-    ev3_memfile_load(path, &mem);
-    ev3_speaker_set_volume(10);
-    ev3_speaker_play_file(&mem, SOUND_MANUAL_STOP);
-*/
-
     // 初期位置
     SelfPositionData pData;
     pData.Angle = 90;
@@ -97,11 +87,15 @@ void main_task(intptr_t unused)
         Refresh();
 		dly_tsk(10);
     }
-  //  PlaySound(Start);
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
- //   StManager->SetStrategy(new BlockMoveStrategy(StManager));
-   StManager->SetStrategy(new LineTraceStrategy(StManager));
+    // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
+    // 初期値をラインの中心として格納
+    auto lts = new LineTraceStrategy(StManager);
+    lts->CenterValue = IOManager->InputData.ReflectLight;
+
+    // ライントレース戦略にて動作開始
+    StManager->SetStrategy(lts);
 
     while(1)
     {

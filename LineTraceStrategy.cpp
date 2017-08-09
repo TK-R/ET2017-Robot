@@ -12,12 +12,11 @@ void LineTraceStrategy::Run()
 	uint IntegralCount = 5;
 
 	double pk = CurrentPID.PGain, pi = CurrentPID.IGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
-	int center = 65;
 
 	int light = InOut->InputData.ReflectLight;
 
 	// 今回の偏差
-	int diff =  (int)light - center;
+	int diff =  (int)light - CenterValue;
 	
 	// 積分処理
 	IntegralDiff.push_back(diff);
@@ -32,6 +31,8 @@ void LineTraceStrategy::Run()
 	// 	ステアリング値
 	int steering = pk * diff + pi * intDiff + (diff - PrevDiff) * pd;
 	
+	if(steering > 100) steering = 100;
+	if(steering < -100) steering = -100;
 
 	if (steering > 0)
 	{

@@ -25,9 +25,14 @@ public:
 class LineTraceStrategy: public AbstractStrategy
 {	
 private:
+	// 微分制御用
 	int PrevDiff = 0;
+
+	// 積分制御用
 	std::vector<int> IntegralDiff = {0};
 public:
+	int CenterValue = 0;
+
 	void Run();
 	using AbstractStrategy::AbstractStrategy;
 };
