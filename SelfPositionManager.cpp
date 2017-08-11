@@ -38,7 +38,8 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	 
 	PositionX += X;
 	PositionY -= Y;
-
+	Distance += D;
+	
 	// 0 - 360度の範囲に変更
 	if(Angle + (theta / M_PI * 180.0) > 360) {
 		Angle = Angle + (theta / M_PI * 180.0) - 360;
@@ -52,6 +53,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	p.PositionX = (uint)PositionX;
 	p.PositionY = (uint)PositionY;
 	p.Angle = (ushort)Angle;
+	p.Distance = (uint)Distance;
 
 	// 自己位置情報と同様のサイズを持つ配列にコピー
 	memcpy(buff_self_position, &p, sizeof(SelfPositionData));
