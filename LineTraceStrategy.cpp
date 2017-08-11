@@ -31,25 +31,11 @@ void LineTraceStrategy::Run()
 	// ステアリング値
 	int steering = pk * diff + pi * intDiff + (diff - PrevDiff) * pd;
 
-	/// 微分偏差計算用の前回の偏差
+	// 微分偏差計算用の前回の偏差
 	PrevDiff = diff;
 
-	// ステアリング値は0-100の範囲内
-	if(steering > 100) steering = 100;
-	if(steering < -100) steering = -100;
-
-	// 右側へ
-	if (steering > 0)
-	{
-		InOut->OutputData.LeftMotorPower = (int8_t)power;
-		InOut->OutputData.RightMotorPower = (int8_t)(power * (100.0 - steering) / 100.0);
-	}
-	// 左側へ
-	else
-	{
-		InOut->OutputData.LeftMotorPower = (int8_t)(power * (100.0 + steering) / 100.0);
-		InOut->OutputData.RightMotorPower = (int8_t)power;
-	}
+	// 操舵角からモータ出力値を決定
+	InOut->Forward(power, steering);
 
 	if(SelfPositionManager::GetInstance()->PositionX < 1800)
 	{

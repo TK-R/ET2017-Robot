@@ -30,6 +30,29 @@ void InOutManager::Forward(int power)
 	OutputData.RightMotorPower = power;
 }
 
+// 出力値と操舵角から左右モータの値を更新する（0：直進 100：右方向へ -100：左方向へ）
+void InOutManager::Forward(int power, int steering)
+{
+	
+	// ステアリング値は0-100の範囲内
+	if(steering > 100) steering = 100;
+	if(steering < -100) steering = -100;
+
+	// 右側へ
+	if (steering > 0)
+	{
+		OutputData.LeftMotorPower = (int8_t)power;
+		OutputData.RightMotorPower = (int8_t)(power * (100.0 - steering) / 100.0);
+	}
+	// 左側へ
+	else
+	{
+		OutputData.LeftMotorPower = (int8_t)(power * (100.0 + steering) / 100.0);
+		OutputData.RightMotorPower = (int8_t)power;
+	}
+}
+
+
 // 後退するように左右モータの値を更新する
 void InOutManager::Back(int power)
 {

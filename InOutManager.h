@@ -42,6 +42,8 @@ public:
 
 	// 前進するように左右モータの値を更新する
 	void Forward(int power);
+	// 出力値と操舵角から左右モータの値を更新する（0：直進 100：右方向へ -100：左方向へ）
+	void Forward(int power, int steering);
 	// 後退するように左右モータの値を更新する
 	void Back(int power);
 	// 目標角度になるように旋回する
@@ -50,7 +52,9 @@ public:
 	void TurnCW(int power);
 	// 反時計回りに回転するように左右モータ値を更新する
 	void TurnCCW(int power);
+	// センサ値を再読み込みする
 	void ReadInputSensor();
+	// モータ出力値を書き込む
 	void WriteOutputMotor();
 };
 
