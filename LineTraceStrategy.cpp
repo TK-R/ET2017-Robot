@@ -28,24 +28,29 @@ void LineTraceStrategy::Run()
 		intDiff  += d;
  	intDiff /= IntegralDiff.size();	
 
-	// 	ステアリング値
+	// ステアリング値
 	int steering = pk * diff + pi * intDiff + (diff - PrevDiff) * pd;
-	
+
+	/// 微分偏差計算用の前回の偏差
+	PrevDiff = diff;
+
+	// ステアリング値は0-100の範囲内
 	if(steering > 100) steering = 100;
 	if(steering < -100) steering = -100;
 
+	// 右側へ
 	if (steering > 0)
 	{
-		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering < 100 ? power + steering : 100);
-		InOut->OutputData.RightMotorPower = (int8_t)(power - steering > 0 ? power - steering : 0);
+		InOut->OutputData.LeftMotorPower = (int8_t)power;
+		InOut->OutputData.RightMotorPower = (int8_t)(power * (100.0 - steering) / 100.0);
 	}
+	// 左側へ
 	else
 	{
-		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering > 0 ? power + steering : 0);
-		InOut->OutputData.RightMotorPower = (int8_t)(power - steering < 100 ? power - steering : 100);
+		InOut->OutputData.LeftMotorPower = (int8_t)(power * (100.0 + steering) / 100.0);
+		InOut->OutputData.RightMotorPower = (int8_t)power;
 	}
 
-	PrevDiff = diff;
 	if(SelfPositionManager::GetInstance()->PositionX < 1800)
 	{
 		InOut->Forward(0);
