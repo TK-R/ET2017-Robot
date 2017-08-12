@@ -42,7 +42,7 @@ void Draw()
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f ",SpManager->PositionX, SpManager->PositionY, SpManager->Angle);
+    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f ",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->Angle);
     ev3_lcd_draw_string(buf, 0, 12);
 
     sprintf(buf, "P: %f, D: %f", CurrentPID.PGain, CurrentPID.DGain);
@@ -53,17 +53,18 @@ void Draw()
         BmManager->CurrentCommand.BlockColor,
         BmManager->CurrentCommand.SourceBlockPosition,
         BmManager->CurrentCommand.DestinationBlockPosition,
-        BmManager->GetSrcWaypointAngle(SpManager->PositionX, SpManager->PositionY));
+        BmManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y));
     ev3_lcd_draw_string(buf, 0, 36);
 
     auto src = BmManager->GetSrcWaypoint();
     sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d", 
         BmManager->CurrentCommand.ApproachWayPoint[BmManager->CurrentSrcWaypointNo],
-        src->X,
-        src->Y);
+        (int)src->X,
+        (int)src->Y);
     ev3_lcd_draw_string(buf, 0, 48);
 
-    RGBColor* color = FieldMap::GetInstance()->GetRGBColor(SpManager->PositionX, SpManager->PositionY);    
+    RGBColor* color = FieldMap::GetInstance()->GetRGBColor(
+                            SpManager->RobotPoint.X, SpManager->RobotPoint.Y);    
     sprintf(buf, "MAP-R:%d,G:%d,B:%d",
         color->R,
         color->G,

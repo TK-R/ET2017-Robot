@@ -36,8 +36,8 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	double X = (D * cos(theta0 + (theta / 2.0)));
 	double Y = (D * sin(theta0 + (theta / 2.0)));
 	 
-	PositionX += X;
-	PositionY -= Y;
+	RobotPoint.X += X;
+	RobotPoint.Y -= Y;
 	Distance += D;
 
 	// 0 - 360度の範囲に変更
@@ -50,8 +50,8 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	}
 	
 	SelfPositionData p;
-	p.PositionX = (uint)PositionX;
-	p.PositionY = (uint)PositionY;
+	p.PositionX = (uint)RobotPoint.X;
+	p.PositionY = (uint)RobotPoint.Y;
 	p.Angle = (ushort)Angle;
 	p.Distance = (uint)Distance;
 
@@ -61,8 +61,8 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 
 void SelfPositionManager::ResetPosition(SelfPositionData p)
 {
-	PositionX = p.PositionX;
-	PositionY = p.PositionY;
+	RobotPoint.X = p.PositionX;
+	RobotPoint.Y = p.PositionY;
 	Angle = p.Angle;
 	Distance = p.Distance;
 }
@@ -70,5 +70,5 @@ void SelfPositionManager::ResetPosition(SelfPositionData p)
 // ある座標との距離を求める
 double SelfPositionManager::GetDistance(Point* p)
 {
-	return hypot(p->X - PositionX, p->Y - PositionY);
+	return hypot(p->X - RobotPoint.X, p->Y - RobotPoint.Y);
 }

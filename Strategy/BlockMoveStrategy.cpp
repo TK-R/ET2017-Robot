@@ -52,8 +52,8 @@ void ApproachState::Run()
 	int ForwardPower = 10;
 	int TurnPower = 10;
 
-	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->PositionX, SpManager->PositionY);
-	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->PositionX, SpManager->PositionY);
+	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 
 	switch(SubState){
 	// 仮想ウェイポイント間を移動中の動作

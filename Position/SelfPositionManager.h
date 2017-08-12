@@ -10,7 +10,8 @@ class SelfPositionManager
 		SelfPositionManager(){}
 
 	public:
-		double PositionX, PositionY, Angle, Distance;
+		Point RobotPoint;
+		double Angle, Distance;
 		static SelfPositionManager* GetInstance();
 
 		void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);

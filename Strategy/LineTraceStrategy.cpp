@@ -37,7 +37,7 @@ void LineTraceStrategy::Run()
 	// 操舵角からモータ出力値を決定
 	InOut->Forward(power, steering);
 
-	if(SelfPositionManager::GetInstance()->PositionX < 1800)
+	if(SelfPositionManager::GetInstance()->RobotPoint.X < 1800)
 	{
 		InOut->Forward(0);
 		InOut->WriteOutputMotor();
