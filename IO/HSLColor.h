@@ -19,4 +19,19 @@ public:
 	static HSLColor* FromRGB(uint8_t R, uint8_t G, uint8_t B);
 };
 
+class RGBColor
+{
+public:
+	int R;
+	int G;
+	int B;
+
+	RGBColor(int r, int g, int b)
+	{
+		R = r;
+		G = g;
+		B = b;
+	}
+};
+
 #endif 

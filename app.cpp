@@ -11,6 +11,14 @@
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 #include "SoundPlayTask.h"
+#include "HSLColor.h"
+#include "FieldMap.h"
+
+// C++からC言語ライブラリをインクルードするため
+extern "C"{
+	#include "image.h"
+}
+
 
 //#include "libcpp-test.h"
 
@@ -22,16 +30,18 @@
 #define _debug(x)
 #endif
 
+imageData_t* image;
+
 void Draw()
 {
     static char buf[256];
     
     InOutManager* IOManager = InOutManager::GetInstance();
 
-    SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     sprintf(buf, "Power: %4d, %4d ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
     ev3_lcd_draw_string(buf, 0, 0);
 
+    SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f ",SpManager->PositionX, SpManager->PositionY, SpManager->Angle);
     ev3_lcd_draw_string(buf, 0, 12);
 
@@ -53,6 +63,13 @@ void Draw()
         src->Y);
     ev3_lcd_draw_string(buf, 0, 48);
 
+    RGBColor* color = FieldMap::GetInstance()->GetRGBColor(SpManager->PositionX, SpManager->PositionY);    
+    sprintf(buf, "MAP-R:%d,G:%d,B:%d",
+        color->R,
+        color->G,
+        color->B);
+    delete color;
+    ev3_lcd_draw_string(buf, 0, 60);
 }
 
 void Refresh()
@@ -69,6 +86,9 @@ void main_task(intptr_t unused)
 {
     PlaySound(SensorInitialStart);
     InOutManager* IOManager = InOutManager::GetInstance();
+    FieldMap * Map = FieldMap::GetInstance();
+    Map->ReadImage("/ev3rt/image/Field.bmp");
+
     StrategyManager *StManager = new StrategyManager();
     StManager->SetStrategy(new LineTraceStrategy(StManager));
 
@@ -88,6 +108,7 @@ void main_task(intptr_t unused)
 		dly_tsk(10);
     }
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
+    
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
     // 初期値をラインの中心として格納
@@ -104,16 +125,15 @@ void main_task(intptr_t unused)
 
         StManager->Run();
         
-        if(i > 200)
-        {
-           i = 0;
-           ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
+        if(i > 200) {
+            i = 0;
+            ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
         }
+
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;
             IOManager->OutputData.RightMotorPower = 0;    
         }
-
         i++;
 
         // 出力情報更新

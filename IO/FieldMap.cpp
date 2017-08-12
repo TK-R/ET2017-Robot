@@ -27,7 +27,35 @@ FieldMap* FieldMap::GetInstance()
 	return &map;
 }
 
-HSLColor* FieldMap::GetFieldColor(int x, int y)
+HSLColor* FieldMap::GetHSLColor(int x, int y)
 {
-	return HSLColor::FromRGB(0, 0, 0);
+	RGBColor* rgb = GetRGBColor(x, y);
+	HSLColor* hsl =  HSLColor::FromRGB(rgb->R, rgb->G, rgb->B);
+	delete rgb;
+
+	return hsl;
+}
+
+RGBColor* FieldMap::GetRGBColor(int x, int y)
+{
+	// 縮尺を計算(1/10)
+	x /=10;
+	y /=10;
+
+	// 画像の範囲外は縁のデータを返す
+	if(x > (int)Image->width)
+		x = Image->width;
+	else if(x < 0)
+		x = 0;
+	
+	if(y > (int)Image->height) 
+		y = Image->height;
+	else if(y < 0)
+		y = 0;
+
+	int r = Image->map[y][x].c.r;
+    int g = Image->map[y][x].c.g;
+	int b = Image->map[y][x].c.b;
+
+	return new RGBColor(r, g, b);
 }
