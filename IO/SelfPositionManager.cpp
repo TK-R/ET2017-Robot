@@ -39,7 +39,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	PositionX += X;
 	PositionY -= Y;
 	Distance += D;
-	
+
 	// 0 - 360度の範囲に変更
 	if(Angle + (theta / M_PI * 180.0) > 360) {
 		Angle = Angle + (theta / M_PI * 180.0) - 360;
