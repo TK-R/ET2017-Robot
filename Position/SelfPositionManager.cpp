@@ -55,6 +55,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 		Angle += (theta / M_PI * 180.0);
 	}
 
+
 	// 送信処理	
 	SelfPositionData p;
 	p.PositionX = (uint)RobotPoint.X;

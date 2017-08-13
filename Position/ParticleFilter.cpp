@@ -5,6 +5,7 @@
 #include "Point.h"
 #include "ParticleFilter.h"
 
+// 正規分布でsigmaに指定した範囲内の値を取り出す
 double Particle::NormalDistribution(double sigma) {
 	double alpha = (double)rand()/RAND_MAX;
     double beta = (double)rand()/RAND_MAX * M_PI * 2;
@@ -14,7 +15,7 @@ double Particle::NormalDistribution(double sigma) {
 
 
 // 座標を更新して、尤度を再計算する
-void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount, double sigma)
+void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 {
 	// 車輪直径(mm)
 	double TireDiameter = 81.6;
@@ -32,7 +33,7 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount, double sigm
 	double D = (Tl + Tr) / 2.0;
 	
 	// 角度の変化量	
-	double theta = (Tr - Tl) / d + NormalDistribution(sigma); 
+	double theta = (Tr - Tl) / d; 
 
 	// 0 - 360度の範囲に変更
 	if(Angle + (theta / M_PI * 180.0) > 360) {
@@ -47,37 +48,41 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount, double sigm
 	double theta0 = Angle * M_PI / 180.0;
 
 	// 変化量を、正規分布の値を加味して算出
-	double deltaX = (D * cos(theta0 + (theta / 2.0))) + NormalDistribution(sigma);
-	double deltaY = (D * sin(theta0 + (theta / 2.0))) + NormalDistribution(sigma);
+	double deltaX = (D * cos(theta0 + (theta / 2.0)));
+	double deltaY = (D * sin(theta0 + (theta / 2.0)));
+		
+	RobotPoint.X += deltaX;
+	RobotPoint.Y -= deltaY;
 
+	// TODO 尤度を計算する
 
 }
 
 // 指定した座標で粒子を撒きなおす
-void Particle::Reset(Point* newPoint, double newAngle)
+void Particle::Reset(Point* newPoint, double newAngle, double sigma)
 {
-	if(RobotCenterPoint != NULL)
-		delete RobotCenterPoint;
+	// 正規分布の値を加味する
+	RobotPoint.X = newPoint->X + NormalDistribution(sigma);
+	RobotPoint.Y = newPoint->Y + NormalDistribution(sigma);
+	Angle = newAngle + NormalDistribution(sigma);
 
-	RobotCenterPoint = newPoint;
-	Angle = newAngle;
 	Likelihood = 0;
 }
 
 // 中心値を指定して、パーティクルを散布する
-void ParticleFilter::Resampling(double x, double y)
+void ParticleFilter::Resampling(Point* newPoint, double Angle, double sigma)
 {
 
 }
 
 // パーティクルに対して、座標のアップデートを行う
-void ParticleFilter::UpdateParticle(double deltaX, double deltaY)
+void ParticleFilter::UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCount)
 {
 
 }
 
 // パーティクルのうち、尤度の高い物の平均値をとって、次の中心座標を決定する。
-Point* ParticleFilter::Localize()
+void ParticleFilter::Localize()
 {
-
+	return;
 }
