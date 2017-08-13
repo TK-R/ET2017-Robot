@@ -3,22 +3,32 @@
 
 #include "ev3api.h"
 #include "SerialData.h"
+#include "ParticleFilter.h"
 #include "Point.h"
 class SelfPositionManager
 {
-	private:
-		SelfPositionManager(){}
+private:
+	SelfPositionManager(){}
+	ParticleFilter* Filter;
+public:
+	// ONなら自己位置推定を実施する
+	bool ParticleFilterON = false;
 
-	public:
-		Point RobotPoint;
-		double Angle, Distance;
-		static SelfPositionManager* GetInstance();
+	// 走行体の座標
+	Point RobotPoint;
+	
+	// 走行体の角度
+	double Angle;
 
-		void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);
-		void ResetPosition(SelfPositionData p);
+	// 総走行距離
+	double Distance;
+	static SelfPositionManager* GetInstance();
 
-		// ある座標との距離を求める
-		double GetDistance(Point* p);
+	void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);
+	void ResetPosition(SelfPositionData p);
+
+	// ある座標との距離を求める
+	double GetDistance(Point* p);
 };
 
 

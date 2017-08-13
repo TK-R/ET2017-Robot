@@ -3,6 +3,7 @@
 #include "ev3api.h"
 #include "SerialData.h"
 #include "SerialSendTask.h"
+#include "ParticleFilter.h"
 #include "SelfPositionManager.h"
 
 SelfPositionManager* SelfPositionManager::GetInstance(){
@@ -36,10 +37,15 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	double X = (D * cos(theta0 + (theta / 2.0)));
 	double Y = (D * sin(theta0 + (theta / 2.0)));
 	 
-	RobotPoint.X += X;
-	RobotPoint.Y -= Y;
-	Distance += D;
-
+	// パーティクルフィルタONのため、一連の推測処理を実施
+	if(ParticleFilterON) {
+		
+	} else {
+		// パーティクルフィルタOFFのため、直接自己位置を更新
+		RobotPoint.X += X;
+		RobotPoint.Y -= Y;
+		Distance += D;
+	}
 	// 0 - 360度の範囲に変更
 	if(Angle + (theta / M_PI * 180.0) > 360) {
 		Angle = Angle + (theta / M_PI * 180.0) - 360;
@@ -48,7 +54,8 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	}else {
 		Angle += (theta / M_PI * 180.0);
 	}
-	
+
+	// 送信処理	
 	SelfPositionData p;
 	p.PositionX = (uint)RobotPoint.X;
 	p.PositionY = (uint)RobotPoint.Y;
@@ -59,12 +66,20 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	memcpy(buff_self_position, &p, sizeof(SelfPositionData));
 }
 
+// 自己位置情報電文の内容で自身の情報をリセットする
 void SelfPositionManager::ResetPosition(SelfPositionData p)
 {
 	RobotPoint.X = p.PositionX;
 	RobotPoint.Y = p.PositionY;
 	Angle = p.Angle;
 	Distance = p.Distance;
+
+	// パーティクルフィルタを初期化
+	if(Filter != NULL) {
+		delete Filter;
+	}
+	Filter = new ParticleFilter();
+	
 }
 
 // ある座標との距離を求める
