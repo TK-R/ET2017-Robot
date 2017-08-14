@@ -16,7 +16,7 @@ private:
 	// 粒子が持つ走行体の座標
 	Point RobotPoint;
 	// 粒子が持つ走行体の方向
-	double Angle;
+	double RobotAngle;
 
 public:
 	double NormalDistribution(double sigma);

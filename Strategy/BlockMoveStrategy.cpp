@@ -48,7 +48,7 @@ void ApproachState::Run()
 	BlockMoveManager* BtManager = BlockMoveManager::GetInstance();
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
-	int currentAngle = SpManager->Angle;
+	int currentAngle = SpManager->RobotAngle;
 	int ForwardPower = 10;
 	int TurnPower = 10;
 
