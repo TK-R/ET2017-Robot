@@ -70,14 +70,21 @@ void Particle::Reset(Point* newPoint, double newAngle, double sigma)
 }
 
 // 中心値を指定して、パーティクルを散布する
-void ParticleFilter::Resampling(Point* newPoint, double Angle, double sigma)
+void ParticleFilter::Resampling(Point* newPoint, double newAngle, double sigma)
 {
-
+	// 全ての粒子に対しt、中心座標を指定した再散布を行う
+	for(Particle* p: ParticleArray) {
+		p->Reset(newPoint, newAngle, sigma);
+	}
 }
 
 // パーティクルに対して、座標のアップデートを行う
 void ParticleFilter::UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCount)
 {
+	// すべての粒子に対して状態遷移を実施する
+	for(Particle*  p: ParticleArray) {
+		p->Update(leftMotorCount,  rightMotorCount);
+	}
 
 }
 
