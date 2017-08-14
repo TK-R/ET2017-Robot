@@ -16,11 +16,12 @@ class ColorDicision
 public:
     static HSLColorKind Decision(HSLColor color);
 private:
-    HSLColor* Red;
-    HSLColor* Black;
-    HSLColor* Yellow;
-    HSLColor* Blue;
-    HSLColor* Green;
+    static const HSLColor Red;
+    static const HSLColor Black;
+    static const HSLColor Yellow;
+    static const HSLColor Blue;
+    static const HSLColor Green;
+
 };
 
 #endif

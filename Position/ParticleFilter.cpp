@@ -3,6 +3,7 @@
 
 #include "ev3api.h"
 #include "Point.h"
+#include "FieldMap.h"
 #include "ParticleFilter.h"
 
 // 正規分布でsigmaに指定した範囲内の値を取り出す

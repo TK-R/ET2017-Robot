@@ -16,8 +16,6 @@ bool FieldMap::ReadImage(const char* fileName)
 		free_image(Image);
 
 	Image = read_bmp_simple_file(fileName);
-
-
 	return true;
 }
 
@@ -32,7 +30,6 @@ HSLColor* FieldMap::GetHSLColor(int x, int y)
 	RGBColor* rgb = GetRGBColor(x, y);
 	HSLColor* hsl =  HSLColor::FromRGB(rgb->R, rgb->G, rgb->B);
 	delete rgb;
-
 	return hsl;
 }
 
