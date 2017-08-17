@@ -63,13 +63,12 @@ void Draw()
         (int)src->Y);
     ev3_lcd_draw_string(buf, 0, 48);
 
-    RGBColor* color = FieldMap::GetInstance()->GetRGBColor(
+    RGBColor color = FieldMap::GetInstance()->GetRGBColor(
                             SpManager->RobotPoint.X, SpManager->RobotPoint.Y);    
     sprintf(buf, "MAP-R:%d,G:%d,B:%d    ",
-        color->R,
-        color->G,
-        color->B);
-    delete color;
+        color.R,
+        color.G,
+        color.B);
     ev3_lcd_draw_string(buf, 0, 60);
 
     sprintf(buf, "SEN-R:%d,G:%d,B:%d    ",
@@ -78,16 +77,11 @@ void Draw()
         IOManager->InputData.ColorBlue);
     ev3_lcd_draw_string(buf, 0, 72);
 
-    HSLColor * hsl = HSLColor::FromRGB(
-        IOManager->InputData.ColorRed, 
-        IOManager->InputData.ColorGreen, 
-        IOManager->InputData.ColorBlue);
-
-    sprintf(buf, "SEN-H:%f      " ,hsl->Hue);
+    sprintf(buf, "SEN-H:%f      " ,IOManager->HSLValue.Hue);
     ev3_lcd_draw_string(buf, 0, 84);
-    sprintf(buf, "SEN-S:%f      " ,hsl->Saturation);
+    sprintf(buf, "SEN-S:%f      " ,IOManager->HSLValue.Saturation);
     ev3_lcd_draw_string(buf, 0, 96);
-    sprintf(buf, "SEN-L:%f      " ,hsl->Luminosity);
+    sprintf(buf, "SEN-L:%f      " ,IOManager->HSLValue.Luminosity);
     ev3_lcd_draw_string(buf, 0, 108);
 }
 

@@ -12,8 +12,8 @@ class FieldMap
 public:
 	bool ReadImage(const char* fileName);
 	static FieldMap* GetInstance();
-	HSLColor* GetHSLColor(int x, int y);
-	RGBColor* GetRGBColor(int x, int y);
+	HSLColor GetHSLColor(int x, int y);
+	RGBColor GetRGBColor(int x, int y);
 
 private:
 	imageData_t* Image = NULL;

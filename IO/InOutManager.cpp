@@ -1,8 +1,12 @@
 #include "ev3api.h"
 #include <string.h>
 
+#include "HSLColor.h"
+#include "ColorDecision.h"
 #include "InOutManager.h"
 #include "SerialSendTask.h"
+
+
 
 InOutManager::InOutManager()
 {
@@ -128,10 +132,19 @@ void InOutManager::ReadInputSensor()
 	rgb.g = uint16_t(rgb.g * (255.0  / 318.0)); 
 	rgb.b = uint16_t(rgb.b * (255.0  / 104.0));  
 
+	// 補正後でも範囲外の場合には、桁溢れを抑止
+	if(rgb.r > 255) rgb.r = 255;
+	if(rgb.g > 255) rgb.g = 255;
+	if(rgb.b > 255) rgb.b = 255;
+
 	InputData.ColorRed = rgb.r;
 	InputData.ColorGreen = rgb.g;
 	InputData.ColorBlue = rgb.b;
 	
+	// HSL色空間に変換して、予測色を更新
+	HSLColor::FromRGB(rgb.r, rgb.g, rgb.b, &HSLValue);
+	HSLKind = ColorDecision::Decision(&HSLValue);
+
 	// 反射光を輝度値から変換
 	int light = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
 	if(light > 255) light = 255;

@@ -3,7 +3,7 @@
 #include "HSLColor.h"
 using namespace std;
 
-HSLColor* HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
+HSLColor HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 {
 	float red = (R / 255.0);
 	float green = (G / 255.0);
@@ -16,6 +16,8 @@ HSLColor* HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 	float H = 0.0;
 	float S = 0.0;
 	float L = (float)((_Max + _Min) / 2.0);
+
+	HSLColor value;
 
 	if (_Delta != 0)
 	{
@@ -43,6 +45,17 @@ HSLColor* HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 		}
 	}
 
-	return new HSLColor(H, S, L);
+	value.Hue = H;
+	value.Saturation = S;
+	value.Luminosity = L;
+	return value;
+}
+
+void HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B, HSLColor* OutColor)
+{
+	HSLColor c = FromRGB(R, G, B);
+	OutColor->Hue = c.Hue;
+	OutColor->Saturation = c.Saturation;
+	OutColor->Luminosity = c.Luminosity;
 }
 

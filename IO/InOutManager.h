@@ -8,7 +8,8 @@
 #include <SonarSensor.h>
 #include <GyroSensor.h>
 
-
+#include "HSLColor.h"
+#include "ColorDecision.h"
 #include "SerialReceiveTask.h"
 
 using ev3api::Motor;
@@ -37,6 +38,11 @@ private:
 public:
 	InputSignalData InputData;
 	OutputSignalData OutputData;
+
+	// HSL色情報
+	HSLColor HSLValue;
+	// HSL色種別
+	HSLColorKind HSLKind;
 
 	static InOutManager* GetInstance();
 
