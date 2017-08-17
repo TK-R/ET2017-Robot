@@ -18,7 +18,7 @@ public:
 	Point RobotPoint;
 	
 	// 走行体の角度
-	double Angle;
+	double RobotAngle;
 
 	// 総走行距離
 	double Distance;

@@ -42,7 +42,7 @@ void Draw()
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f     ",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->Angle);
+    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f 　",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->RobotAngle);
     ev3_lcd_draw_string(buf, 0, 12);
 
     sprintf(buf, "P: %f, D: %f    ", CurrentPID.PGain, CurrentPID.DGain);

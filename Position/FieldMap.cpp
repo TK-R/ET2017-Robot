@@ -16,8 +16,6 @@ bool FieldMap::ReadImage(const char* fileName)
 		free_image(Image);
 
 	Image = read_bmp_simple_file(fileName);
-
-
 	return true;
 }
 
