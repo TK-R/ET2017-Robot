@@ -12,6 +12,7 @@
 #define COMMAND_PID_DATA 0x10
 #define COMMAND_BLOCK_MOVE_RULE_DATA 0x20
 #define COMMAND_SELF_POSITION_DATA 0x30
+#define COMMAND_HSL_COLOR_DATA 0x31
 
 #define HEADER_BYTE_SIZE 4
 struct Header {
@@ -51,19 +52,27 @@ struct InputSignalData {
 
 #define PID_DATA_BYTE_SIZE 20
 struct PIDData {
-	float BasePower; // 計算の基準となる出力値
-	float PGain; // 比例ゲイン
-	float IGain; // 積分ゲイン
-	float DGain; // 微分ゲイン
-	int State; // 変更を適用するステートNo
+	float BasePower;	// 計算の基準となる出力値
+	float PGain;		// 比例ゲイン
+	float IGain;		// 積分ゲイン
+	float DGain; 		// 微分ゲイン
+	int State; 			// 変更を適用するステートNo
 };
 
 #define SELF_POSITION_BYTE_SIZE 14
 struct SelfPositionData {
 	uint PositionX; // X座標(mm/左上原点)
 	uint PositionY; // Y座標(mm/左上原点)
-	ushort Angle; // 角度(右向きを0度)
-	uint Distance; // 総走行距離(mm)
+	ushort Angle; 	// 角度(右向きを0度)
+	uint Distance; 	// 総走行距離(mm)
+};
+
+#define HSL_COLOR_BYTE_SIZE 13
+struct HSLColorData {
+	float Hue;			// 色相
+	float Saturation; 	// 彩度
+	float Luminosity; 	// 輝度
+	uint8_t HSLKind;	// 色種別
 };
 
 #pragma pack(pop)

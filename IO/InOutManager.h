@@ -38,6 +38,7 @@ private:
 public:
 	InputSignalData InputData;
 	OutputSignalData OutputData;
+	HSLColorData HSLData;
 
 	// HSL色情報
 	HSLColor HSLValue;

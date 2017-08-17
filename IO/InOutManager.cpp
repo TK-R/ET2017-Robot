@@ -141,18 +141,11 @@ void InOutManager::ReadInputSensor()
 	InputData.ColorGreen = rgb.g;
 	InputData.ColorBlue = rgb.b;
 	
-	// HSL色空間に変換して、予測色を更新
-	HSLColor::FromRGB(rgb.r, rgb.g, rgb.b, &HSLValue);
-	HSLKind = ColorDecision::Decision(&HSLValue);
-
 	// 反射光を輝度値から変換
 	int light = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
 	if(light > 255) light = 255;
 
 	InputData.ReflectLight = light;  
-
-//	syslog(0, "Light is %d", InputData.ReflectLight);
-//	InputData.AmbientLight = color_sensor->getAmbient();
 	InputData.Angle = Gyro->getAngle();
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
 	InputData.reserved1 = 0;
@@ -160,8 +153,18 @@ void InOutManager::ReadInputSensor()
 	InputData.BatteryCurrent = ev3_battery_current_mA();
 	InputData.BatteryVoltage = ev3_battery_voltage_mV();
 
-	//入力信号電文構造体と同サイズの出力電文バッファに出力電文をコピー
+	//入力信号電文構造体と同サイズのバッファに電文をコピー
 	memcpy(buff_input_signal, &InputData, sizeof(InputSignalData));
+
+	// HSL色空間に変換して、予測色を更新
+	HSLColor::FromRGB(rgb.r, rgb.g, rgb.b, &HSLValue);
+	HSLKind = ColorDecision::Decision(&HSLValue);
+	HSLData.Hue = HSLValue.Hue;
+	HSLData.Saturation = HSLValue.Saturation;
+	HSLData.Luminosity = HSLValue.Luminosity;
+	
+	// HSL情報電文構造体と同サイズのバッファに電文をコピー
+	memcpy(buff_hsl_color, &HSLData, sizeof(HSLColorData));
 }
 
 
