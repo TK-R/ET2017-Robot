@@ -3,24 +3,31 @@
 
 #include  "HSLColor.h"
 
+
+
 enum HSLColorKind {
+    HSLWhite = 0,
+    HSLBlack = 1,
     HSLRed,
-    HSLBlack,
     HSLYellow,
     HSLBlue,
-    HLGreen,
+    HSLGreen,
 };
 
-class ColorDicision
+
+class ColorDecision
 {
-public:
-    static HSLColorKind Decision(HSLColor color);
 private:
-    HSLColor* Red;
-    HSLColor* Black;
-    HSLColor* Yellow;
-    HSLColor* Blue;
-    HSLColor* Green;
+    static HSLColor White;
+    static HSLColor Red;
+    static HSLColor Black;
+    static HSLColor Yellow;
+    static HSLColor Blue;
+    static HSLColor Green;
+
+public:
+    static double GetLikelihood(HSLColor* base, HSLColor* sensor);
+    static HSLColorKind Decision(HSLColor* color);
 };
 
 #endif

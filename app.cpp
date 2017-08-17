@@ -72,11 +72,23 @@ void Draw()
     delete color;
     ev3_lcd_draw_string(buf, 0, 60);
 
-    sprintf(buf, "SENS-R:%d,G:%d,B:%d    ",
+    sprintf(buf, "SEN-R:%d,G:%d,B:%d    ",
         IOManager->InputData.ColorRed,
         IOManager->InputData.ColorGreen,
         IOManager->InputData.ColorBlue);
     ev3_lcd_draw_string(buf, 0, 72);
+
+    HSLColor * hsl = HSLColor::FromRGB(
+        IOManager->InputData.ColorRed, 
+        IOManager->InputData.ColorGreen, 
+        IOManager->InputData.ColorBlue);
+
+    sprintf(buf, "SEN-H:%f      " ,hsl->Hue);
+    ev3_lcd_draw_string(buf, 0, 84);
+    sprintf(buf, "SEN-S:%f      " ,hsl->Saturation);
+    ev3_lcd_draw_string(buf, 0, 96);
+    sprintf(buf, "SEN-L:%f      " ,hsl->Luminosity);
+    ev3_lcd_draw_string(buf, 0, 108);
 }
 
 void Refresh()
