@@ -26,11 +26,12 @@ enum BlockPlaceColor
 class AbstractMoveState
 {
 protected:
-	double PrevDiff = 0;
-	bool LeftEdge = false;
-	void LineTraceAction();
 	// サブステートの最初は必ず初回旋回
 	BlockMoveStateEnum SubState = FirstTurn;
+
+	// 左エッジを走行する場合にTrueにセットする
+	bool LeftEdge;
+
 public:
 	// 初回旋回時の目標角度
 	bool StateMachine();

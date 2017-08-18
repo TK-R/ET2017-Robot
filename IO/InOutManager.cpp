@@ -6,8 +6,6 @@
 #include "InOutManager.h"
 #include "SerialSendTask.h"
 
-
-
 InOutManager::InOutManager()
 {
 	LeftMotor = new Motor(PORT_A, false, LARGE_MOTOR);
@@ -112,6 +110,21 @@ void InOutManager::TurnCCW(int power)
 	OutputData.LeftMotorPower = -1 * power;
 	OutputData.RightMotorPower = power;
 }
+
+// ライントレースを実施するように左右モータ値を更新する
+void InOutManager::LineTraceAction(bool LeftEdge)
+{
+	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
+	int center = 65;
+
+	int light = InputData.ReflectLight;
+
+	int diff = LeftEdge ? (int)light - center :  (int)center - light;
+	int steering = pk * diff + (diff - PrevDiff) * pd;
+	
+	Forward(power, steering);
+}
+
 
 void InOutManager::ReadInputSensor()
 {

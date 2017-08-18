@@ -16,19 +16,6 @@ void BlockMoveStrategy::Run()
 	State->Run();
 }
 
-void AbstractMoveState::LineTraceAction()
-{
-	auto InOut = InOutManager::GetInstance();
-	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
-	int center = 65;
-
-	int light = InOut->InputData.ReflectLight;
-
-	int diff = LeftEdge ? (int)light - center :  (int)center - light;
-	int steering = pk * diff + (diff - PrevDiff) * pd;
-	
-	InOut->Forward(power, steering);
-}
 
 // ブロックまで移動中の動作
 void ApproachState::Run()
@@ -100,7 +87,7 @@ void ApproachState::Run()
 		break;	
 	// ライントレースする動作	
 	case LineTrace:
-		LineTraceAction();
+		IoManager->LineTraceAction(LeftEdge);
 
 		// 置き場色を取得
 		break;

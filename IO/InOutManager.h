@@ -21,16 +21,20 @@ using ev3api::ColorSensor;
 class InOutManager
 {
 private:
-
+	// モータAPIクラスへの参照
 	Motor* LeftMotor;
 	Motor* RightMotor;
 	Motor* ArmMotor;
 	Motor* TailMotor;
 	
+	// センサAPIクラスへの参照
 	TouchSensor* Touch;
 	SonarSensor* Sonar;
 	ColorSensor* Color;
 	GyroSensor *Gyro;
+
+	// ライントレース実施時に使用する値
+	int PrevDiff = 0;
 
 	InOutManager();
 
@@ -59,6 +63,9 @@ public:
 	void TurnCW(int power);
 	// 反時計回りに回転するように左右モータ値を更新する
 	void TurnCCW(int power);
+	// ライントレースを実施するように左右モータ値を更新する
+	void LineTraceAction(bool LeftEdge);
+	
 
 
 	// センサ値を再読み込みする
