@@ -77,12 +77,11 @@ void Draw()
         IOManager->InputData.ColorBlue);
     ev3_lcd_draw_string(buf, 0, 72);
 
-    sprintf(buf, "SEN-H:%4.1f  " ,IOManager->HSLValue.Hue);
+    sprintf(buf, "SEN-H:%3.2f,S:%3.2f,L%3.2f " ,IOManager->HSLValue.Hue,
+                                                IOManager->HSLValue.Saturation,
+                                                IOManager->HSLValue.Luminosity);
     ev3_lcd_draw_string(buf, 0, 84);
-    sprintf(buf, "SEN-S:%4.1f  " ,IOManager->HSLValue.Saturation);
-    ev3_lcd_draw_string(buf, 0, 96);
-    sprintf(buf, "SEN-L:%4.1f  " ,IOManager->HSLValue.Luminosity);
-    ev3_lcd_draw_string(buf, 0, 108);
+    
 }
 
 void Refresh()

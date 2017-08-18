@@ -5,10 +5,6 @@ using namespace std;
 
 HSLColor HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 {
-//	float red = (R / 255.0);
-//	float green = (G / 255.0);
-//	float blue = (B / 255.0);
-
 	float red = R;
 	float green = G;
 	float blue = B;
@@ -38,6 +34,9 @@ HSLColor HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 		} else if (blue == _Max) {
 			H = 60 * (red - green) / _Delta + 240;
 		}
+		
+		// 色相は常に0～360の範囲内
+		if (H < 0) H += 360;
 	}
 
 	L = CNT;

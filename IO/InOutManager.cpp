@@ -21,11 +21,11 @@ InOutManager::InOutManager()
 	Gyro = new GyroSensor(PORT_4);
 
 	// アーム位置の初期化を行う
-	ev3_motor_rotate(EV3_PORT_C, -35, 30, false);
-	dly_tsk(750);
+	ev3_motor_set_power(EV3_PORT_C, -15);
+	dly_tsk(1000);
 	ArmMotor->setCount(0);
 
-	ev3_motor_rotate(EV3_PORT_C, 15, 30, true);
+	ev3_motor_rotate(EV3_PORT_C, 30, 30, true);
 	ev3_motor_stop(EV3_PORT_C, true);
 	ArmMotor->setCount(0);
 }
@@ -162,7 +162,7 @@ void InOutManager::ReadInputSensor()
 	HSLData.Hue = HSLValue.Hue;
 	HSLData.Saturation = HSLValue.Saturation;
 	HSLData.Luminosity = HSLValue.Luminosity;
-	
+	HSLData.HSLKind = HSLKind;
 	// HSL情報電文構造体と同サイズのバッファに電文をコピー
 	memcpy(buff_hsl_color, &HSLData, sizeof(HSLColorData));
 }

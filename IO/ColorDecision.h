@@ -3,8 +3,6 @@
 
 #include  "HSLColor.h"
 
-
-
 enum HSLColorKind {
     HSLWhite = 0,
     HSLBlack = 1,
