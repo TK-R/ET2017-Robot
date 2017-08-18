@@ -1,5 +1,5 @@
 APPL_COBJS += image.o bmp_simple.o 
-APPL_CXXOBJS += SerialSendTask.o SerialReceiveState.o SerialReceiveTask.o HSLColor.o InOutManager.o StrategyManager.o  LineTraceStrategy.o BlockMoveStrategy.o SelfPositionManager.o BlockMoveManager.o SoundPlayTask.o ColorDecision.o FieldMap.o ParticleFilter.o
+APPL_CXXOBJS += SerialSendTask.o SerialReceiveState.o SerialReceiveTask.o HSLColor.o InOutManager.o StrategyManager.o  LineTraceStrategy.o BlockMoveStrategy.o SelfPositionManager.o BlockMoveManager.o SoundPlayTask.o ColorDecision.o FieldMap.o ParticleFilter.o ETSumoStrategy.o
 
 SRCLANG := c++
 

@@ -27,19 +27,7 @@ void AbstractMoveState::LineTraceAction()
 	int diff = LeftEdge ? (int)light - center :  (int)center - light;
 	int steering = pk * diff + (diff - PrevDiff) * pd;
 	
-
-	if (steering > 0)
-	{
-		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering < 100 ? power + steering : 100);
-		InOut->OutputData.RightMotorPower = (int8_t)(power - steering > 0 ? power - steering : 0);
-	}
-	else
-	{
-		InOut->OutputData.LeftMotorPower = (int8_t)(power + steering > 0 ? power + steering : 0);
-		InOut->OutputData.RightMotorPower = (int8_t)(power - steering < 100 ? power - steering : 100);
-	}
-
-	PrevDiff = diff;
+	InOut->Forward(power, steering);
 }
 
 // ブロックまで移動中の動作
