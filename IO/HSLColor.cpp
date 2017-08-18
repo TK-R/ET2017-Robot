@@ -5,9 +5,13 @@ using namespace std;
 
 HSLColor HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 {
-	float red = (R / 255.0);
-	float green = (G / 255.0);
-	float blue = (B / 255.0);
+//	float red = (R / 255.0);
+//	float green = (G / 255.0);
+//	float blue = (B / 255.0);
+
+	float red = R;
+	float green = G;
+	float blue = B;
 
 	float _Min = min(min(red, green), blue);
 	float _Max = max(max(red, green), blue);
@@ -15,39 +19,32 @@ HSLColor HSLColor::FromRGB(uint8_t R, uint8_t G, uint8_t B)
 
 	float H = 0.0;
 	float S = 0.0;
-	float L = (float)((_Max + _Min) / 2.0);
+	float L = 0.0;
+	float CNT = (float)((_Max + _Min) / 2.0);
 
 	HSLColor value;
 
-	if (_Delta != 0)
-	{
-		if (L < 0.5)
-		{
+	if (_Delta != 0) {
+		if (CNT < 128) {
 			S = (float)(_Delta / (_Max + _Min));
-		}
-		else
-		{
-			S = (float)(_Delta / (2.0 - _Max - _Min));
+		} else {
+			S = (float)(_Delta / (510 -	CNT));
 		}
 
-
-		if (red == _Max)
-		{
-			H = (green - blue) / _Delta;
-		}
-		else if (green == _Max)
-		{
-			H = 2.0 + (blue - red) / _Delta;
-		}
-		else if (blue == _Max)
-		{
-			H = 4.0 + (red - green) / _Delta;
+		if (red == _Max) {
+			H = 60 * (green - blue) / _Delta;
+		} else if (green == _Max) {
+			H = 60 * (blue - red) / _Delta + 120;
+		} else if (blue == _Max) {
+			H = 60 * (red - green) / _Delta + 240;
 		}
 	}
 
+	L = CNT;
+
 	value.Hue = H;
-	value.Saturation = S;
-	value.Luminosity = L;
+	value.Saturation = S * 100;
+	value.Luminosity = L / 2.55;
 	return value;
 }
 

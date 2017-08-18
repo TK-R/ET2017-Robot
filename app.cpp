@@ -38,18 +38,18 @@ void Draw()
     
     InOutManager* IOManager = InOutManager::GetInstance();
 
-    sprintf(buf, "Power: %4d, %4d     ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
+    sprintf(buf, "Power: %4d, %4d   ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f 　",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->RobotAngle);
+    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f ",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->RobotAngle);
     ev3_lcd_draw_string(buf, 0, 12);
 
-    sprintf(buf, "P: %f, D: %f    ", CurrentPID.PGain, CurrentPID.DGain);
+    sprintf(buf, "P: %2.1f, D: %4.1f  ", CurrentPID.PGain, CurrentPID.DGain);
     ev3_lcd_draw_string(buf, 0, 24);
 
     BlockMoveManager * BmManager = BlockMoveManager::GetInstance();
-    sprintf(buf, "C:%d src:%2d, dst:%2d, Ang:%3d    ", 
+    sprintf(buf, "C:%d src:%2d, dst:%2d, Ang:%3d ", 
         BmManager->CurrentCommand.BlockColor,
         BmManager->CurrentCommand.SourceBlockPosition,
         BmManager->CurrentCommand.DestinationBlockPosition,
@@ -57,7 +57,7 @@ void Draw()
     ev3_lcd_draw_string(buf, 0, 36);
 
     auto src = BmManager->GetSrcWaypoint();
-    sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d    ", 
+    sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d  ", 
         BmManager->CurrentCommand.ApproachWayPoint[BmManager->CurrentSrcWaypointNo],
         (int)src->X,
         (int)src->Y);
@@ -65,23 +65,23 @@ void Draw()
 
     RGBColor color = FieldMap::GetInstance()->GetRGBColor(
                             SpManager->RobotPoint.X, SpManager->RobotPoint.Y);    
-    sprintf(buf, "MAP-R:%d,G:%d,B:%d    ",
+    sprintf(buf, "MAP-R:%d,G:%d,B:%d  ",
         color.R,
         color.G,
         color.B);
     ev3_lcd_draw_string(buf, 0, 60);
 
-    sprintf(buf, "SEN-R:%d,G:%d,B:%d    ",
+    sprintf(buf, "SEN-R:%d,G:%d,B:%d ",
         IOManager->InputData.ColorRed,
         IOManager->InputData.ColorGreen,
         IOManager->InputData.ColorBlue);
     ev3_lcd_draw_string(buf, 0, 72);
 
-    sprintf(buf, "SEN-H:%f      " ,IOManager->HSLValue.Hue);
+    sprintf(buf, "SEN-H:%4.1f  " ,IOManager->HSLValue.Hue);
     ev3_lcd_draw_string(buf, 0, 84);
-    sprintf(buf, "SEN-S:%f      " ,IOManager->HSLValue.Saturation);
+    sprintf(buf, "SEN-S:%4.1f  " ,IOManager->HSLValue.Saturation);
     ev3_lcd_draw_string(buf, 0, 96);
-    sprintf(buf, "SEN-L:%f      " ,IOManager->HSLValue.Luminosity);
+    sprintf(buf, "SEN-L:%4.1f  " ,IOManager->HSLValue.Luminosity);
     ev3_lcd_draw_string(buf, 0, 108);
 }
 
@@ -114,6 +114,8 @@ void main_task(intptr_t unused)
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
     PlaySound(SensorInitialEnd);
+
+    
 
     int i = 0;
     while(IOManager->InputData.TouchSensor == 0){
