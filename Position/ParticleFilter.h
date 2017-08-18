@@ -6,22 +6,24 @@
 #include "ev3api.h"
 
 // 散布する粒子数
-#define PARTICLE_COUNT 30
+#define PARTICLE_COUNT 50
 
 class Particle
 {
 private:
-	// 尤度(0-100で、100が最も尤もらしい状態)
-	int Likelihood;
+public:
+	
 	// 粒子が持つ走行体の座標
 	Point RobotPoint;
 	// 粒子が持つ走行体の方向
 	double RobotAngle;
 
-public:
+	
+	double Likelihood;	
+
 	double NormalDistribution(double sigma);
 	void Update(int8_t leftMotorCount, int8_t rightMotorCount);
-	void Reset(Point* newPoint, double newAngle, double sigma);
+	void Reset(Point* newPoint, double newAngle, double pointSigma, double angleSigma);
 
 	Particle(){}
 };
@@ -35,7 +37,7 @@ public:
 	Point RobotPoint;
 	double RobotAngle;
 		 
-	void Resampling(Point* newPoint, double newAngle, double sigma);
+	void Resampling(Point* newPoint, double newAngle, double pointSigma, double angleSigma);
 	void UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCount);
 	void Localize();
 	

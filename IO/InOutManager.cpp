@@ -25,7 +25,7 @@ InOutManager::InOutManager()
 	dly_tsk(1000);
 	ArmMotor->setCount(0);
 
-	ev3_motor_rotate(EV3_PORT_C, 30, 30, true);
+	ev3_motor_rotate(EV3_PORT_C, 35, 30, true);
 	ev3_motor_stop(EV3_PORT_C, true);
 	ArmMotor->setCount(0);
 }

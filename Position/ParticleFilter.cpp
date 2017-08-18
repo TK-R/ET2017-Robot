@@ -1,10 +1,14 @@
 #include <stdlib.h>
 #include <math.h>
+#include "cpplinq.hpp"
 
 #include "ev3api.h"
 #include "Point.h"
 #include "FieldMap.h"
+#include "InOutManager.h"
 #include "ParticleFilter.h"
+
+using namespace cpplinq;
 
 // 正規分布でsigmaに指定した範囲内の値を取り出す
 double Particle::NormalDistribution(double sigma) {
@@ -55,31 +59,30 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	RobotPoint.X += deltaX;
 	RobotPoint.Y -= deltaY;
 
-	// TODO 尤度を計算する
+	// 地図上の色情報を取得
+	HSLColor mapColor = FieldMap::GetInstance()->GetHSLColor(RobotPoint.X, RobotPoint.Y);
 
-	// 地図データを取得
-	FieldMap* map = FieldMap::GetInstance();
-
-
+	// センサから得た色情報を元に、尤度を定義
+	Likelihood = ColorDecision::GetLikelihood(&mapColor, &InOutManager::GetInstance()->HSLValue);	
 }
 
 // 指定した座標で粒子を撒きなおす
-void Particle::Reset(Point* newPoint, double newAngle, double sigma)
+void Particle::Reset(Point* newPoint, double newAngle, double pointSigma, double angleSigma)
 {
 	// 正規分布の値を加味する
-	RobotPoint.X = newPoint->X + NormalDistribution(sigma);
-	RobotPoint.Y = newPoint->Y + NormalDistribution(sigma);
-	RobotAngle = newAngle + NormalDistribution(sigma);
+	RobotPoint.X = newPoint->X + NormalDistribution(pointSigma);
+	RobotPoint.Y = newPoint->Y + NormalDistribution(pointSigma);
+	RobotAngle = newAngle + NormalDistribution(angleSigma);
 
 	Likelihood = 0;
 }
 
 // 中心値を指定して、パーティクルを散布する
-void ParticleFilter::Resampling(Point* newPoint, double newAngle, double sigma)
+void ParticleFilter::Resampling(Point* newPoint, double newAngle, double pointSigma, double angleSigma)
 {
 	// 全ての粒子に対しt、中心座標を指定した再散布を行う
 	for(Particle* p: ParticleArray) {
-		p->Reset(newPoint, newAngle, sigma);
+		p->Reset(newPoint, newAngle, pointSigma, angleSigma);
 	}
 }
 
@@ -96,6 +99,19 @@ void ParticleFilter::UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCoun
 // パーティクルのうち、尤度の高い物の平均値を元に、
 // 自身の状態を更新する
 void ParticleFilter::Localize()
-{
+{	
+	// 平均化する上位個数
+	const int AverageCount = 5;
+
+	// 尤度の高い方から、平均化する分だけ取り出し
+	auto result = from_array(ParticleArray)
+	>> orderby_descending([] (Particle* p) { return p->Likelihood;} )
+	>> take(AverageCount)
+	>> to_vector();
+	
+	// 各要素を平均化して現在値として登録
+	RobotPoint.X = from(result) >> select([](Particle* p) { return p->RobotPoint.X; }) >> avg();
+	RobotPoint.Y= from(result) >> select([](Particle* p) { return p->RobotPoint.Y; }) >> avg();
+	RobotAngle = from(result) >> select([](Particle* p) { return p->RobotAngle; }) >> avg();	
 	return;
 }

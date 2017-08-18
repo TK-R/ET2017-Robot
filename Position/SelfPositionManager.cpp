@@ -11,10 +11,29 @@ SelfPositionManager* SelfPositionManager::GetInstance(){
 	return &manager;
 }
 
+void SelfPositionManager::SendData()
+{
+	// 送信処理	
+	SelfPositionData p;
+	p.PositionX = (uint)RobotPoint.X;
+	p.PositionY = (uint)RobotPoint.Y;
+	p.Angle = (ushort)RobotAngle;
+	p.Distance = (uint)Distance;
+
+	// 自己位置情報と同様のサイズを持つ配列にコピー
+	memcpy(buff_self_position, &p, sizeof(SelfPositionData));
+}
+
 void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount)
 {
+	// モータが一切動いていない場合には、パーティクルフィルタも駆動しない
+	if(leftMotorCount == 0 && rightMotorCount == 0)	{
+		SendData();
+		return;
+	}	
+
 	// パーティクルフィルタに対するリサンプリング
-	Filter->Resampling(&RobotPoint,RobotAngle, 20);
+	Filter->Resampling(&RobotPoint,RobotAngle, 20, 0.5);
 
 	// パーティクルフィルタの状態遷移を実施
 	Filter->UpdateParticle(leftMotorCount, rightMotorCount);
@@ -28,14 +47,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	RobotAngle = Filter->RobotAngle;
 	
 	// 送信処理	
-	SelfPositionData p;
-	p.PositionX = (uint)RobotPoint.X;
-	p.PositionY = (uint)RobotPoint.Y;
-	p.Angle = (ushort)RobotAngle;
-	p.Distance = (uint)Distance;
-
-	// 自己位置情報と同様のサイズを持つ配列にコピー
-	memcpy(buff_self_position, &p, sizeof(SelfPositionData));
+	SendData();
 }
 
 // 自己位置情報電文の内容で自身の情報をリセットする

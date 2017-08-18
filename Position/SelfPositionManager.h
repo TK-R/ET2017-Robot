@@ -10,6 +10,7 @@ class SelfPositionManager
 private:
 	SelfPositionManager(){}
 	ParticleFilter* Filter;
+	void SendData();
 public:
 	// ONなら自己位置推定を実施する
 	bool ParticleFilterON = false;
