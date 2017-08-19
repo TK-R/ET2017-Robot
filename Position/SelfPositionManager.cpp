@@ -6,8 +6,8 @@
 #include "ParticleFilter.h"
 #include "SelfPositionManager.h"
 
-#define POS_SIGMA 	3	// パーティクルの散布範囲
-#define ANGLE_SIGMA	0.01// パーティクルの角度範囲
+#define POS_SIGMA 	0// パーティクルの散布範囲
+#define ANGLE_SIGMA	0// パーティクルの角度範囲
 
 SelfPositionManager* SelfPositionManager::GetInstance(){
 	static SelfPositionManager manager;

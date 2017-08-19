@@ -104,7 +104,9 @@ void main_task(intptr_t unused)
 
     
     StrategyManager *StManager = new StrategyManager();
-
+    PlaySound(SensorInitialEnd);    
+    
+RESTART_:
     // 初期位置
     SelfPositionData pData;
 
@@ -114,13 +116,19 @@ void main_task(intptr_t unused)
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
-    PlaySound(SensorInitialEnd);
 
     int i = 0;
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
 		dly_tsk(10);
     }
+
+    while(IOManager->InputData.TouchSensor == 1){
+        Refresh();
+		dly_tsk(10);
+    }
+
+
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
     
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
@@ -147,12 +155,21 @@ void main_task(intptr_t unused)
             ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
         }
 
+        i++;
+        
+        // ボタン押されたらリスタート
         if(IOManager->InputData.TouchSensor == 1){
             IOManager->OutputData.LeftMotorPower = 0;
-            IOManager->OutputData.RightMotorPower = 0;    
-        }
-        i++;
+            IOManager->OutputData.RightMotorPower = 0;
+            IOManager->DownARMMotor();
+            IOManager->WriteOutputMotor();
 
+            while(IOManager->InputData.TouchSensor == 1) {
+                Refresh();                                
+                dly_tsk(10);
+            }
+            goto RESTART_;
+        }
         // 出力情報更新
         IOManager->WriteOutputMotor();
 		dly_tsk(10);

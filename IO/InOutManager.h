@@ -38,6 +38,8 @@ private:
 
 	InOutManager();
 
+	// アーム上昇中ならTrue
+	bool ArmUp = false;
 
 public:
 	InputSignalData InputData;
@@ -48,6 +50,8 @@ public:
 	HSLColor HSLValue;
 	// HSL色種別
 	HSLColorKind HSLKind;
+	// 予測する対象の種別
+	DetectTargetType HSLTargetType = FieldColor;
 
 	static InOutManager* GetInstance();
 
@@ -57,6 +61,9 @@ public:
 	void Forward(int power, int steering);
 	// 後退するように左右モータの値を更新する
 	void Back(int power);
+
+	// 移動用モータを停止する
+	void Stop();
 	// 目標角度になるように旋回する
 	void Turn(int currentAngle, int targetAngle, int power);
 	// 時計回りに回転するように左右モータの値を更新する
@@ -66,7 +73,11 @@ public:
 	// ライントレースを実施するように左右モータ値を更新する
 	void LineTraceAction(bool LeftEdge);
 	
+	// アームを上昇させる、ただし、処理はすぐに戻る
+	void UpARMMotor();
 
+	// アームを下降させる（元の位置に戻す）
+	void DownARMMotor();
 
 	// センサ値を再読み込みする
 	void ReadInputSensor();

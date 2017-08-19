@@ -1,6 +1,8 @@
 #include "InOutManager.h"
 #include "SelfPositionManager.h"
 #include "ETSumoStrategy.h"
+#include "HSLColor.h"
+#include "ColorDecision.h"
 
 #define FSPEED  		15	// 直進時の出力
 #define TURN_SPEED		15	// 旋回時の出力
@@ -12,11 +14,16 @@
 #define ONLINE			40	// 黒線上での輝度値
 #define NotONLINE 		120 // 黒線以外での輝度値
 
+#define NOT_BLOCK_DISTANCE	8 // ブロックを認識していないときの距離
+#define BLOCK_DISTANCE 		4 // ブロックを認識した時のきょり　
+
 void ETSumoStrategy::Run()
 {
 	// 使用するシングルトンクラスのインスタンスを取得
 	InOutManager* IOManager = InOutManager::GetInstance();
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
+
+	HSLColorKind DetectColor = IOManager->HSLKind;
 
 	int currentAngle = SpManager->RobotAngle;
 
@@ -35,7 +42,7 @@ void ETSumoStrategy::Run()
 			// 土俵直進にて黒線横断中
 		case ForwardOverLine:
 			// 黒線を抜けたら、左ブロック方向旋回状態に遷移
-			if(IOManager->InputData.ReflectLight < ONLINE) {
+			if(IOManager->InputData.ReflectLight > NotONLINE) {
 				CurrentState = TurnLeftPlace;
 				break;
 			}
@@ -44,8 +51,8 @@ void ETSumoStrategy::Run()
 			break;
 		
 		case TurnLeftPlace:
-			// 左ブロック方向を向いたら左ブロックまで直進に遷移
-			if(currentAngle == LEFT_ANGLE) {
+			// 黒線上に乗ったら左ブロックへの直進状態に移行
+			if(IOManager->InputData.ReflectLight < ONLINE) {
 				CurrentState = ForwardLeftPlace;
 				break;
 			}
@@ -54,9 +61,33 @@ void ETSumoStrategy::Run()
 			IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
 			break;
 		case ForwardLeftPlace:
+			// 超音波センサでブロックを認識した場合には、色認識に移行
+			if(IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
+				CurrentState = DetectLeftBlock;
+				IOManager->Stop();
+				break;
+			}
 			
-			// 一定距離直進するまで直進
-			IOManager->LineTraceAction(false);
+			IOManager->Forward(FSPEED);
+			break;
+		case DetectLeftBlock:
+			// アームを上昇させて、色認識種別をブロックに変更
+			IOManager->UpARMMotor();
+			IOManager->HSLTargetType = BlockColor;
+
+			// 色が一致している場合には、カウントを進める
+			if(DetectColor == PrevColor && DetectColor != HSLBlack) {
+				if(ColorDetectCount > 100) {
+					ColorDetectCount = 0;
+					// 寄り切り or 押し出し
+				}
+			} else {
+				PrevColor = DetectColor;
+				ColorDetectCount = 0;
+			}
+
+				
+			break;	
 		default :
 		break;
 	}

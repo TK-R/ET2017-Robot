@@ -13,19 +13,18 @@ InOutManager::InOutManager()
 	ArmMotor = new Motor(PORT_C, false, LARGE_MOTOR);
 	TailMotor = new Motor(PORT_D, false, MEDIUM_MOTOR);
 
-	Touch = new TouchSensor(PORT_1);
-	Sonar = new SonarSensor(PORT_2);
-	Color = new ColorSensor(PORT_3);
-	Gyro = new GyroSensor(PORT_4);
-
 	// アーム位置の初期化を行う
-	ev3_motor_set_power(EV3_PORT_C, -15);
-	dly_tsk(1000);
-	ArmMotor->setCount(0);
+	ev3_motor_set_power(EV3_PORT_C, -15);	
+	Color = new ColorSensor(PORT_3);
 
+	ArmMotor->setCount(0);
 	ev3_motor_rotate(EV3_PORT_C, 35, 30, true);
 	ev3_motor_stop(EV3_PORT_C, true);
 	ArmMotor->setCount(0);
+
+	Touch = new TouchSensor(PORT_1);
+	Sonar = new SonarSensor(PORT_2);
+	Gyro = new GyroSensor(PORT_4);
 }
 
 InOutManager* InOutManager::GetInstance()
@@ -71,6 +70,12 @@ void InOutManager::Back(int power)
 	OutputData.RightMotorPower = -1 * power;
 }
 
+// 移動用モータを停止する
+void InOutManager::Stop()
+{
+	OutputData.LeftMotorPower = 0;
+	OutputData.RightMotorPower = 0;
+}
 
 void InOutManager::Turn(int currentAngle, int targetAngle, int power)
 {
@@ -125,6 +130,26 @@ void InOutManager::LineTraceAction(bool LeftEdge)
 	Forward(power, steering);
 }
 
+void InOutManager::UpARMMotor()
+{
+	// 既に上昇済みなら何もしない
+	if(ArmUp) return;
+
+	ev3_motor_rotate(EV3_PORT_C, 70, 30, true);	
+	ArmUp = true;
+}
+
+void InOutManager::DownARMMotor()
+{
+	// 既に下降済なら何もしない
+	if(!ArmUp) return;
+
+	// ターゲットタイプがブロックなら床に戻す
+	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
+
+	ev3_motor_rotate(EV3_PORT_C, -70, 30, true);		
+	ArmUp = false;
+}
 
 void InOutManager::ReadInputSensor()
 {
@@ -171,15 +196,18 @@ void InOutManager::ReadInputSensor()
 
 	// HSL色空間に変換して、予測色を更新
 	HSLColor::FromRGB(rgb.r, rgb.g, rgb.b, &HSLValue);
-	HSLKind = ColorDecision::Decision(&HSLValue);
+
+	// タイプを指定して更新
+	HSLKind = ColorDecision::Decision(&HSLValue, HSLTargetType);
+	
 	HSLData.Hue = HSLValue.Hue;
 	HSLData.Saturation = HSLValue.Saturation;
 	HSLData.Luminosity = HSLValue.Luminosity;
 	HSLData.HSLKind = HSLKind;
+
 	// HSL情報電文構造体と同サイズのバッファに電文をコピー
 	memcpy(buff_hsl_color, &HSLData, sizeof(HSLColorData));
 }
-
 
 
 void InOutManager::WriteOutputMotor()

@@ -3,6 +3,13 @@
 
 #include  "HSLColor.h"
 
+// 色検知する対象のタイプ
+enum DetectTargetType {
+    FieldColor = 0,  // 布の床
+    ArenaColor,      // 土俵上の床
+    BlockColor       // ブロック
+};
+
 enum HSLColorKind {
     HSLWhite = 0,
     HSLBlack = 1,
@@ -12,20 +19,25 @@ enum HSLColorKind {
     HSLGreen,
 };
 
+struct HSLColors {
+    HSLColor White;  
+    HSLColor Black;
+    HSLColor Red;
+    HSLColor Yellow;
+    HSLColor Blue;
+    HSLColor Green;
+};
 
 class ColorDecision
 {
 private:
-    static HSLColor White;
-    static HSLColor Red;
-    static HSLColor Black;
-    static HSLColor Yellow;
-    static HSLColor Blue;
-    static HSLColor Green;
+    static HSLColors FieldColors;
+    static HSLColors BlockColors;
+    static HSLColors ArenaColors; 
 
 public:
     static double GetLikelihood(HSLColor* base, HSLColor* sensor);
-    static HSLColorKind Decision(HSLColor* color);
+    static HSLColorKind Decision(HSLColor* color, DetectTargetType type);
 };
 
 #endif
