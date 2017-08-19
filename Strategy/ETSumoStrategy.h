@@ -15,6 +15,7 @@ struct Arena {
 enum ETSumoStateEnum
 {
 	ForwardArena = 0,	// 土俵直進中
+	ForwardOverLine,	// 土俵直進にて黒線横断中
 	TurnLeftPlace,		// 左ブロック方向旋回
 	ForwardLeftPlace,	// 左ブロックまで直進
 	DetectLeftBlock,	// 左ブロック色認識
@@ -34,7 +35,7 @@ class ETSumoStrategy: public AbstractStrategy
 {
 private:
 	// 現在のステート情報
-	ETSumoStateEnum CurrentState;
+	ETSumoStateEnum CurrentState = ForwardArena;
 	double CurrentDistance = 0;
 	Arena ArenaArray[4] = {
 		// Left, Right

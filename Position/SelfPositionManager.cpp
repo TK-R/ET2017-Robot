@@ -6,6 +6,9 @@
 #include "ParticleFilter.h"
 #include "SelfPositionManager.h"
 
+#define POS_SIGMA 	3	// パーティクルの散布範囲
+#define ANGLE_SIGMA	0.01// パーティクルの角度範囲
+
 SelfPositionManager* SelfPositionManager::GetInstance(){
 	static SelfPositionManager manager;
 	return &manager;
@@ -33,7 +36,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	}	
 
 	// パーティクルフィルタに対するリサンプリング
-	Filter->Resampling(&RobotPoint,RobotAngle, 20, 0.5);
+	Filter->Resampling(&RobotPoint,RobotAngle, POS_SIGMA, ANGLE_SIGMA);
 
 	// パーティクルフィルタの状態遷移を実施
 	Filter->UpdateParticle(leftMotorCount, rightMotorCount);

@@ -58,7 +58,7 @@ void ApproachState::Run()
 			bool last = BtManager->ArrivalSrcWayPoint();
 			
 			// 最終ウェイポイントの場合
-			if(last){
+			if(last) {
 				// ライントレース前の旋回動作に遷移
 				SubState = LineTurn;
 			} else {

@@ -8,6 +8,7 @@
 #include "Strategy.h"
 #include "StrategyManager.h"
 #include "BlockMoveStrategy.h"
+#include "ETSumoStrategy.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 #include "SoundPlayTask.h"
@@ -101,20 +102,19 @@ void main_task(intptr_t unused)
     FieldMap * Map = FieldMap::GetInstance();
     Map->ReadImage("/ev3rt/image/Field.bmp");
 
+    
     StrategyManager *StManager = new StrategyManager();
-    StManager->SetStrategy(new LineTraceStrategy(StManager));
 
     // 初期位置
     SelfPositionData pData;
-    pData.Angle = 90;
-    pData.PositionX = 600;
-    pData.PositionY = 1200;
+
+    pData.Angle = 0;
+    pData.PositionX = 1360;
+    pData.PositionY = 2920;
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
     PlaySound(SensorInitialEnd);
-
-    
 
     int i = 0;
     while(IOManager->InputData.TouchSensor == 0){
@@ -125,13 +125,16 @@ void main_task(intptr_t unused)
     
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
+    // ET相撲NEO確認用
+    StManager->SetStrategy(new ETSumoStrategy(StManager));
+/*
     // 初期値をラインの中心として格納
     auto lts = new LineTraceStrategy(StManager);
     lts->CenterValue = IOManager->InputData.ReflectLight;
 
     // ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);
-
+*/
     while(1)
     {
         // 入力情報更新
