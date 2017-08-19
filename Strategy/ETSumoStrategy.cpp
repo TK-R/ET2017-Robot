@@ -77,17 +77,39 @@ void ETSumoStrategy::Run()
 
 			// 色が一致している場合には、カウントを進める
 			if(DetectColor == PrevColor && DetectColor != HSLBlack) {
-				if(ColorDetectCount > 100) {
+				ColorDetectCount++;
+				if(ColorDetectCount > 10) {
 					ColorDetectCount = 0;
-					// 寄り切り or 押し出し
+					// 色認識が完了したため、アームを下降させる
+					IOManager->DownARMMotor();
+					// フィールドの色と土俵の色が一致した場合、寄り切り
+					if(ArenaArray[CurrentArena].LeftPlaceColor == DetectColor) {
+						CurrentState = YORIKIRILeft;
+					} else {
+						// フィールドの色と土俵の色が異なる場合、押し出し
+						CurrentState = OSHIDASHILeft;
+					}
+					break;
 				}
 			} else {
 				PrevColor = DetectColor;
 				ColorDetectCount = 0;
 			}
+			break;
+		case YORIKIRILeft:
+			// ある程度旋回してから、黒線上に乗ったら左ブロックへの直進状態に移行
+			if(IOManager->InputData.ReflectLight < ONLINE && 
+							abs(currentAngle - RIGHT_ANGLE) < 45) {
+				CurrentState = ForwardRightPlace;
+				break;
+			}
 
-				
-			break;	
+			// 左ブロック方向を向くまで旋回
+			IOManager->Turn(currentAngle, RIGHT_ANGLE, TURN_SPEED);
+			break;
+		case ForwardRightPlace:
+			IOManager->Forward(FSPEED);
+			break;
 		default :
 		break;
 	}
