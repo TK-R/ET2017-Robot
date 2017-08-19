@@ -14,6 +14,8 @@
 #define ONLINE			40	// 黒線上での輝度値
 #define NotONLINE 		120 // 黒線以外での輝度値
 
+#define EDGE_LINE		80	// 黒線との境界線
+
 #define NOT_BLOCK_DISTANCE	8 // ブロックを認識していないときの距離
 #define BLOCK_DISTANCE 		4 // ブロックを認識した時のきょり　
 
@@ -52,7 +54,7 @@ void ETSumoStrategy::Run()
 		
 		case TurnLeftPlace:
 			// 黒線上に乗ったら左ブロックへの直進状態に移行
-			if(IOManager->InputData.ReflectLight < ONLINE) {
+			if(IOManager->InputData.ReflectLight < EDGE_LINE) {
 				CurrentState = ForwardLeftPlace;
 				break;
 			}
@@ -97,19 +99,67 @@ void ETSumoStrategy::Run()
 			}
 			break;
 		case YORIKIRILeft:
-			// ある程度旋回してから、黒線上に乗ったら左ブロックへの直進状態に移行
-			if(IOManager->InputData.ReflectLight < ONLINE && 
+			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
+			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
 							abs(currentAngle - RIGHT_ANGLE) < 45) {
 				CurrentState = ForwardRightPlace;
 				break;
 			}
 
 			// 左ブロック方向を向くまで旋回
-			IOManager->Turn(currentAngle, RIGHT_ANGLE, TURN_SPEED);
+			IOManager->TurnCW(TURN_SPEED);
 			break;
-		case ForwardRightPlace:
+		case ForwardRightPlace :
 			IOManager->Forward(FSPEED);
+			
+			// 超音波センサでブロックを認識した場合には、色認識に移行
+			if(IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
+				CurrentState = DetectRightBlock;
+				IOManager->Stop();
+				break;
+			}
 			break;
+
+		case DetectRightBlock:
+			// アームを上昇させて、色認識種別をブロックに変更
+			IOManager->UpARMMotor();
+			IOManager->HSLTargetType = BlockColor;
+
+			// 色が一致している場合には、カウントを進める
+			if(DetectColor == PrevColor && DetectColor != HSLBlack) {
+				ColorDetectCount++;
+				if(ColorDetectCount > 10) {
+					ColorDetectCount = 0;
+					// 色認識が完了したため、アームを下降させる
+					IOManager->DownARMMotor();
+					// フィールドの色と土俵の色が一致した場合、寄り切り
+					if(ArenaArray[CurrentArena].RightPlaceColor == DetectColor) {
+						CurrentState = YORIKIRIRight;
+					} else {
+						// フィールドの色と土俵の色が異なる場合、押し出し
+						CurrentState = OSHIDASHIRight;
+					}
+					break;
+				}
+			} else {
+				PrevColor = DetectColor;
+				ColorDetectCount = 0;
+			}
+			break;
+
+		case YORIKIRIRight:
+			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
+			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
+							abs(currentAngle - LEFT_ANGLE) < 45) {
+				CurrentState = ForwardCenter;
+				IOManager->Stop();
+				break;
+			}
+
+			// 中央方向を向くまで旋回
+			IOManager->TurnCW(TURN_SPEED);
+			break;
+
 		default :
 		break;
 	}
