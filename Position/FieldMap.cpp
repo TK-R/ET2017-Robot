@@ -36,16 +36,16 @@ HSLColor FieldMap::GetHSLColor(int x, int y)
 RGBColor FieldMap::GetRGBColor(int x, int y)
 {
 	// 縮尺を計算(1/10)
-	x /=10;
-	y /=10;
+	x /= 10;
+	y /= 10;
 
 	// 画像の範囲外は縁のデータを返す
-	if(x > (int)Image->width)
+	if(x >= (int)Image->width)
 		x = Image->width;
 	else if(x < 0)
 		x = 0;
 	
-	if(y > (int)Image->height) 
+	if(y >= (int)Image->height) 
 		y = Image->height;
 	else if(y < 0)
 		y = 0;

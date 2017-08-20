@@ -20,7 +20,7 @@ private:
 		PIDData line = {30, 0.4, 0, 0.1, LineTracePIDState};
 		SetPIDData(line);
 
-		PIDData block = {30, 0.4, 0, 0.1, BlockMovePIDState};
+		PIDData block = {16, 0.4, 0, 0.7, BlockMovePIDState};
 		SetPIDData(block);
 
 		PIDData sumo = {30, 0.4, 0, 0.1, ETSumoPIDState};

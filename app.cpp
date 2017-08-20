@@ -134,15 +134,15 @@ RESTART_:
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
     // ET相撲NEO確認用
-//    StManager->SetStrategy(new ETSumoStrategy(StManager));
-
+    StManager->SetStrategy(new ETSumoStrategy(StManager));
+/*
     // 初期値をラインの中心として格納
     auto lts = new LineTraceStrategy(StManager);
     lts->CenterValue = IOManager->InputData.ReflectLight;
 
     // ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);
-
+*/
     while(1)
     {
         // 入力情報更新
