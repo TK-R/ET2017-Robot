@@ -69,6 +69,19 @@ void SelfPositionManager::ResetPosition(SelfPositionData p)
 	Filter = new ParticleFilter();
 }
 
+// 位置を強制的にリセットする
+void SelfPositionManager::ResetPoint(Point* p)
+{
+	RobotPoint.X = p->X;
+	RobotPoint.Y = p->Y;
+}
+
+// 角度を強制的にリセットする
+void SelfPositionManager::ResetAngle(double currentAngle)
+{
+	RobotAngle = currentAngle;
+}
+
 // ある座標との距離を求める
 double SelfPositionManager::GetDistance(Point* p)
 {

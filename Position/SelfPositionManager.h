@@ -28,6 +28,12 @@ public:
 	void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);
 	void ResetPosition(SelfPositionData p);
 
+	// 位置を強制的にリセットする
+	void ResetPoint(Point* p);
+
+	// 角度を強制的にリセットする
+	void ResetAngle(double currentAngle);
+
 	// ある座標との距離を求める
 	double GetDistance(Point* p);
 };

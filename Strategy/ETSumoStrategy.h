@@ -14,21 +14,22 @@ struct Arena {
 // ET相撲におけるステートの列挙
 enum ETSumoStateEnum
 {
-	ForwardArena = 0,	// 土俵直進中
-	ForwardOverLine,	// 土俵直進にて黒線横断中
-	TurnLeftPlace,		// 左ブロック方向旋回
-	ForwardLeftPlace,	// 左ブロックまで直進
-	DetectLeftBlock,	// 左ブロック色認識
-	OSHIDASHILeft,		// 左ブロックを押し出し
-	YORIKIRILeft,		// 左ブロックを寄り切り
-	TurnRightPlace,		// 右ブロック方向旋回
-	ForwardRightPlace,	// 右ブロックまで直進	
-	DetectRightBlock,	// 右ブロック色認識
-	OSHIDASHIRight,		// 右ブロックを押し出し
-	YORIKIRIRight,		// 右ブロックを寄り切り
-	TurnCenter,			// 中央方向へ旋回
-	ForwardCenter,		// 中央方向へ前進
-	TurnForward,		// 前方方向へ旋回
+	ForwardArena = 0,		// 土俵直進中
+	ForwardOverLeftLine,	// 土俵左黒線横断中
+	TurnLeftPlace,			// 左ブロック方向旋回
+	ForwardLeftPlace,		// 左ブロックまで直進
+	DetectLeftBlock,		// 左ブロック色認識
+	OSHIDASHILeft,			// 左ブロックを押し出し
+	YORIKIRILeft,			// 左ブロックを寄り切り
+	TurnRightPlace,			// 右ブロック方向旋回
+	ForwardRightPlace,		// 右ブロックまで直進	
+	DetectRightBlock,		// 右ブロック色認識
+	OSHIDASHIRight,			// 右ブロックを押し出し
+	YORIKIRIRight,			// 右ブロックを寄り切り
+	TurnCenter,				// 中央方向へ旋回
+	ForwardCenter,			// 中央方向へ前進
+	ForwardOverCenterLine, 	// 土俵中央黒線を横断中
+	TurnForward,			// 前方方向へ旋回
 };
 
 class ETSumoStrategy: public AbstractStrategy

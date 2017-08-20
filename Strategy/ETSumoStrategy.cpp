@@ -3,6 +3,9 @@
 #include "ETSumoStrategy.h"
 #include "HSLColor.h"
 #include "ColorDecision.h"
+#include "SerialData.h"
+#include "PIDDataManager.h"
+
 
 #define FSPEED  		15	// 直進時の出力
 #define TURN_SPEED		15	// 旋回時の出力
@@ -26,7 +29,7 @@ void ETSumoStrategy::Run()
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 
 	HSLColorKind DetectColor = IOManager->HSLKind;
-
+	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
 	int currentAngle = SpManager->RobotAngle;
 
 	switch(CurrentState) {
@@ -34,15 +37,15 @@ void ETSumoStrategy::Run()
 		case ForwardArena:
 			// 黒線認識したら、黒線横断中状態に遷移
 			if(IOManager->InputData.ReflectLight < ONLINE) {
-				CurrentState = ForwardOverLine;
+				CurrentState = ForwardOverLeftLine;
 				break;
 			}
-			// 黒線認識までは普通に直進
-			IOManager->Forward(FSPEED);
+			// 黒線まではラインの左側のエッジに沿ってライントレース
+			IOManager->LineTraceAction(pid, EDGE_LINE, true);
 			break;
 		
-			// 土俵直進にて黒線横断中
-		case ForwardOverLine:
+		// 土俵左黒線横断中
+		case ForwardOverLeftLine:
 			// 黒線を抜けたら、左ブロック方向旋回状態に遷移
 			if(IOManager->InputData.ReflectLight > NotONLINE) {
 				CurrentState = TurnLeftPlace;
@@ -52,6 +55,7 @@ void ETSumoStrategy::Run()
 			IOManager->Forward(FSPEED);
 			break;
 		
+		// 左ブロック方向旋回
 		case TurnLeftPlace:
 			// 黒線上に乗ったら左ブロックへの直進状態に移行
 			if(IOManager->InputData.ReflectLight < EDGE_LINE) {
@@ -62,6 +66,8 @@ void ETSumoStrategy::Run()
 			// 左ブロック方向を向くまで旋回
 			IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
 			break;
+
+		// 左ブロックまで直進
 		case ForwardLeftPlace:
 			// 超音波センサでブロックを認識した場合には、色認識に移行
 			if(IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
@@ -69,9 +75,13 @@ void ETSumoStrategy::Run()
 				IOManager->Stop();
 				break;
 			}
+
+			// ラインの右側をトレースしながらブロックに接近
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);
 			
-			IOManager->Forward(FSPEED);
 			break;
+
+		// 左ブロック色認識
 		case DetectLeftBlock:
 			// アームを上昇させて、色認識種別をブロックに変更
 			IOManager->UpARMMotor();
@@ -98,6 +108,8 @@ void ETSumoStrategy::Run()
 				ColorDetectCount = 0;
 			}
 			break;
+		
+		// 左ブロックを寄り切り
 		case YORIKIRILeft:
 			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
 			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
@@ -109,6 +121,13 @@ void ETSumoStrategy::Run()
 			// 左ブロック方向を向くまで旋回
 			IOManager->TurnCW(TURN_SPEED);
 			break;
+		
+		// 左ブロックを押し出し
+		case OSHIDASHILeft :
+
+			break;
+		
+		// 右ブロック方向旋回
 		case ForwardRightPlace :
 			IOManager->Forward(FSPEED);
 			
@@ -120,6 +139,7 @@ void ETSumoStrategy::Run()
 			}
 			break;
 
+		// 右ブロック色認識
 		case DetectRightBlock:
 			// アームを上昇させて、色認識種別をブロックに変更
 			IOManager->UpARMMotor();
@@ -147,6 +167,7 @@ void ETSumoStrategy::Run()
 			}
 			break;
 
+		// 右ブロックを寄り切り
 		case YORIKIRIRight:
 			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
 			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
@@ -159,7 +180,52 @@ void ETSumoStrategy::Run()
 			// 中央方向を向くまで旋回
 			IOManager->TurnCW(TURN_SPEED);
 			break;
+		
+		// 右ブロックを押し出し
+		case OSHIDASHIRight:
+			break;
+		
+		// 中央方向へ前進
+		case ForwardCenter:
+			// 黒線認識したら、黒線横断中状態に遷移
+			if(IOManager->InputData.ReflectLight < ONLINE) {
+				CurrentState = ForwardOverCenterLine;
+				break;
+			}
+	
+			// エッジの右側をライントレースしながら中央のラインに向かう
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);
+			
+			break;
+		
+		case ForwardOverCenterLine:
+			// 黒線を抜けたら、前方方向に旋回状態に遷移
+			if(IOManager->InputData.ReflectLight > NotONLINE) {
+				CurrentState = TurnForward;
+				break;
+			}
+			// 黒線認識までは普通に直進
+			IOManager->Forward(FSPEED);
+		
+		case TurnForward:
+			// 黒線上に乗ったら一枚の土俵攻略が終了
+			if(IOManager->InputData.ReflectLight < EDGE_LINE) {
+				//  四枚目の土俵でなければ次の土俵の攻略に遷移
+				if(CurrentArena <= 4) {
+					CurrentArena++;
+					CurrentState = ForwardArena;                        
+				} else { 
+					// 全ての土俵の攻略が終わっていれば、ET相撲戦略を終了
+					IOManager->Stop();
+				}
 
+				CurrentState = ForwardLeftPlace;
+				break;
+			}
+			
+			// 左ブロック方向を向くまで旋回
+			IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
+		
 		default :
 		break;
 	}
