@@ -42,6 +42,8 @@ void ETSumoStrategy::Run()
 			}
 			// 黒線まではラインの左側のエッジに沿ってライントレース
 			IOManager->LineTraceAction(pid, EDGE_LINE, true);
+			// ライントレース中なので、角度は常にライン方向
+			SpManager->ResetAngle(FORWARD_ANGLE);
 			break;
 		
 		// 土俵左黒線横断中
@@ -78,7 +80,9 @@ void ETSumoStrategy::Run()
 
 			// ラインの右側をトレースしながらブロックに接近
 			IOManager->LineTraceAction(pid, EDGE_LINE, false);
-			
+
+			// ライントレース中なので、角度は常にライン沿い
+			SpManager->ResetAngle(LEFT_ANGLE);			
 			break;
 
 		// 左ブロック色認識
@@ -114,7 +118,7 @@ void ETSumoStrategy::Run()
 			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
 			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
 							abs(currentAngle - RIGHT_ANGLE) < 45) {
-				CurrentState = ForwardRightPlace;
+				CurrentState = ForwardCenterFromLeft;
 				break;
 			}
 
@@ -127,18 +131,48 @@ void ETSumoStrategy::Run()
 
 			break;
 		
-		// 右ブロック方向旋回
-		case ForwardRightPlace :
-			IOManager->Forward(FSPEED);
+		// 左ブロックから中央ラインに向かって前進
+		case ForwardCenterFromLeft :
+			// 黒線認識したら、黒線横断中状態に遷移
+			if(IOManager->InputData.ReflectLight < ONLINE) {
+				CurrentState = ForwardOverCenterLineToRight;
+				break;
+			}
+			// 黒線まではラインの左側のエッジに沿ってライントレース
+			IOManager->LineTraceAction(pid, EDGE_LINE, true);
+			// ライントレース中なので、角度は常にライン方向
+			SpManager->ResetAngle(RIGHT_ANGLE);
 			
+			break;
+		
+		// 右ブロックへ向けて中央ラインを横断
+		case ForwardOverCenterLineToRight:
+			// 黒線を抜けたら、右ブロックまで直進に遷移
+			if(IOManager->InputData.ReflectLight > NotONLINE) {
+				CurrentState = ForwardRightPlace;
+				break;
+			}
+			// 黒線認識までは普通に直進
+			IOManager->Forward(FSPEED);
+			break;
+
+			break;
+		
+		/// 右ブロックまで前進
+		case ForwardRightPlace :
 			// 超音波センサでブロックを認識した場合には、色認識に移行
 			if(IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
 				CurrentState = DetectRightBlock;
 				IOManager->Stop();
 				break;
 			}
-			break;
+			
+			// ラインに沿って右ブロック置き場に接近
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);
+			// ライントレース中なので常に角度はライン沿い
+			SpManager->ResetAngle(RIGHT_ANGLE);
 
+			break;
 		// 右ブロック色認識
 		case DetectRightBlock:
 			// アームを上昇させて、色認識種別をブロックに変更
@@ -172,7 +206,7 @@ void ETSumoStrategy::Run()
 			// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
 			if(IOManager->InputData.ReflectLight < EDGE_LINE && 
 							abs(currentAngle - LEFT_ANGLE) < 45) {
-				CurrentState = ForwardCenter;
+				CurrentState = ForwardCenterFromRight;
 				IOManager->Stop();
 				break;
 			}
@@ -186,19 +220,21 @@ void ETSumoStrategy::Run()
 			break;
 		
 		// 中央方向へ前進
-		case ForwardCenter:
+		case ForwardCenterFromRight:
 			// 黒線認識したら、黒線横断中状態に遷移
 			if(IOManager->InputData.ReflectLight < ONLINE) {
-				CurrentState = ForwardOverCenterLine;
+				CurrentState = ForwardOverCenterLineFromRight;
 				break;
 			}
 	
 			// エッジの右側をライントレースしながら中央のラインに向かう
 			IOManager->LineTraceAction(pid, EDGE_LINE, false);
-			
+		
+			// ライントレース中なので方向は強制的にライン沿い
+			SpManager->ResetAngle(LEFT_ANGLE);
 			break;
 		
-		case ForwardOverCenterLine:
+		case ForwardOverCenterLineFromRight:
 			// 黒線を抜けたら、前方方向に旋回状態に遷移
 			if(IOManager->InputData.ReflectLight > NotONLINE) {
 				CurrentState = TurnForward;

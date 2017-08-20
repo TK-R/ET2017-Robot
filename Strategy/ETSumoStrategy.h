@@ -22,13 +22,15 @@ enum ETSumoStateEnum
 	OSHIDASHILeft,			// 左ブロックを押し出し
 	YORIKIRILeft,			// 左ブロックを寄り切り
 	TurnRightPlace,			// 右ブロック方向旋回
+	ForwardCenterFromLeft,	// 左ブロックから中央ラインに向かって前進
+	ForwardOverCenterLineToRight,	// 右ブロックへ向けて中央ラインを横断
 	ForwardRightPlace,		// 右ブロックまで直進	
 	DetectRightBlock,		// 右ブロック色認識
 	OSHIDASHIRight,			// 右ブロックを押し出し
 	YORIKIRIRight,			// 右ブロックを寄り切り
 	TurnCenter,				// 中央方向へ旋回
-	ForwardCenter,			// 中央方向へ前進
-	ForwardOverCenterLine, 	// 土俵中央黒線を横断中
+	ForwardCenterFromRight,	// 中央方向へ前進
+	ForwardOverCenterLineFromRight, // 右ブロックから土俵中央黒線を横断中
 	TurnForward,			// 前方方向へ旋回
 };
 
