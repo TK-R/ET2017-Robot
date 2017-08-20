@@ -112,7 +112,7 @@ RESTART_:
 
     pData.Angle = 0;
     pData.PositionX = 1360;
-    pData.PositionY = 2920;
+    pData.PositionY = 2900;
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
