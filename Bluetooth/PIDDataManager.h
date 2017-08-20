@@ -23,7 +23,7 @@ private:
 		PIDData block = {16, 0.4, 0, 0.7, BlockMovePIDState};
 		SetPIDData(block);
 
-		PIDData sumo = {14, 1.09, 0, 0.96, ETSumoPIDState};
+		PIDData sumo = {15, 1.2, 0, 1.0, ETSumoPIDState};
 		SetPIDData(sumo);
 	}
 

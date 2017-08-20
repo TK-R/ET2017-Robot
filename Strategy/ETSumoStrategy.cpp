@@ -6,8 +6,10 @@
 #include "SerialData.h"
 #include "PIDDataManager.h"
 
-#define FSPEED 15	 // 直進時の出力
-#define TURN_SPEED 10 // 旋回時の出力
+#define OSHIDASHI_SPEED 25 // 押し出し動作時のスピード
+
+#define FIRST_TURN_SPEED 25 // 高速旋回時の出力
+#define TURN_SPEED 15 // 旋回時の出力
 
 #define LEFT_ANGLE 90   // 左ブロック方向
 #define RIGHT_ANGLE 270 // 右ブロック方向
@@ -31,15 +33,15 @@ void ETSumoStrategy::Run()
 	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState);
 	int currentAngle = SpManager->RobotAngle;
 	Point currentPoint = SpManager->RobotPoint;
-	switch (CurrentState)
-	{
+
+ACTION :
+	switch (CurrentState) {
 	// 土俵直進中
 	case ForwardArena:
 		// 黒線認識したら、黒線横断中状態に遷移
-		if (IOManager->InputData.ReflectLight < ONLINE)
-		{
+		if (IOManager->InputData.ReflectLight < ONLINE) {
 			CurrentState = ForwardOverLeftLine;
-			break;
+			goto ACTION;
 		}
 		// 黒線まではラインの左側のエッジに沿ってライントレース
 		IOManager->LineTraceAction(pid, EDGE_LINE, true);
@@ -47,7 +49,6 @@ void ETSumoStrategy::Run()
 		SpManager->ResetAngle(FORWARD_ANGLE);
 		currentPoint.Y = 2900;
 		SpManager->ResetPoint(&currentPoint);
-		
 		break;
 
 	// 土俵左黒線横断中
@@ -55,7 +56,7 @@ void ETSumoStrategy::Run()
 		// 黒線を抜けたら、左ブロック方向旋回状態に遷移
 		if (IOManager->InputData.ReflectLight > NotONLINE) {
 			CurrentState = TurnLeftPlace;
-			break;
+			goto ACTION;
 		}
 		// 黒線認識までは普通に直進
 		IOManager->Forward(pid.BasePower);
@@ -64,14 +65,17 @@ void ETSumoStrategy::Run()
 	// 左ブロック方向旋回
 	case TurnLeftPlace:
 		// 黒線上に乗ったら左ブロックへの直進状態に移行
-		if (IOManager->InputData.ReflectLight < NotONLINE &&
+		if (IOManager->InputData.ReflectLight < ONLINE &&
 						abs(currentAngle - LEFT_ANGLE)) {
 			CurrentState = ForwardLeftPlace;
-			break;
+			goto ACTION;
 		}
 
 		// 左ブロック方向を向くまで旋回
-		IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
+		//IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
+		IOManager->OutputData.LeftMotorPower = -1 * TURN_SPEED / 2;
+		IOManager->OutputData.RightMotorPower = TURN_SPEED;
+
 		break;
 
 	// 左ブロックまで直進
@@ -124,11 +128,14 @@ void ETSumoStrategy::Run()
 		if (IOManager->InputData.ReflectLight < EDGE_LINE &&
 			abs(currentAngle - RIGHT_ANGLE) < 45) {
 			CurrentState = ForwardRightPlace;
-			break;
+			goto ACTION;
+		} else if (abs(currentAngle - RIGHT_ANGLE) < 25) {
+			// 右ブロック方向を向くまで旋回
+			IOManager->TurnCW(TURN_SPEED);
+		} else {
+			// 右ブロック方向を向くまで旋回（離れているため高速
+			IOManager->TurnCW(FIRST_TURN_SPEED);
 		}
-
-		// 左ブロック方向を向くまで旋回
-		IOManager->TurnCW(TURN_SPEED);
 		break;
 
 	// 左ブロックを押し出し
@@ -136,13 +143,15 @@ void ETSumoStrategy::Run()
 		// 一定距離進んだら後退
 		if(SpManager->RobotPoint.Y < 2670) {
 			CurrentState = OSHIDASHILeftBack;
+			goto ACTION;			
 		}
-		IOManager->Forward(pid.BasePower);
+		IOManager->Forward(OSHIDASHI_SPEED);
 		break;
 	case OSHIDASHILeftBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
 		if(SpManager->RobotPoint.Y > 2750){
 			CurrentState = YORIKIRILeft;
+			goto ACTION;			
 		}
 		IOManager->Back(pid.BasePower);
 		break;
@@ -192,14 +201,17 @@ void ETSumoStrategy::Run()
 
 	// 右ブロックを寄り切り
 	case YORIKIRIRight:
-		// ある程度旋回してから、黒線上に乗ったら右ブロックへの直進状態に移行
-		if (abs(currentAngle - (LEFT_ANGLE - 45)) < 5) {
+		// 斜め方向を向いたらフィールド走行状態に遷移
+		if (abs(currentAngle - (LEFT_ANGLE - 50)) < 5) {
 			CurrentState = ForwardField;
-			break;
+			goto ACTION;			
+		} else if(abs(currentAngle - (LEFT_ANGLE - 50)) < 15) {
+			// 中央方向を向くまで旋回
+			IOManager->TurnCW(TURN_SPEED);
+		} else {
+			// 中央方向を向くまで旋回 (離れているので高速)
+			IOManager->TurnCW(FIRST_TURN_SPEED);			
 		}
-
-		// 中央方向を向くまで旋回
-		IOManager->TurnCW(TURN_SPEED);
 		break;
 
 	// 右ブロックを押し出し
@@ -207,13 +219,15 @@ void ETSumoStrategy::Run()
 		// 一定距離進んだら後退
 		if(SpManager->RobotPoint.Y > 3140) {
 			CurrentState = OSHIDASHIRightBack;
+			goto ACTION;			
 		}
-		IOManager->Forward(pid.BasePower);
+		IOManager->Forward(OSHIDASHI_SPEED);
 		break;
 	case OSHIDASHIRightBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
 		if(SpManager->RobotPoint.Y < 3070){
 			CurrentState = YORIKIRIRight;
+			goto ACTION;			
 		}
 		IOManager->Back(pid.BasePower);
 		break;
@@ -223,7 +237,7 @@ void ETSumoStrategy::Run()
 		// 完全に黒線上から移動したら中央方向への移動に遷移
 		if(IOManager->InputData.ReflectLight > FIELD) {
 			CurrentState = ForwardCenterFromRight;
-			break;
+			goto ACTION;
 		}
 
 		IOManager->Forward(pid.BasePower);
@@ -233,7 +247,7 @@ void ETSumoStrategy::Run()
 		// 黒線認識したら、黒線横断中状態に遷移
 		if (IOManager->InputData.ReflectLight < ONLINE) {
 			CurrentState = ForwardOverCenterLineFromRight;
-			break;
+			goto ACTION;
 		}
 
 		IOManager->Forward(pid.BasePower);
@@ -244,30 +258,34 @@ void ETSumoStrategy::Run()
 		// 黒線を抜けたら、前方方向に旋回状態に遷移
 		if (IOManager->InputData.ReflectLight > NotONLINE){
 			CurrentState = TurnForward;
-			break;
+			goto ACTION;
 		}
 		// 黒線認識までは普通に直進
-		IOManager->Forward(pid.BasePower);
+	//	IOManager->LineTraceAction(pid, EDGE_LINE, true);
+		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
+		IOManager->OutputData.RightMotorPower =  TURN_SPEED / 2;
+
 		break;
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-		if (IOManager->InputData.ReflectLight < FIELD) {
+	//	if (IOManager->InputData.ReflectLight < EDGE_LINE) {
 			//  四枚目の土俵でなければ次の土俵の攻略に遷移
 			if (CurrentArena <= 4) {
-				IOManager->Stop();				
 					CurrentArena++;
 					CurrentState = ForwardArena;
+					goto ACTION;					
 				} else {
 				// 全ての土俵の攻略が終わっていれば、ET相撲戦略を終了
 				IOManager->Stop();
 			}
 			break;
-		}
+	//	}
 
 		// 正面を向くまで旋回	
-		IOManager->TurnCW(TURN_SPEED);
-
+//		IOManager->TurnCW(TURN_SPEED);
+	//	IOManager->OutputData.LeftMotorPower = TURN_SPEED;
+	//	IOManager->OutputData.RightMotorPower = 0;
 		break;
 	default:
 		break;
