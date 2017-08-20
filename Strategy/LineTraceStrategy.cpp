@@ -6,13 +6,15 @@
 #include "Strategy.h"
 #include "SelfPositionManager.h"
 #include "SoundPlayTask.h"
+#include "PIDDataManager.h"
+
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
 	uint IntegralCount = 5;
+	auto pidData = PIDDataManager::GetInstance()->GetPIDData(LineTracePIDState); 
 
-	double pk = CurrentPID.PGain, pi = CurrentPID.IGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
-
+	double pk = pidData.PGain, pi = pidData.IGain, pd = pidData.DGain, power = pidData.BasePower;
 	int light = InOut->InputData.ReflectLight;
 
 	// 今回の偏差
@@ -37,6 +39,7 @@ void LineTraceStrategy::Run()
 	// 操舵角からモータ出力値を決定
 	InOut->Forward(power, steering);
 
+	/*
 	if(SelfPositionManager::GetInstance()->RobotPoint.X < 1800)
 	{
 		InOut->Forward(0);
@@ -45,5 +48,5 @@ void LineTraceStrategy::Run()
 		ext_tsk();
 
 	}
-
+*/
 }

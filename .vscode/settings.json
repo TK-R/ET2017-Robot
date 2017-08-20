@@ -38,6 +38,7 @@
 		"xtr1common": "cpp",
 		"xutility": "cpp",
 		"string.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"map": "cpp"
 	}
 }

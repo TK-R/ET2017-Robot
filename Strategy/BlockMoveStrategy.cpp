@@ -1,9 +1,11 @@
 
-
+#include "SerialData.h"
+#include "PIDDataManager.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 #include "BlockMoveStrategy.h"
 #include "InOutManager.h"
+#include "PIDDataManager.h"
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -23,9 +25,13 @@ void ApproachState::Run()
 	BlockMoveManager* BtManager = BlockMoveManager::GetInstance();
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
+
+	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
+
 	int currentAngle = SpManager->RobotAngle;
 	int ForwardPower = 10;
 	int TurnPower = 10;
+	int CenterValue = 65;
 
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
@@ -87,7 +93,7 @@ void ApproachState::Run()
 		break;	
 	// ライントレースする動作	
 	case LineTrace:
-		IoManager->LineTraceAction(LeftEdge);
+		IoManager->LineTraceAction(BlockMovePID, CenterValue, LeftEdge);
 
 		// 置き場色を取得
 		break;

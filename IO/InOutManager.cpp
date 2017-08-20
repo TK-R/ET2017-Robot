@@ -1,6 +1,7 @@
 #include "ev3api.h"
 #include <string.h>
 
+#include "SerialData.h"
 #include "HSLColor.h"
 #include "ColorDecision.h"
 #include "InOutManager.h"
@@ -117,17 +118,14 @@ void InOutManager::TurnCCW(int power)
 }
 
 // ライントレースを実施するように左右モータ値を更新する
-void InOutManager::LineTraceAction(bool LeftEdge)
+void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 {
-	double pk = CurrentPID.PGain, pd = CurrentPID.DGain, power = CurrentPID.BasePower;
-	int center = 65;
-
 	int light = InputData.ReflectLight;
 
 	int diff = LeftEdge ? (int)light - center :  (int)center - light;
-	int steering = pk * diff + (diff - PrevDiff) * pd;
+	int steering = data.PGain * diff + (diff - PrevDiff) * data.IGain;
 	
-	Forward(power, steering);
+	Forward(data.BasePower, steering);
 }
 
 void InOutManager::UpARMMotor()

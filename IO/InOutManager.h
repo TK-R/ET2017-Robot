@@ -8,6 +8,7 @@
 #include <SonarSensor.h>
 #include <GyroSensor.h>
 
+#include "SerialData.h"
 #include "HSLColor.h"
 #include "ColorDecision.h"
 #include "SerialReceiveTask.h"
@@ -71,7 +72,7 @@ public:
 	// 反時計回りに回転するように左右モータ値を更新する
 	void TurnCCW(int power);
 	// ライントレースを実施するように左右モータ値を更新する
-	void LineTraceAction(bool LeftEdge);
+	void LineTraceAction(PIDData data, int center, bool LeftEdge);
 	
 	// アームを上昇させる、ただし、処理はすぐに戻る
 	void UpARMMotor();

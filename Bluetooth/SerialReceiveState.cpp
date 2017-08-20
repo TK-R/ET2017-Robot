@@ -6,6 +6,8 @@
 #include "InOutManager.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
+#include "PIDDataManager.h"
+
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
 {
@@ -109,7 +111,11 @@ void PIDDataState::Receive(uint8_t data)
 		// チェックサムが一致したら、構造体を構築
 		PIDData data;
 		memcpy(&data, buff.data(), sizeof(PIDData));
-		CurrentPID = data;
+
+		auto pidManager = PIDDataManager::GetInstance();
+		pidManager->SetPIDData(data);
+
+		//		CurrentPID = data;
 	}
 
 	Context->SetState(new HeaderState(Context));
