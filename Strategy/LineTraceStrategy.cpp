@@ -7,12 +7,73 @@
 #include "SelfPositionManager.h"
 #include "SoundPlayTask.h"
 #include "PIDDataManager.h"
+#include "Point.h"
+
+int LineTraceStrategy::GetCurrentState()
+{
+	Point p = SelfPositionManager::GetInstance()->RobotPoint;
+	StateNo currentState = LineTraceStraight;
+RETRY:
+
+	switch(Position) {
+		case RStraight :
+			// 最初の直線終了
+			if(p.Y > 2550) {
+				Position = RFirstCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceStraight;
+			break;
+		case RFirstCurve:
+			// 最初のカーブ終了
+			if(p.Y < 2180){ 
+				Position = RSecondCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceHighSpeedCurve;
+			break;
+		case RSecondCurve:
+			// 二番目のカーブ終了
+			if(p.Y < 1340){
+				Position = RThirdCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceMiddleSpeedCurve;
+			break;
+		case RThirdCurve:
+			// 三番目のカーブ終了
+			if(p.Y > 1420) {
+				Position = RFourthCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceSlowSpeedCurve;
+			break;
+		case RFourthCurve:
+			// 四番目のカーブ終了
+			if(p.X < 2900) {
+				Position = RLastStraight;
+				goto RETRY;
+			}
+			currentState = LineTraceMiddleSpeedCurve;
+			break;
+		case RLastStraight:
+			currentState = LineTraceStraight;
+			break;
+		default:
+			currentState = LineTraceSlowSpeedCurve;
+			break;
+	}	
+
+	return (int)currentState;
+}
 
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
 	uint IntegralCount = 5;
-	auto pidData = PIDDataManager::GetInstance()->GetPIDData(LineTracePIDState); 
+	
+	int state = GetCurrentState();
+	auto pidData = PIDDataManager::GetInstance()->GetPIDData(state); 
 
 	double pk = pidData.PGain, pi = pidData.IGain, pd = pidData.DGain, power = pidData.BasePower;
 	int light = InOut->InputData.ReflectLight;
@@ -50,3 +111,4 @@ void LineTraceStrategy::Run()
 	}
 */
 }
+

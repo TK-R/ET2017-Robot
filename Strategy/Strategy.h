@@ -22,6 +22,16 @@ public:
 	virtual ~AbstractStrategy(){}
 };
 
+// 現在どこを走行中か
+enum CurrentCoursePosition {
+	RStraight = 0,
+	RFirstCurve,
+	RSecondCurve,
+	RThirdCurve,
+	RFourthCurve,
+	RLastStraight
+};
+
 class LineTraceStrategy: public AbstractStrategy
 {	
 private:
@@ -30,6 +40,13 @@ private:
 
 	// 積分制御用
 	std::vector<int> IntegralDiff = {0};
+
+	// 現在走行中のコース箇所
+	CurrentCoursePosition Position = RStraight;
+
+	// 現在の走行状態を求める
+	int GetCurrentState();
+
 public:
 	int CenterValue = 0;
 

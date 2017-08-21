@@ -109,10 +109,15 @@ void main_task(intptr_t unused)
 RESTART_:
     // 初期位置
     SelfPositionData pData;
-
+/*
     pData.Angle = 0;
     pData.PositionX = 1360;
     pData.PositionY = 2900;
+*/
+    // 初期位置（ライントレース）
+    pData.Angle = 270;
+    pData.PositionX = 5190;
+    pData.PositionY = 380;
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
@@ -134,15 +139,16 @@ RESTART_:
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
     // ET相撲NEO確認用
-    StManager->SetStrategy(new ETSumoStrategy(StManager));
-/*
+//    StManager->SetStrategy(new ETSumoStrategy(StManager));
+
     // 初期値をラインの中心として格納
     auto lts = new LineTraceStrategy(StManager);
-    lts->CenterValue = IOManager->InputData.ReflectLight;
+//    lts->CenterValue = IOManager->InputData.ReflectLight;
+    lts->CenterValue = 120;
 
     // ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);
-*/
+
     while(1)
     {
         // 入力情報更新
