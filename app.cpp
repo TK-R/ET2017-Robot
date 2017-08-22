@@ -64,23 +64,22 @@ void Draw()
         (int)src->Y);
     ev3_lcd_draw_string(buf, 0, 48);
 
-    RGBColor color = FieldMap::GetInstance()->GetRGBColor(
-                            SpManager->RobotPoint.X, SpManager->RobotPoint.Y);    
-    sprintf(buf, "MAP-R:%d,G:%d,B:%d  ",
-        color.R,
-        color.G,
-        color.B);
-    ev3_lcd_draw_string(buf, 0, 60);
+    RGBColor rgbMap = FieldMap::GetInstance()->GetRGBColor(
+                            SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+    HSLColor hslMap = HSLColor::FromRGB(rgbMap.R, rgbMap.G, rgbMap.B);
 
-    sprintf(buf, "SEN-R:%d,G:%d,B:%d ",
-        IOManager->InputData.ColorRed,
-        IOManager->InputData.ColorGreen,
-        IOManager->InputData.ColorBlue);
-    ev3_lcd_draw_string(buf, 0, 72);
+    sprintf(buf, "MAP-H:%3.2f,S:%3.2f,L%3.2f",
+        hslMap.Hue,
+        hslMap.Saturation,
+        hslMap.Luminosity);
+    ev3_lcd_draw_string(buf, 0, 60);
 
     sprintf(buf, "SEN-H:%3.2f,S:%3.2f,L%3.2f " ,IOManager->HSLValue.Hue,
                                                 IOManager->HSLValue.Saturation,
                                                 IOManager->HSLValue.Luminosity);
+    ev3_lcd_draw_string(buf, 0, 72);
+    
+    sprintf(buf, "LFood: %1.4f", ColorDecision::GetLikelihoodLuminosity(hslMap.Luminosity, IOManager->HSLValue.Luminosity));
     ev3_lcd_draw_string(buf, 0, 84);
     
 }
@@ -132,7 +131,6 @@ RESTART_:
         Refresh();
 		dly_tsk(10);
     }
-
 
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
     

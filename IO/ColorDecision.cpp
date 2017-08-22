@@ -40,9 +40,19 @@ double ColorDecision::GetLikelihood(HSLColor* base, HSLColor* sensor)
 {
     // 各要素ごとの重み
     double hk = 10, sk = 1, lk = 0.5;
+    double hueDiff = abs(base->Hue - sensor->Hue);
+    if(hueDiff > 180) hueDiff = 360 - hueDiff;
+
     return hk * 1 / (1 + abs(base->Hue - sensor->Hue)) + 
            sk * 1 / (1 + abs(base->Saturation - sensor->Saturation)) +
            lk * 1 / (1 + abs(base->Luminosity - sensor->Luminosity));
+}
+
+// 明度に対する尤度を求める
+double ColorDecision::GetLikelihoodLuminosity(double lumiBase, double lumiSens)
+{   
+    // 明るさに応じて、尤度を計算する
+    return 1.0 / (1.0 + abs(lumiBase - lumiSens));
 }
 
 // 定義された値に従って、色の推定結果を求める

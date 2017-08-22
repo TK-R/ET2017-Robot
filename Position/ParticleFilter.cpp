@@ -63,7 +63,7 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	HSLColor mapColor = FieldMap::GetInstance()->GetHSLColor(RobotPoint.X, RobotPoint.Y);
 
 	// センサから得た色情報を元に、尤度を定義
-	Likelihood = ColorDecision::GetLikelihood(&mapColor, &InOutManager::GetInstance()->HSLValue);	
+	Likelihood = ColorDecision::GetLikelihoodLuminosity(mapColor.Luminosity, InOutManager::GetInstance()->HSLValue.Luminosity);	
 }
 
 // 指定した座標で粒子を撒きなおす
@@ -101,7 +101,7 @@ void ParticleFilter::UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCoun
 void ParticleFilter::Localize()
 {	
 	// 平均化する上位個数
-	const int AverageCount = 5;
+	const int AverageCount = 10;
 
 	// 尤度の高い方から、平均化する分だけ取り出し
 	auto result = from_array(ParticleArray)

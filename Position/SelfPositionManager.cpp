@@ -6,7 +6,7 @@
 #include "ParticleFilter.h"
 #include "SelfPositionManager.h"
 
-#define POS_SIGMA 	8// パーティクルの散布範囲
+#define POS_SIGMA 	10// パーティクルの散布範囲
 #define ANGLE_SIGMA	0.01// パーティクルの角度範囲
 
 
