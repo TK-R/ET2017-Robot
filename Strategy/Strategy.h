@@ -29,7 +29,13 @@ enum CurrentCoursePosition {
 	RSecondCurve,
 	RThirdCurve,
 	RFourthCurve,
-	RLastStraight
+	RLastStraight,
+	LStraight,
+	LFirstCurve,
+	LSecondCurve,
+	LThirdCurve,
+	LFourthCurve,
+	LLastStraight
 };
 
 class LineTraceStrategy: public AbstractStrategy
@@ -43,6 +49,7 @@ private:
 
 	// 現在走行中のコース箇所
 	CurrentCoursePosition Position = RStraight;
+	// CurrentCoursePosition Position = LStraight;
 
 	// 現在の走行状態を求める
 	int GetCurrentState();

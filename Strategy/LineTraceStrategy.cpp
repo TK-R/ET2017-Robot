@@ -17,7 +17,7 @@ RETRY:
 
 	switch(Position) {
 		case RStraight :
-			// 最初の直線終了
+			// 最初の直線終了（Rコース）
 			if(p.Y > 2550) {
 				Position = RFirstCurve;
 				goto RETRY;
@@ -25,7 +25,7 @@ RETRY:
 			currentState = LineTraceStraight;
 			break;
 		case RFirstCurve:
-			// 最初のカーブ終了
+			// 最初のカーブ終了（Rコース）
 			if(p.Y < 2180){ 
 				Position = RSecondCurve;
 				goto RETRY;
@@ -33,7 +33,7 @@ RETRY:
 			currentState = LineTraceHighSpeedCurve;
 			break;
 		case RSecondCurve:
-			// 二番目のカーブ終了
+			// 二番目のカーブ終了（Rコース）
 			if(p.Y < 1340){
 				Position = RThirdCurve;
 				goto RETRY;
@@ -41,7 +41,7 @@ RETRY:
 			currentState = LineTraceMiddleSpeedCurve;
 			break;
 		case RThirdCurve:
-			// 三番目のカーブ終了
+			// 三番目のカーブ終了（Rコース）
 			if(p.Y > 1420) {
 				Position = RFourthCurve;
 				goto RETRY;
@@ -49,7 +49,7 @@ RETRY:
 			currentState = LineTraceSlowSpeedCurve;
 			break;
 		case RFourthCurve:
-			// 四番目のカーブ終了
+			// 四番目のカーブ終了（Rコース）
 			if(p.X < 2900) {
 				Position = RLastStraight;
 				goto RETRY;
@@ -57,6 +57,49 @@ RETRY:
 			currentState = LineTraceMiddleSpeedCurve;
 			break;
 		case RLastStraight:
+			currentState = LineTraceStraight;
+			break;
+		case LStraight :
+			// 最初の直線終了（Lコース）
+			if(p.Y > 2550) {
+				Position = LFirstCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceStraight;
+			break;
+		case LFirstCurve:
+			// 最初のカーブ終了（Lコース）
+			if(p.Y < 2200){ 
+				Position = LSecondCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceSlowSpeedCurve;	//感度高すぎ
+			break;
+		case LSecondCurve:
+			// 二番目のカーブ終了（Lコース）
+			if(p.X < 3350){
+				Position = LThirdCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceHighSpeedCurve;	//感度低すぎ
+			break;
+		case LThirdCurve:
+			// 三番目のカーブ終了（Lコース）
+			if(p.Y > 1200) {
+				Position = LFourthCurve;
+				goto RETRY;
+			}
+			currentState = LineTraceSlowSpeedCurve;
+			break;
+		case LFourthCurve:
+			// 四番目のカーブ終了（Lコース）
+			if(p.X < 2900) {
+				Position = LLastStraight;
+				goto RETRY;
+			}
+			currentState = LineTraceMiddleSpeedCurve;
+			break;
+		case LLastStraight:
 			currentState = LineTraceStraight;
 			break;
 		default:
