@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include "HSLColor.h"
 #include "ColorDecision.h"
@@ -52,7 +53,8 @@ double ColorDecision::GetLikelihood(HSLColor* base, HSLColor* sensor)
 double ColorDecision::GetLikelihoodLuminosity(double lumiBase, double lumiSens)
 {   
     // 明るさに応じて、尤度を計算する
-    return 1.0 / (1.0 + abs(lumiBase - lumiSens));
+//    return 1.0 / (1.0 + abs(lumiBase - lumiSens));
+   return 10.0 * 1.0 / (sqrt(2.0 * M_PI) * 4) *  exp(-1.0 * pow(lumiBase - lumiSens, 2) /(2.0 * 16));
 }
 
 // 定義された値に従って、色の推定結果を求める

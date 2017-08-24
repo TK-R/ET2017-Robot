@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <math.h>
-#include "cpplinq.hpp"
 
 #include "ev3api.h"
 #include "Point.h"
@@ -8,7 +7,6 @@
 #include "InOutManager.h"
 #include "ParticleFilter.h"
 
-using namespace cpplinq;
 
 // 正規分布でsigmaに指定した範囲内の値を取り出す
 double Particle::NormalDistribution(double sigma) {
@@ -100,18 +98,53 @@ void ParticleFilter::UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCoun
 // 自身の状態を更新する
 void ParticleFilter::Localize()
 {	
-	// 平均化する上位個数
-	const int AverageCount = 10;
+	// 尤度が閾値より高い粒子は、すべて平均化の対象とする。
+	const double min = 0.1;
 
-	// 尤度の高い方から、平均化する分だけ取り出し
-	auto result = from_array(ParticleArray)
-	>> orderby_descending([] (Particle* p) { return p->Likelihood;} )
-	>> take(AverageCount)
-	>> to_vector();
-	
-	// 各要素を平均化して現在値として登録
-	RobotPoint.X = from(result) >> select([](Particle* p) { return p->RobotPoint.X; }) >> avg();
-	RobotPoint.Y= from(result) >> select([](Particle* p) { return p->RobotPoint.Y; }) >> avg();
-	RobotAngle = from(result) >> select([](Particle* p) { return p->RobotAngle; }) >> avg();	
-	return;
+	std::vector<Particle*> pVector;
+
+	for(Particle* p : ParticleArray) {
+		if(p->Likelihood > min) pVector.push_back(p);
+	}
+
+	double x = 0, y = 0, angleX = 0, angleY = 0, angle = 0;
+
+	// 尤度の高い粒子が存在しない場合には、すべての粒子を平均化
+	if(pVector.size() == 0)	{
+		for(Particle* p  : ParticleArray) {
+			angleX += cos(p->RobotAngle * M_PI / 180);
+			angleY += sin(p->RobotAngle * M_PI / 180);
+			x += p->RobotPoint.X;
+			y += p->RobotPoint.Y;
+		}
+
+		x /= PARTICLE_COUNT;
+		y /= PARTICLE_COUNT;
+
+		angle = atan2(angleY / PARTICLE_COUNT, angleX / PARTICLE_COUNT) * 180 / M_PI; 		
+
+	} else {
+		// 閾値以上の粒子を平均化
+		for(Particle* p : pVector) {
+			angleX += cos(p->RobotAngle * M_PI / 180);
+			angleY += sin(p->RobotAngle * M_PI / 180);
+			x += p->RobotPoint.X;
+			y += p->RobotPoint.Y;
+		}
+
+		x/=pVector.size();
+		y/=pVector.size();
+		
+		angle = atan2(angleY / pVector.size() ,angleX / pVector.size()) * 180 / M_PI; 		
+	}
+
+	// atan2の出力範囲が-pi ~ piのため、0-360の範囲に修正
+	if(angle < 0) {
+		angle = 360 + angle;
+	}
+
+	// 算出した平均値でフィールドを更新
+	RobotPoint.X = x;
+	RobotPoint.Y = y;
+	RobotAngle = angle;
 }

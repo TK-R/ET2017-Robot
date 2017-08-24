@@ -7,7 +7,7 @@
 #include "SelfPositionManager.h"
 
 #define POS_SIGMA 	10// パーティクルの散布範囲
-#define ANGLE_SIGMA	0.01// パーティクルの角度範囲
+#define ANGLE_SIGMA	0.001// パーティクルの角度範囲
 
 
 //#define POS_SIGMA 	10// パーティクルの散布範囲
@@ -51,7 +51,7 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 
 	// パーティクルフィルタからフィルタ透過後の位置を取得して、自己位置とする
 	RobotPoint.X = Filter->RobotPoint.X;
-	RobotPoint.Y = Filter->RobotPoint.Y;;
+	RobotPoint.Y = Filter->RobotPoint.Y;
 	RobotAngle = Filter->RobotAngle;
 	
 	// 送信処理	
