@@ -1,5 +1,6 @@
 
 #include "ev3api.h"
+#include "Clock.h"
 #include "app.h"
 #include "SerialData.h"
 #include "SerialSendTask.h"
@@ -14,6 +15,8 @@
 #include "SoundPlayTask.h"
 #include "HSLColor.h"
 #include "FieldMap.h"
+
+using ev3api::Clock;
 
 // C++からC言語ライブラリをインクルードするため
 extern "C"{
@@ -32,6 +35,7 @@ extern "C"{
 #endif
 
 imageData_t* image;
+uint32_t sleepTime = 0;
 
 void Draw()
 {
@@ -39,7 +43,7 @@ void Draw()
     
     InOutManager* IOManager = InOutManager::GetInstance();
 
-    sprintf(buf, "Power: %4d, %4d   ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower);
+    sprintf(buf, "Power: %4d, %4d, S:%d",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, sleepTime);
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
@@ -146,9 +150,11 @@ RESTART_:
 
     // ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);
-
+    Clock* clock = new Clock();
     while(1)
     {
+        uint32_t baseTime = clock->now();
+    
         // 入力情報更新
         Refresh();
 
@@ -176,6 +182,7 @@ RESTART_:
         }
         // 出力情報更新
         IOManager->WriteOutputMotor();
-		dly_tsk(10);
+        sleepTime = clock->now() - baseTime;
+		dly_tsk(10 - sleepTime);
     }
 }
