@@ -73,27 +73,35 @@ RETRY:
 				Position = LSecondCurve;
 				goto RETRY;
 			}
-			currentState = LineTraceSlowSpeedCurve;	//感度高すぎ
+			currentState = LineTraceMiddleSpeedCurve;
 			break;
 		case LSecondCurve:
 			// 二番目のカーブ終了（Lコース）
-			if(p.X < 3350){
+			if(p.X < 4000){
 				Position = LThirdCurve;
 				goto RETRY;
 			}
-			currentState = LineTraceHighSpeedCurve;	//感度低すぎ
+			currentState = LineTraceHighSpeedCurve;
 			break;
 		case LThirdCurve:
 			// 三番目のカーブ終了（Lコース）
-			if(p.Y > 1200) {
-				Position = LFourthCurve;
+			if(p.X > 3350) {
+				Position = LLastStraight;
+				goto RETRY;
+			}
+			currentState = LineTraceHighSpeedCurve;
+			break;
+		case LFourthCurve:
+			// 四番目のカーブ終了（Lコース）
+			if(p.Y > 1150) {
+				Position = LLastStraight;
 				goto RETRY;
 			}
 			currentState = LineTraceSlowSpeedCurve;
 			break;
-		case LFourthCurve:
-			// 四番目のカーブ終了（Lコース）
-			if(p.X < 2900) {
+		case LFifthCurve:
+			// 五番目のカーブ終了（Lコース）
+			if(p.X < 2800 && p.Y > 1740 ) {
 				Position = LLastStraight;
 				goto RETRY;
 			}
