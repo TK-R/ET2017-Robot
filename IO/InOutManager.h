@@ -54,6 +54,9 @@ public:
 	// 予測する対象の種別
 	DetectTargetType HSLTargetType = FieldColor;
 
+	// 制御にかかった時間
+	uint16_t SleepTime = 0;
+	
 	static InOutManager* GetInstance();
 
 	// 前進するように左右モータの値を更新する
@@ -76,7 +79,6 @@ public:
 	
 	// アームを上昇させる、ただし、処理はすぐに戻る
 	void UpARMMotor();
-
 	// アームを下降させる（元の位置に戻す）
 	void DownARMMotor();
 

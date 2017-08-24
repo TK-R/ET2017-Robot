@@ -184,7 +184,7 @@ void InOutManager::ReadInputSensor()
 	InputData.ReflectLight = light;  
 	InputData.Angle = Gyro->getAngle();
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
-	InputData.reserved1 = 0;
+	InputData.SleepTime = SleepTime;
 	InputData.reserved2 = 0;
 	InputData.BatteryCurrent = ev3_battery_current_mA();
 	InputData.BatteryVoltage = ev3_battery_voltage_mV();

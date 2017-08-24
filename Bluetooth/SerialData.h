@@ -44,7 +44,7 @@ struct InputSignalData {
 	uint8_t ReflectLight;	//反射光
 	int16_t Angle;			//角位置……ジャイロセンサ角速度を代入
 	int16_t AnglarSpeed;	//角速度…ジャイロセンサ角位置を代入
-	int16_t reserved1;		//予備1……0（固定）
+	int16_t SleepTime;		//周期処理にかかった時間
 	float reserved2;		//予備2……0（固定）
 	uint16_t BatteryCurrent;	//バッテリ電流[mA]
 	uint16_t BatteryVoltage;	//バッテリ電圧[mV]

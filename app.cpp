@@ -34,8 +34,10 @@ extern "C"{
 #define _debug(x)
 #endif
 
+// 制御周期
+#define BASE_TIME 50
+
 imageData_t* image;
-uint32_t sleepTime = 0;
 
 void Draw()
 {
@@ -43,7 +45,7 @@ void Draw()
     
     InOutManager* IOManager = InOutManager::GetInstance();
 
-    sprintf(buf, "Power: %4d, %4d, S:%d ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, sleepTime);
+    sprintf(buf, "Power: %4d, %4d, S:%d ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, IOManager->SleepTime);
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
@@ -180,7 +182,11 @@ RESTART_:
         }
         // 出力情報更新
         IOManager->WriteOutputMotor();
-        sleepTime = clock->now() - baseTime;
-		dly_tsk(50 - sleepTime);
+        
+        // 制御に掛かった時間を格納
+        IOManager->SleepTime = clock->now() - baseTime;
+
+        // 基準周期から、制御に掛かった時間を引く
+		dly_tsk(BASE_TIME - IOManager->SleepTime);
     }
 }
