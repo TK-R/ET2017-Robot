@@ -18,7 +18,7 @@ public:
 	// 粒子が持つ走行体の方向
 	double RobotAngle;
 
-	
+	// 計算した尤度
 	double Likelihood;	
 
 	double NormalDistribution(double sigma);
