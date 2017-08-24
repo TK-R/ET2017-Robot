@@ -47,7 +47,7 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	if(RobotAngle + (theta / M_PI * 180.0) > 360) {
 		RobotAngle = RobotAngle + (theta / M_PI * 180.0) - 360;
 	}else if(RobotAngle + (theta / M_PI * 180.0) < 0) {
-		RobotAngle = 360 - RobotAngle +(theta / M_PI * 180.0);
+		RobotAngle = 360 + RobotAngle +(theta / M_PI * 180.0);
 	}else {
 		RobotAngle += (theta / M_PI * 180.0);
 	}
