@@ -43,7 +43,7 @@ void Draw()
     
     InOutManager* IOManager = InOutManager::GetInstance();
 
-    sprintf(buf, "Power: %4d, %4d, S:%d",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, sleepTime);
+    sprintf(buf, "Power: %4d, %4d, S:%d ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, sleepTime);
     ev3_lcd_draw_string(buf, 0, 0);
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
@@ -104,8 +104,6 @@ void main_task(intptr_t unused)
     InOutManager* IOManager = InOutManager::GetInstance();
     FieldMap * Map = FieldMap::GetInstance();
     Map->ReadImage("/ev3rt/image/Field.bmp");
-
-    
     StrategyManager *StManager = new StrategyManager();
     PlaySound(SensorInitialEnd);    
     
