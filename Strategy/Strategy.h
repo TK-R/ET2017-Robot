@@ -35,6 +35,7 @@ enum CurrentCoursePosition {
 	LSecondCurve,
 	LThirdCurve,
 	LFourthCurve,
+	LFifthCurve,
 	LLastStraight
 };
 
