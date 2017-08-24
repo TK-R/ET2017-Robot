@@ -183,6 +183,6 @@ RESTART_:
         // 出力情報更新
         IOManager->WriteOutputMotor();
         sleepTime = clock->now() - baseTime;
-		dly_tsk(10 - sleepTime);
+		dly_tsk(50 - sleepTime);
     }
 }
