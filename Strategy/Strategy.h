@@ -49,8 +49,8 @@ private:
 	std::vector<int> IntegralDiff = {0};
 
 	// 現在走行中のコース箇所
-	CurrentCoursePosition Position = RStraight;
-	// CurrentCoursePosition Position = LStraight;
+	// CurrentCoursePosition Position = RStraight;
+	CurrentCoursePosition Position = LFirstCurve;
 
 	// 現在の走行状態を求める
 	int GetCurrentState();
