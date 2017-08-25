@@ -35,7 +35,7 @@ extern "C"{
 #endif
 
 // 制御周期
-#define BASE_TIME 50
+#define BASE_TIME 20
 
 imageData_t* image;
 
@@ -44,31 +44,22 @@ void Draw()
     static char buf[256];
     
     InOutManager* IOManager = InOutManager::GetInstance();
-
-    sprintf(buf, "Power: %4d, %4d, S:%d ",IOManager->OutputData.LeftMotorPower, IOManager->OutputData.RightMotorPower, IOManager->SleepTime);
-    ev3_lcd_draw_string(buf, 0, 0);
-
-    SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-    sprintf(buf, "X:%4.1f, Y:%5.1f. A:%3.1f ",SpManager->RobotPoint.X, SpManager->RobotPoint.Y, SpManager->RobotAngle);
-    ev3_lcd_draw_string(buf, 0, 12);
-
-    sprintf(buf, "P: %2.1f, D: %4.1f  ", CurrentPID.PGain, CurrentPID.DGain);
-    ev3_lcd_draw_string(buf, 0, 24);
-
     BlockMoveManager * BmManager = BlockMoveManager::GetInstance();
+    SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
+  
     sprintf(buf, "C:%d src:%2d, dst:%2d, Ang:%3d ", 
         BmManager->CurrentCommand.BlockColor,
         BmManager->CurrentCommand.SourceBlockPosition,
         BmManager->CurrentCommand.DestinationBlockPosition,
         BmManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y));
-    ev3_lcd_draw_string(buf, 0, 36);
+    ev3_lcd_draw_string(buf, 0, 0);
 
     auto src = BmManager->GetSrcWaypoint();
     sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d  ", 
         BmManager->CurrentCommand.ApproachWayPoint[BmManager->CurrentSrcWaypointNo],
         (int)src->X,
         (int)src->Y);
-    ev3_lcd_draw_string(buf, 0, 48);
+    ev3_lcd_draw_string(buf, 0, 12);
 
     RGBColor rgbMap = FieldMap::GetInstance()->GetRGBColor(
                             SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
@@ -78,15 +69,10 @@ void Draw()
         hslMap.Hue,
         hslMap.Saturation,
         hslMap.Luminosity);
-    ev3_lcd_draw_string(buf, 0, 60);
+    ev3_lcd_draw_string(buf, 0, 24);
 
-    sprintf(buf, "SEN-H:%3.2f,S:%3.2f,L%3.2f " ,IOManager->HSLValue.Hue,
-                                                IOManager->HSLValue.Saturation,
-                                                IOManager->HSLValue.Luminosity);
-    ev3_lcd_draw_string(buf, 0, 72);
-    
     sprintf(buf, "LFood: %1.4f", ColorDecision::GetLikelihoodLuminosity(hslMap.Luminosity, IOManager->HSLValue.Luminosity));
-    ev3_lcd_draw_string(buf, 0, 84);
+    ev3_lcd_draw_string(buf, 0, 36);
     
 }
 
@@ -159,13 +145,6 @@ RESTART_:
         Refresh();
 
         StManager->Run();
-        
-        if(i > 200) {
-            i = 0;
-            ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
-        }
-
-        i++;
         
         // ボタン押されたらリスタート
         if(IOManager->InputData.TouchSensor == 1){
