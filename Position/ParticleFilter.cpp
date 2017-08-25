@@ -51,11 +51,12 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	}
 
 	// 変化量を、正規分布の値を加味して算出
+	double sinc = 1 - theta*theta/24.0 * (1 - theta*theta/80.0 * (1 - theta*theta/168.0));	//sinc(theta/2)を3次までテイラー展開
 	// double sinc_theta = fabs(theta/2.0)<1.0e-10 ? 1.0 : sin(theta/2.0)/(theta/2.0);
-	// double deltaX = D * cos(theta0 + (theta / 2.0)) * sinc_theta;
-	// double deltaY = D * sin(theta0 + (theta / 2.0)) * sinc_theta;
-	double deltaX = D * cos(theta0 + (theta / 2.0));
-	double deltaY = D * sin(theta0 + (theta / 2.0));
+	double deltaX = D * cos(theta0 + (theta / 2.0)) * sinc;
+	double deltaY = D * sin(theta0 + (theta / 2.0)) * sinc;
+	// double deltaX = D * cos(theta0 + (theta / 2.0));
+	// double deltaY = D * sin(theta0 + (theta / 2.0));
 		
 	RobotPoint.X += deltaX;
 	RobotPoint.Y -= deltaY;
