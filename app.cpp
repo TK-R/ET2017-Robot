@@ -132,7 +132,7 @@ RESTART_:
     // 初期値をラインの中心として格納
     auto lts = new LineTraceStrategy(StManager);
 //    lts->CenterValue = IOManager->InputData.ReflectLight;
-    lts->CenterValue = 120;
+    lts->CenterValue = 150;
 
     // ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);

@@ -86,7 +86,7 @@ RETRY:
 		case LThirdCurve:
 			// 三番目のカーブ終了（Lコース）
 			if(p.X < 3350) {
-				Position = LLastStraight;
+				Position = LFourthCurve;
 				goto RETRY;
 			}
 			currentState = LineTraceHighSpeedCurve;
@@ -94,14 +94,14 @@ RETRY:
 		case LFourthCurve:
 			// 四番目のカーブ終了（Lコース）
 			if(p.Y > 1150) {
-				Position = LLastStraight;
+				Position = LFifthCurve;
 				goto RETRY;
 			}
 			currentState = LineTraceSlowSpeedCurve;
 			break;
 		case LFifthCurve:
 			// 五番目のカーブ終了（Lコース）
-			if(p.X < 2800 && p.Y > 1740 ) {
+			if(p.X < 2800) {
 				Position = LLastStraight;
 				goto RETRY;
 			}
