@@ -42,6 +42,9 @@ private:
 	// アーム上昇中ならTrue
 	bool ArmUp = false;
 
+	// 尻尾上昇中ならTrue
+	bool TailUp = true;
+
 public:
 	InputSignalData InputData;
 	OutputSignalData OutputData;
@@ -81,6 +84,12 @@ public:
 	void UpARMMotor();
 	// アームを下降させる（元の位置に戻す）
 	void DownARMMotor();
+
+	// 尻尾を上げる
+	void UpTailMotor();
+	// 尻尾を下げる
+	void DownTailMotor();
+
 
 	// センサ値を再読み込みする
 	void ReadInputSensor();

@@ -12,6 +12,7 @@
 #include "ETSumoStrategy.h"
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
+#include "ETTrainStrategy.h"
 #include "SoundPlayTask.h"
 #include "HSLColor.h"
 #include "FieldMap.h"
@@ -111,7 +112,6 @@ RESTART_:
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
 
-    int i = 0;
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
 		dly_tsk(10);
@@ -130,12 +130,13 @@ RESTART_:
 //    StManager->SetStrategy(new ETSumoStrategy(StManager));
 
     // 初期値をラインの中心として格納
-    auto lts = new LineTraceStrategy(StManager);
+//    auto lts = new LineTraceStrategy(StManager);
 //    lts->CenterValue = IOManager->InputData.ReflectLight;
-    lts->CenterValue = 120;
-
-    // ライントレース戦略にて動作開始
-    StManager->SetStrategy(lts);
+    
+//    lts->CenterValue = 120;
+// ライントレース戦略にて動作開始
+//    StManager->SetStrategy(lts);
+    StManager->SetStrategy(new ETTrainStrategy(StManager));
     Clock* clock = new Clock();
     while(1)
     {

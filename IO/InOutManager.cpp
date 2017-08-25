@@ -149,6 +149,24 @@ void InOutManager::DownARMMotor()
 	ArmUp = false;
 }
 
+void InOutManager::UpTailMotor()
+{
+	// 既に上昇済みなら何もしない
+	if(TailUp) return;
+
+	ev3_motor_rotate(EV3_PORT_D, -90, 30, false);	
+	TailUp = true;
+}
+
+void InOutManager::DownTailMotor()
+{
+	// 既に下降済なら何もしない
+	if(!TailUp) return;
+
+	ev3_motor_rotate(EV3_PORT_D, 90, 30, false);		
+	TailUp = false;
+}
+
 void InOutManager::ReadInputSensor()
 {
 	//入力電文構造体にAPIの取得値を代入
