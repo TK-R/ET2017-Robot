@@ -182,7 +182,7 @@ void InOutManager::ReadInputSensor()
 	if(light > 255) light = 255;
 
 	InputData.ReflectLight = light;  
-	InputData.Angle = Gyro->getAngle();
+//	InputData.Angle = Gyro->getAngle();
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
 	InputData.SleepTime = SleepTime;
 	InputData.reserved2 = 0;
