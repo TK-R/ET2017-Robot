@@ -85,7 +85,7 @@ RETRY:
 			break;
 		case LThirdCurve:
 			// 三番目のカーブ終了（Lコース）
-			if(p.X > 3350) {
+			if(p.X < 3350) {
 				Position = LLastStraight;
 				goto RETRY;
 			}
