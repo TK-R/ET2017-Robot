@@ -76,49 +76,7 @@ ACTION :
 		IOManager->OutputData.RightMotorPower = TURN_SPEED;
 		break;
 
-	// 土俵直進中
-	case ForwardArena:
-		// 黒線認識したら、黒線横断中状態に遷移
-		if (IOManager->InputData.ReflectLight < ONLINE) {
-			CurrentState = ForwardOverLeftLine;
-			goto ACTION;
-		}
-		// 黒線まではラインの左側のエッジに沿ってライントレース
-		IOManager->LineTraceAction(pid, EDGE_LINE, true);
-		// ライントレース中なので、角度は常にライン方向
-		SpManager->ResetAngle(FORWARD_ANGLE);
-		currentPoint.Y = 2900;
-		SpManager->ResetPoint(&currentPoint);
-		break;
-
-	// 土俵左黒線横断中
-	case ForwardOverLeftLine:
-		// 黒線を抜けたら、左ブロック方向旋回状態に遷移
-		if (IOManager->InputData.ReflectLight > NotONLINE) {
-			CurrentState = TurnLeftPlace;
-			goto ACTION;
-		}
-		// 黒線認識までは普通に直進
-		IOManager->Forward(pid.BasePower);
-		break;
-
-	// 左ブロック方向旋回
-	case TurnLeftPlace:
-		// 黒線上に乗ったら左ブロックへの直進状態に移行
-		if (IOManager->InputData.ReflectLight < ONLINE &&
-						abs(currentAngle - LEFT_ANGLE)) {
-			CurrentState = ForwardLeftPlace;
-			goto ACTION;
-		}
-
-		// 左ブロック方向を向くまで旋回
-		//IOManager->Turn(currentAngle, LEFT_ANGLE, TURN_SPEED);
-		IOManager->OutputData.LeftMotorPower = -1 * TURN_SPEED / 2;
-		IOManager->OutputData.RightMotorPower = TURN_SPEED;
-
-		break;
-
-	// 左ブロックまで直進
+		// 左ブロックまで直進
 	case ForwardLeftPlace:
 		// 超音波センサでブロックを認識した場合には、色認識に移行
 		if (IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
@@ -183,7 +141,7 @@ ACTION :
 	// 左ブロックを押し出し
 	case OSHIDASHILeft:
 		// 一定距離進んだら後退
-		if(SpManager->RobotPoint.Y < 2750) {
+		if(currentPoint.Y < 2750) {
 			CurrentState = OSHIDASHILeftBack;
 			IOManager->UpARMMotor();
 			goto ACTION;			
@@ -192,7 +150,7 @@ ACTION :
 		break;
 	case OSHIDASHILeftBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
-		if(SpManager->RobotPoint.Y > 2790){
+		if(currentPoint.Y > 2790){
 			IOManager->DownARMMotor();
 			CurrentState = YORIKIRILeft;
 			goto ACTION;			
@@ -263,7 +221,7 @@ ACTION :
 	// 右ブロックを押し出し
 	case OSHIDASHIRight:
 		// 一定距離進んだら後退
-		if(SpManager->RobotPoint.Y > 3090) {
+		if(currentPoint.Y > 3090) {
 			IOManager->UpARMMotor();
 			CurrentState = OSHIDASHIRightBack;
 			goto ACTION;			
@@ -272,7 +230,7 @@ ACTION :
 		break;
 	case OSHIDASHIRightBack:
 		// 一定距離後退したら、正面を向く
-		if(SpManager->RobotPoint.Y < 3050){
+		if(currentPoint.Y < 3050){
 			IOManager->DownARMMotor();
 
 			CurrentState = TurnForward;

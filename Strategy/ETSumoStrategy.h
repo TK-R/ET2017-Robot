@@ -17,9 +17,6 @@ enum ETSumoStateEnum
 	FirstOnArena = 0,		// 初回土俵入り
 	FirstOverLine,			// 初回黒線到達
 	FirstTurnLeftPlace,		// 初回左ブロック方向旋回中
-	ForwardArena,			// 土俵直進中
-	ForwardOverLeftLine,	// 土俵左黒線横断中
-	TurnLeftPlace,			// 左ブロック方向旋回
 	ForwardLeftPlace,		// 左ブロックまで直進
 	DetectLeftBlock,		// 左ブロック色認識
 	OSHIDASHILeft,			// 左ブロックを押し出し
