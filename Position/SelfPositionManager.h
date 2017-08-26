@@ -30,6 +30,8 @@ public:
 
 	// 位置を強制的にリセットする
 	void ResetPoint(Point* p);
+	void ResetX(double X);
+	void ResetY(double Y);
 
 	// 角度を強制的にリセットする
 	void ResetAngle(double currentAngle);

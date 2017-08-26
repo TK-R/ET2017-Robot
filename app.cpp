@@ -137,6 +137,13 @@ RESTART_:
 // ライントレース戦略にて動作開始
 //    StManager->SetStrategy(lts);
     StManager->SetStrategy(new ETTrainStrategy(StManager));
+
+    // 初期位置（新幹線停止）
+    pData.Angle = 180;
+    pData.PositionX = 1200;
+    pData.PositionY = 2200;
+    SpManager->ResetPosition(pData);
+
     Clock* clock = new Clock();
     while(1)
     {

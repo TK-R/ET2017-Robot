@@ -20,8 +20,12 @@ InOutManager::InOutManager()
 
 	ArmMotor->setCount(0);
 	ev3_motor_rotate(EV3_PORT_C, 35, 30, true);
+
 	ev3_motor_stop(EV3_PORT_C, true);
 	ArmMotor->setCount(0);
+
+	ev3_motor_stop(EV3_PORT_D, true);
+	TailMotor->setCount(0);
 
 	Touch = new TouchSensor(PORT_1);
 	Sonar = new SonarSensor(PORT_2);
@@ -128,6 +132,18 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	Forward(data.BasePower, steering);
 }
 
+// 広報にライントレースを実施するように、左右モータ値を更新する
+void InOutManager::BackLineTraceAction(PIDData data, int center, bool LeftEdge)
+{
+	int light = InputData.ReflectLight;
+
+	int diff = LeftEdge ? (int)light - center :  (int)center - light;
+	int steering = data.PGain * diff + (diff - PrevDiff) * data.IGain;
+	
+	Forward(data.BasePower * -1, steering);
+
+}
+
 void InOutManager::UpARMMotor()
 {
 	// 既に上昇済みなら何もしない
@@ -154,7 +170,8 @@ void InOutManager::UpTailMotor()
 	// 既に上昇済みなら何もしない
 	if(TailUp) return;
 
-	ev3_motor_rotate(EV3_PORT_D, -90, 30, false);	
+	ev3_motor_rotate(EV3_PORT_D, -90, 30, true);	
+	ev3_motor_stop(EV3_PORT_D, true);
 	TailUp = true;
 }
 
@@ -162,8 +179,8 @@ void InOutManager::DownTailMotor()
 {
 	// 既に下降済なら何もしない
 	if(!TailUp) return;
-
-	ev3_motor_rotate(EV3_PORT_D, 90, 30, false);		
+	
+	ev3_motor_rotate(EV3_PORT_D, 90, 30, true);		
 	TailUp = false;
 }
 

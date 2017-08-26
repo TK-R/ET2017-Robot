@@ -77,9 +77,14 @@ public:
 	void TurnCW(int power);
 	// 反時計回りに回転するように左右モータ値を更新する
 	void TurnCCW(int power);
+	
 	// ライントレースを実施するように左右モータ値を更新する
 	void LineTraceAction(PIDData data, int center, bool LeftEdge);
-	
+
+	// 後退しながらライントレースを実施するように左右モータ値を更新する
+	void BackLineTraceAction(PIDData data, int center, bool LeftEdge);
+
+
 	// アームを上昇させる、ただし、処理はすぐに戻る
 	void UpARMMotor();
 	// アームを下降させる（元の位置に戻す）

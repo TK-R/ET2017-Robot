@@ -81,6 +81,16 @@ void SelfPositionManager::ResetPoint(Point* p)
 	RobotPoint.Y = p->Y;
 }
 
+void SelfPositionManager::ResetX(double X)
+{
+	RobotPoint.X = X;
+}
+
+void SelfPositionManager::ResetY(double Y)
+{
+	RobotPoint.Y = Y;
+}
+
 // 角度を強制的にリセットする
 void SelfPositionManager::ResetAngle(double currentAngle)
 {
