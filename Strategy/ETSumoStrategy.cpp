@@ -239,16 +239,6 @@ ACTION :
 		IOManager->Back(pid.BasePower);
 		break;
 	
-	// 黒線まで移動
-	case ForwardField:
-		// 完全に黒線上から移動したら中央方向への移動に遷移
-		if(IOManager->InputData.ReflectLight > FIELD) {
-			CurrentState = ForwardCenterFromRight;
-			goto ACTION;
-		}
-
-		IOManager->Forward(pid.BasePower);
-		break;
 	// 中央方向へ前進
 	case ForwardCenterFromRight:
 		// 黒線認識したら、前方旋回中状態に遷移
@@ -258,19 +248,6 @@ ACTION :
 			goto ACTION;
 		}
 		IOManager->LineTraceAction(pid, EDGE_LINE, false);		
-		break;
-
-	case ForwardOverCenterLineFromRight:
-		// 黒線を抜けたら、前方方向に旋回状態に遷移
-		if (IOManager->InputData.ReflectLight > NotONLINE){
-			CurrentState = TurnForward;
-			goto ACTION;
-		}
-		// 黒線認識までは普通に直進
-	//	IOManager->LineTraceAction(pid, EDGE_LINE, true);
-		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
-		IOManager->OutputData.RightMotorPower =  TURN_SPEED / 2;
-
 		break;
 
 	case TurnForward:
@@ -289,8 +266,7 @@ ACTION :
 		}
 
 		// 正面を向くまで旋回	
-//		IOManager->TurnCCW(TURN_SPEED);
-				IOManager->Stop();	
+		IOManager->TurnCCW(TURN_SPEED);
 		break;
 	default:
 		break;

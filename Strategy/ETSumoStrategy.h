@@ -31,7 +31,6 @@ enum ETSumoStateEnum
 	TurnCenter,				// 中央方向へ旋回
 	ForwardField,			// フィールド
 	ForwardCenterFromRight,	// 中央方向へ前進
-	ForwardOverCenterLineFromRight, // 右ブロックから土俵中央黒線を横断中
 	TurnForward,			// 前方方向へ旋回
 };
 
