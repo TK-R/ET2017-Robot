@@ -14,7 +14,10 @@ struct Arena {
 // ET相撲におけるステートの列挙
 enum ETSumoStateEnum
 {
-	ForwardArena = 0,		// 土俵直進中
+	FirstOnArena = 0,		// 初回土俵入り
+	FirstOverLine,			// 初回黒線到達
+	FirstTurnLeftPlace,		// 初回左ブロック方向旋回中
+	ForwardArena,			// 土俵直進中
 	ForwardOverLeftLine,	// 土俵左黒線横断中
 	TurnLeftPlace,			// 左ブロック方向旋回
 	ForwardLeftPlace,		// 左ブロックまで直進
@@ -43,7 +46,7 @@ private:
 	HSLColorKind PrevColor = HSLBlack;
 
 	// 現在のステート情報
-	ETSumoStateEnum CurrentState = ForwardArena;
+	ETSumoStateEnum CurrentState = FirstOnArena;
 	double CurrentDistance = 0;
 
 	// 現在の土俵枚数
@@ -54,8 +57,8 @@ private:
 		// Left, Right
 		{ HSLBlue, HSLRed },
 		{ HSLYellow, HSLGreen },
-		{ HSLBlue, HSLRed },		
-		{ HSLYellow, HSLGreen }
+		{ HSLYellow, HSLGreen },
+		{ HSLBlue, HSLRed }	
 	};
 
 	

@@ -111,30 +111,33 @@ void ParticleFilter::Localize()
 		if(p->Likelihood > min) pVector.push_back(p);
 	}
 
-	double x = 0, y = 0, angle = 0;
+	double x = 0, y = 0, angleX = 0, angleY = 0, angle = 0;
 
 	// 尤度の高い粒子が存在しない場合には、すべての粒子を平均化
 	if(pVector.size() == 0)	{
 		for(Particle* p  : ParticleArray) {
 			x += p->RobotPoint.X;
 			y += p->RobotPoint.Y;
-			angle += p->RobotAngle;
+			angleX += cos(p->RobotAngle * M_PI / 180);  
+			angleY += sin(p->RobotAngle * M_PI / 180); 
 		}
 
 		x /= PARTICLE_COUNT;
 		y /= PARTICLE_COUNT;
-		angle /= PARTICLE_COUNT;
+		angle = atan2(angleY / PARTICLE_COUNT, angleX / PARTICLE_COUNT) * 180 / M_PI; 
+
 	} else {
 		// 閾値以上の粒子を平均化
 		for(Particle* p : pVector) {
 			x += p->RobotPoint.X;
 			y += p->RobotPoint.Y;
-			angle += p->RobotAngle;
+			angleX += cos(p->RobotAngle * M_PI / 180);  
+			angleY += sin(p->RobotAngle * M_PI / 180); 
 		}
 
 		x /= pVector.size();
 		y /= pVector.size();
-		angle /= pVector.size();
+		angle = atan2(angleY / pVector.size() ,angleX / pVector.size()) * 180 / M_PI; 
 	}
 
 	// atan2の出力範囲が-pi ~ piのため、0-360の範囲に修正

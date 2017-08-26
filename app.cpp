@@ -112,6 +112,10 @@ RESTART_:
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
 
+    // デバッグ用
+//    IOManager->UpARMMotor();
+//   IOManager->HSLTargetType = BlockColor;
+
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
 		dly_tsk(10);
@@ -126,8 +130,6 @@ RESTART_:
     
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
-    // ET相撲NEO確認用
-//    StManager->SetStrategy(new ETSumoStrategy(StManager));
 
     // 初期値をラインの中心として格納
 //    auto lts = new LineTraceStrategy(StManager);
@@ -136,14 +138,24 @@ RESTART_:
 //    lts->CenterValue = 120;
 // ライントレース戦略にて動作開始
 //    StManager->SetStrategy(lts);
-    StManager->SetStrategy(new ETTrainStrategy(StManager));
+
+    // ET相撲列車停止
+    //StManager->SetStrategy(new ETTrainStrategy(StManager));
 
     // 初期位置（新幹線停止）
-    pData.Angle = 180;
-    pData.PositionX = 1200;
-    pData.PositionY = 2200;
-    SpManager->ResetPosition(pData);
+    //pData.Angle = 180;
+    //pData.PositionX = 1200;
+    //pData.PositionY = 2200;
+    //SpManager->ResetPosition(pData);
 
+    // 初期位置（ET相撲）
+    StManager->SetStrategy(new ETSumoStrategy(StManager));
+    // 初期位置（新幹線停止）
+    pData.Angle = 180;
+    pData.PositionX = 1530;
+    pData.PositionY = 2940;
+    SpManager->ResetPosition(pData);
+ 
     Clock* clock = new Clock();
     while(1)
     {

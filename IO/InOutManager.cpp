@@ -20,7 +20,6 @@ InOutManager::InOutManager()
 
 	ArmMotor->setCount(0);
 	ev3_motor_rotate(EV3_PORT_C, 35, 30, true);
-
 	ev3_motor_stop(EV3_PORT_C, true);
 	ArmMotor->setCount(0);
 
@@ -149,7 +148,7 @@ void InOutManager::UpARMMotor()
 	// 既に上昇済みなら何もしない
 	if(ArmUp) return;
 
-	ev3_motor_rotate(EV3_PORT_C, 70, 30, true);	
+	ev3_motor_rotate(EV3_PORT_C, 55, 30, true);	
 	ArmUp = true;
 }
 
@@ -161,7 +160,7 @@ void InOutManager::DownARMMotor()
 	// ターゲットタイプがブロックなら床に戻す
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
-	ev3_motor_rotate(EV3_PORT_C, -70, 30, true);		
+	ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
 	ArmUp = false;
 }
 
@@ -170,7 +169,7 @@ void InOutManager::UpTailMotor()
 	// 既に上昇済みなら何もしない
 	if(TailUp) return;
 
-	ev3_motor_rotate(EV3_PORT_D, -90, 30, true);	
+	ev3_motor_rotate(EV3_PORT_D, -90, 100, true);	
 	ev3_motor_stop(EV3_PORT_D, true);
 	TailUp = true;
 }
@@ -180,7 +179,7 @@ void InOutManager::DownTailMotor()
 	// 既に下降済なら何もしない
 	if(!TailUp) return;
 	
-	ev3_motor_rotate(EV3_PORT_D, 90, 30, true);		
+	ev3_motor_rotate(EV3_PORT_D, 90, 100, true);		
 	TailUp = false;
 }
 

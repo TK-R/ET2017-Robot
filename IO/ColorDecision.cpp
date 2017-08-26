@@ -19,10 +19,10 @@ struct HSLColors ColorDecision::BlockColors =
 {
     {300,   5,   100},  // White
     {252,   24,    4},  // Black
-    {5,     82,   35},  // Red
-    {44,    86,   33},  // Yellow
-    {190,   73,   16},  // Blue
-    {122,   63,   10}   // Green
+    {2,     84,   22},  // Red
+    {38,    84,   23},  // Yellow
+    {220,   96,   23},  // Blue
+    {142,   70,   11}   // Green
 };
 
 // 土俵の床の色認識に使用する基準色
@@ -40,13 +40,13 @@ struct HSLColors ColorDecision::ArenaColors =
 double ColorDecision::GetLikelihood(HSLColor* base, HSLColor* sensor)
 {
     // 各要素ごとの重み
-    double hk = 10, sk = 1, lk = 0.5;
+    double hk = 2, sk = 1, lk = 0.5;
     double hueDiff = abs(base->Hue - sensor->Hue);
     if(hueDiff > 180) hueDiff = 360 - hueDiff;
 
-    return hk * 1 / (1 + abs(base->Hue - sensor->Hue)) + 
-           sk * 1 / (1 + abs(base->Saturation - sensor->Saturation)) +
-           lk * 1 / (1 + abs(base->Luminosity - sensor->Luminosity));
+    return hk * GetGause(base->Hue - sensor->Hue, 10) + 
+           sk * GetGause(base->Saturation - sensor->Saturation, 10) +
+           lk * GetGause(base->Luminosity - sensor->Luminosity, 10);
 }
 
 // 明度に対する尤度を求める
@@ -54,7 +54,12 @@ double ColorDecision::GetLikelihoodLuminosity(double lumiBase, double lumiSens)
 {   
     // 明るさに応じて、尤度を計算する
 //    return 1.0 / (1.0 + abs(lumiBase - lumiSens));
-   return 10.0 * 1.0 / (sqrt(2.0 * M_PI) * 4) *  exp(-1.0 * pow(lumiBase - lumiSens, 2) /(2.0 * 16));
+   return 10.0 * GetGause(lumiBase - lumiSens, 4);
+}
+
+double ColorDecision::GetGause(double diff, double sigma)
+{
+       return 1.0 / (sqrt(2.0 * M_PI) * sigma) *  exp(-1.0 * diff * diff / (2.0 * sigma * sigma));
 }
 
 // 定義された値に従って、色の推定結果を求める

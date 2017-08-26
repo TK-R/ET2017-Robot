@@ -38,6 +38,7 @@ private:
 public:
     static double GetLikelihood(HSLColor* base, HSLColor* sensor);
     static double GetLikelihoodLuminosity(double lumiBase, double lumiSens);
+    static double GetGause(double diff, double sigma);
     
     static HSLColorKind Decision(HSLColor* color, DetectTargetType type);
 };

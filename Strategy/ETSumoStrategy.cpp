@@ -6,14 +6,14 @@
 #include "SerialData.h"
 #include "PIDDataManager.h"
 
-#define OSHIDASHI_SPEED 25 // 押し出し動作時のスピード
+#define OSHIDASHI_SPEED 20 // 押し出し動作時のスピード
 
 #define FIRST_TURN_SPEED 25 // 高速旋回時の出力
 #define TURN_SPEED 15 // 旋回時の出力
 
 #define LEFT_ANGLE 90   // 左ブロック方向
 #define RIGHT_ANGLE 270 // 右ブロック方向
-#define FORWARD_ANGLE 0 // 正面方向
+#define FORWARD_ANGLE 1 // 正面方向
 
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
@@ -21,7 +21,7 @@
 #define FIELD	  180 // 
 
 #define NOT_BLOCK_DISTANCE 8 // ブロックを認識していないときの距離
-#define BLOCK_DISTANCE 4	 // ブロックを認識した時のきょり　
+#define BLOCK_DISTANCE 3	 // ブロックを認識した時のきょり　
 
 void ETSumoStrategy::Run()
 {
@@ -30,12 +30,52 @@ void ETSumoStrategy::Run()
 	SelfPositionManager *SpManager = SelfPositionManager::GetInstance();
 
 	HSLColorKind DetectColor = IOManager->HSLKind;
+
+ACTION :
+
 	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState);
 	int currentAngle = SpManager->RobotAngle;
 	Point currentPoint = SpManager->RobotPoint;
 
-ACTION :
 	switch (CurrentState) {
+	// 初回土俵入り時
+	case FirstOnArena:
+		// 黒線認識したら、初回黒線横断中に遷移
+		if (IOManager->InputData.ReflectLight < ONLINE) {
+			// ライントレース中なので、角度は常にライン方向
+			SpManager->ResetAngle(FORWARD_ANGLE);
+			SpManager->ResetY(2920);
+
+			CurrentState = FirstOverLine;
+			goto ACTION;
+		}
+		// 黒線まではラインの右エッジに沿ってライントレース
+		IOManager->LineTraceAction(pid, EDGE_LINE, false);
+		break;
+
+	// 初回黒線横断時
+	case FirstOverLine:
+		// 黒線を抜けたら、初回左ブロック方向旋回状態に遷移
+		if (IOManager->InputData.ReflectLight > NotONLINE) {
+			CurrentState = FirstTurnLeftPlace;
+			goto ACTION;
+		}
+		// 黒線認識までは普通に直進
+		IOManager->Forward(pid.BasePower);
+		break;
+	
+	// 初回左ブロック旋回中
+	case FirstTurnLeftPlace:
+		// 左ブロック方向を向いたら、左ブロックまで直進中に遷移
+		if(abs(currentAngle - LEFT_ANGLE) < 5){
+			CurrentState = ForwardLeftPlace;
+			goto ACTION;
+		}
+		
+		IOManager->OutputData.LeftMotorPower = -1 * 0.25 * TURN_SPEED;
+		IOManager->OutputData.RightMotorPower = TURN_SPEED;
+		break;
+
 	// 土俵直進中
 	case ForwardArena:
 		// 黒線認識したら、黒線横断中状態に遷移
@@ -83,6 +123,8 @@ ACTION :
 		// 超音波センサでブロックを認識した場合には、色認識に移行
 		if (IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
 			CurrentState = DetectLeftBlock;
+			// ブロック位置に到達したので、座標を修正
+			SpManager->ResetY(2790);
 			IOManager->Stop();
 			break;
 		}
@@ -103,7 +145,7 @@ ACTION :
 		// 色が一致している場合には、カウントを進める
 		if (DetectColor == PrevColor && DetectColor != HSLBlack) {
 			ColorDetectCount++;
-			if (ColorDetectCount > 10) {
+			if (ColorDetectCount > 5) {
 				ColorDetectCount = 0;
 				// 色認識が完了したため、アームを下降させる
 				IOManager->DownARMMotor();
@@ -141,15 +183,17 @@ ACTION :
 	// 左ブロックを押し出し
 	case OSHIDASHILeft:
 		// 一定距離進んだら後退
-		if(SpManager->RobotPoint.Y < 2670) {
+		if(SpManager->RobotPoint.Y < 2750) {
 			CurrentState = OSHIDASHILeftBack;
+			IOManager->UpARMMotor();
 			goto ACTION;			
 		}
 		IOManager->Forward(OSHIDASHI_SPEED);
 		break;
 	case OSHIDASHILeftBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
-		if(SpManager->RobotPoint.Y > 2750){
+		if(SpManager->RobotPoint.Y > 2790){
+			IOManager->DownARMMotor();
 			CurrentState = YORIKIRILeft;
 			goto ACTION;			
 		}
@@ -160,12 +204,14 @@ ACTION :
 		// 超音波センサでブロックを認識した場合には、色認識に移行
 		if (IOManager->InputData.SonarDistance <= BLOCK_DISTANCE) {
 			CurrentState = DetectRightBlock;
+			// 右ブロックを検知したため、座標を修正
+			SpManager->ResetY(3050);
 			IOManager->Stop();
 			break;
 		}
 
 		// ラインに沿って右ブロック置き場に接近
-		IOManager->LineTraceAction(pid, EDGE_LINE, false);
+		IOManager->LineTraceAction(pid, EDGE_LINE, true);
 		// ライントレース中なので常に角度はライン沿い
 		SpManager->ResetAngle(RIGHT_ANGLE);
 
@@ -202,37 +248,40 @@ ACTION :
 	// 右ブロックを寄り切り
 	case YORIKIRIRight:
 		// 斜め方向を向いたらフィールド走行状態に遷移
-		if (abs(currentAngle - (LEFT_ANGLE - 50)) < 5) {
-			CurrentState = ForwardField;
+		if (abs(currentAngle - (LEFT_ANGLE)) < 10) {
+			CurrentState = ForwardCenterFromRight;
 			goto ACTION;			
-		} else if(abs(currentAngle - (LEFT_ANGLE - 50)) < 15) {
+		} else if(abs(currentAngle - (LEFT_ANGLE)) < 25) {
 			// 中央方向を向くまで旋回
-			IOManager->TurnCW(TURN_SPEED);
+			IOManager->TurnCCW(TURN_SPEED);
 		} else {
 			// 中央方向を向くまで旋回 (離れているので高速)
-			IOManager->TurnCW(FIRST_TURN_SPEED);			
+			IOManager->TurnCCW(FIRST_TURN_SPEED);			
 		}
 		break;
 
 	// 右ブロックを押し出し
 	case OSHIDASHIRight:
 		// 一定距離進んだら後退
-		if(SpManager->RobotPoint.Y > 3140) {
+		if(SpManager->RobotPoint.Y > 3090) {
+			IOManager->UpARMMotor();
 			CurrentState = OSHIDASHIRightBack;
 			goto ACTION;			
 		}
 		IOManager->Forward(OSHIDASHI_SPEED);
 		break;
 	case OSHIDASHIRightBack:
-		// 一定距離後退したら、以降は寄り切りと一緒
-		if(SpManager->RobotPoint.Y < 3070){
-			CurrentState = YORIKIRIRight;
+		// 一定距離後退したら、正面を向く
+		if(SpManager->RobotPoint.Y < 3050){
+			IOManager->DownARMMotor();
+
+			CurrentState = TurnForward;
 			goto ACTION;			
 		}
 		IOManager->Back(pid.BasePower);
 		break;
 	
-	// フィールド上まで移動
+	// 黒線まで移動
 	case ForwardField:
 		// 完全に黒線上から移動したら中央方向への移動に遷移
 		if(IOManager->InputData.ReflectLight > FIELD) {
@@ -244,14 +293,13 @@ ACTION :
 		break;
 	// 中央方向へ前進
 	case ForwardCenterFromRight:
-		// 黒線認識したら、黒線横断中状態に遷移
+		// 黒線認識したら、前方旋回中状態に遷移
 		if (IOManager->InputData.ReflectLight < ONLINE) {
-			CurrentState = ForwardOverCenterLineFromRight;
+			CurrentState = TurnForward;
+			SpManager->ResetAngle(LEFT_ANGLE);
 			goto ACTION;
 		}
-
-		IOManager->Forward(pid.BasePower);
-		
+		IOManager->LineTraceAction(pid, EDGE_LINE, false);		
 		break;
 
 	case ForwardOverCenterLineFromRight:
@@ -269,23 +317,22 @@ ACTION :
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-	//	if (IOManager->InputData.ReflectLight < EDGE_LINE) {
+		if (abs(currentAngle - FORWARD_ANGLE) - 5) {
 			//  四枚目の土俵でなければ次の土俵の攻略に遷移
 			if (CurrentArena <= 4) {
 					CurrentArena++;
-					CurrentState = ForwardArena;
+					CurrentState = FirstOnArena;
 					goto ACTION;					
 				} else {
 				// 全ての土俵の攻略が終わっていれば、ET相撲戦略を終了
 				IOManager->Stop();
 			}
 			break;
-	//	}
+		}
 
 		// 正面を向くまで旋回	
-//		IOManager->TurnCW(TURN_SPEED);
-	//	IOManager->OutputData.LeftMotorPower = TURN_SPEED;
-	//	IOManager->OutputData.RightMotorPower = 0;
+//		IOManager->TurnCCW(TURN_SPEED);
+				IOManager->Stop();	
 		break;
 	default:
 		break;

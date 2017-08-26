@@ -54,7 +54,5 @@ RGBColor FieldMap::GetRGBColor(int x, int y)
 	color.R = Image->map[y][x].c.r;
     color.G = Image->map[y][x].c.g;
 	color.B = Image->map[y][x].c.b;
-
-
 	return color;
 }
