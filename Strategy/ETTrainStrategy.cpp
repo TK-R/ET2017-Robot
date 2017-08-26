@@ -12,7 +12,7 @@
 
 #define BACK_POWER 20
 #define TURN_SPEED 20 // 旋回時の出力
-#define BACK_ANGLE 0
+#define BACK_ANGLE 1
 #define STATION_ANGLE 90 // 駅に尻尾を向けた方向
 #define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
@@ -23,11 +23,12 @@ void ETTrainStrategy::Run()
 	InOutManager *IOManager = InOutManager::GetInstance();
 	SelfPositionManager *SpManager = SelfPositionManager::GetInstance();
 	auto pid = PIDDataManager::GetInstance();
-	
+
+ACTION :
+
 	int currentAngle = SpManager->RobotAngle;
 	Point currentPoint = SpManager->RobotPoint;
 
-ACTION :
 	switch (CurrentState) {
 	// ゴール後、反対向きに旋回する
 	case TurnToBack:
@@ -100,7 +101,7 @@ ACTION :
 			SpManager->ResetAngle(FORWARD_ANGLE);
 			goto ACTION;
 		}
-		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 120, true);
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, false);
 		break;
 
 	case ForwardGrayArea:
@@ -114,14 +115,13 @@ ACTION :
 
 	// たどり着くまで、ライントレースを実施する
 	case LineTraceToArena:
-		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, true);
-		break;
-	// 土俵入りする
-	case UpToArena:
-		// 乗ったら、戦略クラスをET相撲戦略に変更
-		if(false) {
+		// 段差による角速度を検知したら、土俵入りと認識
+		if(IOManager->InputData.AnglarSpeed > 30) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
+			return;
 		}
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, false);
+		break;
 	default:
 		break;
 	}
