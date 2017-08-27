@@ -145,42 +145,50 @@ void InOutManager::BackLineTraceAction(PIDData data, int center, bool LeftEdge)
 
 void InOutManager::UpARMMotor()
 {
-	// 既に上昇済みなら何もしない
-	if(ArmUp) return;
+	// 既に上昇済なら何もしない
+	if(ArmState == ArmStateUp) return;
 
-	ev3_motor_rotate(EV3_PORT_C, 55, 30, true);	
-	ArmUp = true;
+	if(ArmState == ArmStateBottom) {
+		ev3_motor_rotate(EV3_PORT_C, 80, 30, true);		
+
+	} else { // At Down
+		ev3_motor_rotate(EV3_PORT_C, 55, 30, true);	
+	}
+	ArmState = ArmStateUp;
 }
 
 void InOutManager::DownARMMotor()
 {
 	// 既に下降済なら何もしない
-	if(!ArmUp)
+	if(ArmState == ArmStateDown) return;
+
 	// ターゲットタイプがブロックなら床に戻す
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
-	ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
-	ArmUp = false;
+	if(ArmState == ArmStateBottom) {
+		ev3_motor_rotate(EV3_PORT_C, 25, 30, true);		
+
+	} else { // At UP
+		ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
+	}
+
+	ArmState = ArmStateDown;
 }
 
 // 懸賞回収箇所までモータを下げる
 void InOutManager::ARMMotorAtBottom()
 {
-	ev3_motor_rotate(EV3_PORT_C, -25, 30, true);		
-}
+	// 既に懸賞回収箇所なら何もしない
+	if(ArmState == ArmStateBottom) return;
 
-// 懸賞回収箇所までモータを下げる
-void InOutManager::PickUpPrize()
-{
-	ev3_motor_rotate(EV3_PORT_C, 80, 30, true);		
-}
+	if(ArmState == ArmStateDown) {
+		ev3_motor_rotate(EV3_PORT_C, -25, 30, true);
+	} else { // At UP
+		ev3_motor_rotate(EV3_PORT_C, -80, 30, true);		
 
-// 懸賞回収箇所までモータを下げる
-void InOutManager::BaseARMMotor()
-{
-	ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
+	}
+	ArmState = ArmStateBottom;		
 }
-
 
 
 void InOutManager::UpTailMotor()

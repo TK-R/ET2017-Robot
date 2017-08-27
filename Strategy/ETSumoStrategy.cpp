@@ -5,6 +5,9 @@
 #include "ColorDecision.h"
 #include "SerialData.h"
 #include "PIDDataManager.h"
+#include "Strategy.h"
+#include "StrategyManager.h"
+#include "PrizeStrategy.h"
 
 #define OSHIDASHI_SPEED 20 // 押し出し動作時のスピード
 
@@ -243,6 +246,21 @@ ACTION :
 	case ForwardCenterFromRight:
 		// 黒線認識したら、前方旋回中状態に遷移
 		if (IOManager->InputData.ReflectLight < ONLINE) {
+			// 最後の土俵の場合には、懸賞運搬戦略に遷移
+			if(CurrentArena == 3) {
+				// 座標をクリア
+				SpManager->ResetX(2470);
+				SpManager->ResetY(2900);
+				SpManager->ResetAngle(LEFT_ANGLE);
+				
+				IOManager->Stop();
+				IOManager->WriteOutputMotor();
+			    dly_tsk(500);
+	
+				Manager->SetStrategy(new PrizeStrategy(Manager));
+				break;
+			}
+		
 			CurrentState = TurnForward;
 			SpManager->ResetAngle(LEFT_ANGLE);
 			goto ACTION;
@@ -260,16 +278,11 @@ ACTION :
 				CurrentState = ForwardRail;
 				// 座標修正
 				SpManager->ResetX(1920);
-				break;
-			}
-
-			//  四枚目の土俵でなければ次の土俵の攻略に遷移
-			if (CurrentArena < 4) {
-				CurrentState = FirstOnArena;
 				goto ACTION;					
 			} else {
-				// 全ての土俵の攻略が終わっていれば、ET相撲戦略を終了
-				IOManager->Stop();
+				// 2枚目でなければ、通常の処理に遷移
+				CurrentState = FirstOnArena;
+				goto ACTION;					
 			}
 			break;
 		}
@@ -277,8 +290,8 @@ ACTION :
 		// 正面を向くまで旋回	
 		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
 		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * TURN_SPEED;
-
 		break;
+
 	case ForwardRail:
 		if(currentPoint.X > 2120) {
 			// 線路を跨いだので、通常のライントレースに遷移

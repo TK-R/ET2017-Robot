@@ -19,6 +19,13 @@ using ev3api::SonarSensor;
 using ev3api::GyroSensor;
 using ev3api::ColorSensor;
 
+enum ArmStateEnum
+{
+	ArmStateUp,
+	ArmStateDown,
+	ArmStateBottom
+};
+
 class InOutManager
 {
 private:
@@ -39,8 +46,8 @@ private:
 
 	InOutManager();
 
-	// アーム上昇中ならTrue
-	bool ArmUp = false;
+	// アーム状態
+	ArmStateEnum ArmState = ArmStateDown;
 
 	// 尻尾上昇中ならTrue
 	bool TailUp = true;
@@ -89,14 +96,8 @@ public:
 	void UpARMMotor();
 	// アームを下降させる
 	void DownARMMotor();
-
 	// アームを懸賞箇所まで下げる
 	void ARMMotorAtBottom();
-	// アームを懸賞回収角度まで上げる
-	void PickUpPrize();
-	// ライントレース時の原点に戻す
-	void BaseARMMotor();
-
 
 	// 尻尾を上げる
 	void UpTailMotor();
