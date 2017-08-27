@@ -28,9 +28,9 @@ void ETSumoStrategy::Run()
 	// 使用するシングルトンクラスのインスタンスを取得
 	InOutManager *IOManager = InOutManager::GetInstance();
 	SelfPositionManager *SpManager = SelfPositionManager::GetInstance();
-
 	HSLColorKind DetectColor = IOManager->HSLKind;
-
+	
+	SpManager->ParticleFilterON = false;
 ACTION :
 
 	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState);
@@ -253,12 +253,21 @@ ACTION :
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
 		if (currentAngle > 270 && currentAngle < 355) {
+			CurrentArena++;
+				
+			// 2枚目の攻略が完了した場合には、線路をまたぐ直進処理に遷移
+			if(CurrentArena == 2) {
+				CurrentState = ForwardRail;
+				// 座標修正
+				SpManager->ResetX(1920);
+				break;
+			}
+
 			//  四枚目の土俵でなければ次の土俵の攻略に遷移
-			if (CurrentArena <= 4) {
-					CurrentArena++;
-					CurrentState = FirstOnArena;
-					goto ACTION;					
-				} else {
+			if (CurrentArena < 4) {
+				CurrentState = FirstOnArena;
+				goto ACTION;					
+			} else {
 				// 全ての土俵の攻略が終わっていれば、ET相撲戦略を終了
 				IOManager->Stop();
 			}
@@ -266,11 +275,18 @@ ACTION :
 		}
 
 		// 正面を向くまで旋回	
-//		IOManager->TurnCW(TURN_SPEED);
-
 		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
 		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * TURN_SPEED;
 
+		break;
+	case ForwardRail:
+		if(currentPoint.X > 2120) {
+			// 線路を跨いだので、通常のライントレースに遷移
+			CurrentState = FirstOnArena;
+			goto ACTION;
+		}
+
+		IOManager->Forward(30);
 		break;
 	default:
 		break;

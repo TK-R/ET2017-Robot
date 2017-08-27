@@ -32,6 +32,7 @@ enum ETSumoStateEnum
 	ForwardField,			// フィールド
 	ForwardCenterFromRight,	// 中央方向へ前進
 	TurnForward,			// 前方方向へ旋回
+	ForwardRail				// 線路上を通貨
 };
 
 class ETSumoStrategy: public AbstractStrategy

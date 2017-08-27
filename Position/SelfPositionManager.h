@@ -11,13 +11,15 @@ private:
 	SelfPositionManager(){}
 	ParticleFilter* Filter;
 	void SendData();
+
+
 public:
 	// ONなら自己位置推定を実施する
-	bool ParticleFilterON = false;
+	bool ParticleFilterON = true;
 
 	// 走行体の座標
 	Point RobotPoint;
-	
+
 	// 走行体の角度
 	double RobotAngle;
 

@@ -40,8 +40,13 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 		return;
 	}	
 
-	// パーティクルフィルタに対するリサンプリング
-	Filter->Resampling(&RobotPoint,RobotAngle, POS_SIGMA, ANGLE_SIGMA);
+	// パーティクルフィルタONなら、フィルタに対してリサンプリングを実施する
+	if (ParticleFilterON) {
+		Filter->Resampling(&RobotPoint,RobotAngle, POS_SIGMA, ANGLE_SIGMA);
+	} else {
+		// OFFなら、標準偏差0でリサンプリングを行う
+		Filter->Resampling(&RobotPoint,RobotAngle, 0, 0);
+	}
 
 	// パーティクルフィルタの状態遷移を実施
 	Filter->UpdateParticle(leftMotorCount, rightMotorCount);
