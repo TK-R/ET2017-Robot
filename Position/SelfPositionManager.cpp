@@ -79,22 +79,34 @@ void SelfPositionManager::ResetPoint(Point* p)
 {
 	RobotPoint.X = p->X;
 	RobotPoint.Y = p->Y;
+
+	// 送信処理	
+	SendData();
 }
 
 void SelfPositionManager::ResetX(double X)
 {
 	RobotPoint.X = X;
+
+	// 送信処理	
+	SendData();
 }
 
 void SelfPositionManager::ResetY(double Y)
 {
 	RobotPoint.Y = Y;
+
+	// 送信処理	
+	SendData();
 }
 
 // 角度を強制的にリセットする
 void SelfPositionManager::ResetAngle(double currentAngle)
 {
 	RobotAngle = currentAngle;
+
+	// 送信処理	
+	SendData();
 }
 
 // ある座標との距離を求める

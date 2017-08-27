@@ -150,7 +150,7 @@ ACTION :
 		break;
 	case OSHIDASHILeftBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
-		if(currentPoint.Y > 2790){
+		if(currentPoint.Y > 2775){
 			IOManager->DownARMMotor();
 			CurrentState = YORIKIRILeft;
 			goto ACTION;			
@@ -229,11 +229,11 @@ ACTION :
 		IOManager->Forward(OSHIDASHI_SPEED);
 		break;
 	case OSHIDASHIRightBack:
-		// 一定距離後退したら、正面を向く
-		if(currentPoint.Y < 3050){
+		// 一定距離後退したら、以降は寄り切りと一緒
+		if(currentPoint.Y < 3070){
 			IOManager->DownARMMotor();
 
-			CurrentState = TurnForward;
+			CurrentState = YORIKIRIRight;
 			goto ACTION;			
 		}
 		IOManager->Back(pid.BasePower);
@@ -252,7 +252,7 @@ ACTION :
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-		if (abs(currentAngle - FORWARD_ANGLE) - 5) {
+		if (currentAngle > 270 && currentAngle < 355) {
 			//  四枚目の土俵でなければ次の土俵の攻略に遷移
 			if (CurrentArena <= 4) {
 					CurrentArena++;
@@ -266,7 +266,11 @@ ACTION :
 		}
 
 		// 正面を向くまで旋回	
-		IOManager->TurnCCW(TURN_SPEED);
+//		IOManager->TurnCW(TURN_SPEED);
+
+		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
+		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * TURN_SPEED;
+
 		break;
 	default:
 		break;

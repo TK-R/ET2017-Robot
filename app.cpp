@@ -150,8 +150,8 @@ RESTART_:
 
     // 初期位置（ET相撲）
     StManager->SetStrategy(new ETSumoStrategy(StManager));
-    // 初期位置（新幹線停止）
-    pData.Angle = 180;
+    // 初期位置（ET相撲）
+    pData.Angle = 0;
     pData.PositionX = 1530;
     pData.PositionY = 2940;
     SpManager->ResetPosition(pData);
