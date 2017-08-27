@@ -155,14 +155,33 @@ void InOutManager::UpARMMotor()
 void InOutManager::DownARMMotor()
 {
 	// 既に下降済なら何もしない
-	if(!ArmUp) return;
-
+	if(!ArmUp)
 	// ターゲットタイプがブロックなら床に戻す
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
 	ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
 	ArmUp = false;
 }
+
+// 懸賞回収箇所までモータを下げる
+void InOutManager::ARMMotorAtBottom()
+{
+	ev3_motor_rotate(EV3_PORT_C, -25, 30, true);		
+}
+
+// 懸賞回収箇所までモータを下げる
+void InOutManager::PickUpPrize()
+{
+	ev3_motor_rotate(EV3_PORT_C, 80, 30, true);		
+}
+
+// 懸賞回収箇所までモータを下げる
+void InOutManager::BaseARMMotor()
+{
+	ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
+}
+
+
 
 void InOutManager::UpTailMotor()
 {

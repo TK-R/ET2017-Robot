@@ -97,6 +97,7 @@ void main_task(intptr_t unused)
     PlaySound(SensorInitialEnd);    
     
 RESTART_:
+
     // 初期位置
     SelfPositionData pData;
 /*

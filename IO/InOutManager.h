@@ -85,10 +85,18 @@ public:
 	void BackLineTraceAction(PIDData data, int center, bool LeftEdge);
 
 
-	// アームを上昇させる、ただし、処理はすぐに戻る
+	// アームを上昇させる
 	void UpARMMotor();
-	// アームを下降させる（元の位置に戻す）
+	// アームを下降させる
 	void DownARMMotor();
+
+	// アームを懸賞箇所まで下げる
+	void ARMMotorAtBottom();
+	// アームを懸賞回収角度まで上げる
+	void PickUpPrize();
+	// ライントレース時の原点に戻す
+	void BaseARMMotor();
+
 
 	// 尻尾を上げる
 	void UpTailMotor();
