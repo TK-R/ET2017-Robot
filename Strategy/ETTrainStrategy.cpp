@@ -107,7 +107,7 @@ ACTION :
 			SpManager->ResetAngle(FORWARD_ANGLE);
 			goto ACTION;
 		}
-		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, false);
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 120, false);
 		break;
 
 	case ForwardGrayArea:
