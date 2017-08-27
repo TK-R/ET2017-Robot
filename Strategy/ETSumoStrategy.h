@@ -47,9 +47,7 @@ private:
 	double CurrentDistance = 0;
 
 	// 現在の土俵枚数
-//	int CurrentArena = 0;
-	// 懸賞運びデバッグ用
-	int CurrentArena = 3;
+	int CurrentArena = 0;
 	
 	// ET相撲における土俵の定義 !! 当日変更箇所
 	Arena ArenaArray[4] = {

@@ -141,21 +141,21 @@ RESTART_:
 //    StManager->SetStrategy(lts);
 
     // ET相撲列車停止
-    //StManager->SetStrategy(new ETTrainStrategy(StManager));
+    StManager->SetStrategy(new ETTrainStrategy(StManager));
 
     // 初期位置（新幹線停止）
-    //pData.Angle = 180;
-    //pData.PositionX = 1200;
-    //pData.PositionY = 2200;
-    //SpManager->ResetPosition(pData);
+    pData.Angle = 180;
+    pData.PositionX = 1200;
+    pData.PositionY = 2200;
+    SpManager->ResetPosition(pData);
 
     // 初期位置（ET相撲）
-    StManager->SetStrategy(new ETSumoStrategy(StManager));
+    //StManager->SetStrategy(new ETSumoStrategy(StManager));
     // 初期位置（ET相撲）
-    pData.Angle = 0;
-    pData.PositionX = 1530;
-    pData.PositionY = 2940;
-    SpManager->ResetPosition(pData);
+    //pData.Angle = 0;
+    //pData.PositionX = 1530;
+    //pData.PositionY = 2940;
+    //SpManager->ResetPosition(pData);
  
     Clock* clock = new Clock();
     while(1)
@@ -172,6 +172,7 @@ RESTART_:
             IOManager->OutputData.LeftMotorPower = 0;
             IOManager->OutputData.RightMotorPower = 0;
             IOManager->DownARMMotor();
+            IOManager->UpTailMotor();
             IOManager->WriteOutputMotor();
 
             while(IOManager->InputData.TouchSensor == 1) {

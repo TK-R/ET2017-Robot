@@ -193,22 +193,48 @@ void InOutManager::ARMMotorAtBottom()
 
 void InOutManager::UpTailMotor()
 {
-	// 既に上昇済みなら何もしない
-	if(TailUp) return;
+	
+	if(TailState == TailStateUp) return;
 
-	ev3_motor_rotate(EV3_PORT_D, -90, 100, true);	
-	ev3_motor_stop(EV3_PORT_D, true);
-	TailUp = true;
+	if(TailState == TailStateDown){
+		ev3_motor_rotate(EV3_PORT_D, -90, 100, true);	
+	} else {
+		// Bottom
+		ev3_motor_rotate(EV3_PORT_D, -180, 100, true);	
+	}
+
+	TailState = TailStateUp;
 }
 
 void InOutManager::DownTailMotor()
 {
 	// 既に下降済なら何もしない
-	if(!TailUp) return;
+	if(TailState == TailStateDown) return;
 	
-	ev3_motor_rotate(EV3_PORT_D, 90, 100, true);		
-	TailUp = false;
+	if(TailState == TailStateUp) {
+		ev3_motor_rotate(EV3_PORT_D, 90, 100, true);		
+	} else {
+		// BOTTOM
+		ev3_motor_rotate(EV3_PORT_D, -90, 100, true);		
+	}
+	TailState = TailStateDown;
 }
+
+void InOutManager::BottomTailMotor() 
+{
+	// 既に下降済なら何もしない
+	if(TailState == TailStateBottom) return;
+	
+	if(TailState == TailStateUp) {
+		ev3_motor_rotate(EV3_PORT_D, 180, 100, true);		
+	} else {
+		// BOTTOM
+		ev3_motor_rotate(EV3_PORT_D, -90, 100, true);		
+	}
+
+	TailState = TailStateBottom;
+}
+	
 
 void InOutManager::ReadInputSensor()
 {
@@ -243,7 +269,6 @@ void InOutManager::ReadInputSensor()
 	if(light > 255) light = 255;
 
 	InputData.ReflectLight = light;  
-//	InputData.Angle = Gyro->getAngle();
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
 	InputData.SleepTime = SleepTime;
 	InputData.reserved2 = 0;

@@ -23,6 +23,7 @@ void ETTrainStrategy::Run()
 	InOutManager *IOManager = InOutManager::GetInstance();
 	SelfPositionManager *SpManager = SelfPositionManager::GetInstance();
 	auto pid = PIDDataManager::GetInstance();
+	SpManager->ParticleFilterON = false;
 
 ACTION :
 
@@ -87,6 +88,11 @@ ACTION :
 	case TurnFront:
 		if (abs(currentAngle - FORWARD_ANGLE) < 10){
 			CurrentState = LineTraceToGrayArea;
+
+			IOManager->Stop();
+			IOManager->WriteOutputMotor();
+			IOManager->BottomTailMotor();
+			
 			goto ACTION;
 		}
 		// 進行方向まで旋回
@@ -118,12 +124,6 @@ ACTION :
 		// 段差による角速度を検知したら、土俵入りと認識
 		if(IOManager->InputData.AnglarSpeed > 30) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
-			IOManager->DownTailMotor();
-			// いったん落ち着く
-			IOManager->Stop();
-			IOManager->WriteOutputMotor();
-			dly_tsk(500);
-
 			return;
 		}
 		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, false);

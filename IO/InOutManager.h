@@ -26,6 +26,13 @@ enum ArmStateEnum
 	ArmStateBottom
 };
 
+enum TailStateEnum
+{
+	TailStateUp,
+	TailStateDown,
+	TailStateBottom
+};
+
 class InOutManager
 {
 private:
@@ -49,8 +56,8 @@ private:
 	// アーム状態
 	ArmStateEnum ArmState = ArmStateDown;
 
-	// 尻尾上昇中ならTrue
-	bool TailUp = true;
+	// 尻尾状態
+	TailStateEnum TailState = TailStateUp;
 
 public:
 	InputSignalData InputData;
@@ -103,13 +110,13 @@ public:
 	void UpTailMotor();
 	// 尻尾を下げる
 	void DownTailMotor();
-
+	// 尻尾を一番下まで下げる 
+	void BottomTailMotor();
 
 	// センサ値を再読み込みする
 	void ReadInputSensor();
 	// モータ出力値を書き込む
 	void WriteOutputMotor();
 };
-
 
 #endif 
