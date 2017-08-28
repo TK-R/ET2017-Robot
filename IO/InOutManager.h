@@ -53,6 +53,12 @@ private:
 	// 積分制御用
 	std::vector<int> IntegralDiff = {0};
 
+	// 直進処理の微分計算用
+	int PrevForwardDiff = 0;
+	// 積分制御用
+	std::vector<int> IntegralForwardDiff = {0};
+
+
 	InOutManager();
 
 	// アーム状態

@@ -13,6 +13,7 @@ enum StateNo {
 	ETSumoPIDState = 20,
 	ETTrainSlow = 21,
 	ETTrainHigh = 22,
+	ForwardPID = 99,
 };
 
 
@@ -53,6 +54,10 @@ private:
 		// ET相撲前の列車停止中
 		PIDData trainH = {25, 0.41, 0.0, 0.8, ETTrainHigh};
 		SetPIDData(trainH);
+
+		// 直進中のPID制御
+		PIDData forward = {100, 0.46, 0.88, 0.22, ForwardPID};
+		SetPIDData(forward);
 	}
 
 public:

@@ -70,6 +70,9 @@ RETRY:
 			}
 			leftEdge = true;
 			pidData = pidManager->GetPIDData(LineTraceStraight);
+	//		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+			InOut->Forward(pidData.BasePower);
+			
 			break;
 		case L2:
 			// 最初のカーブ終了（Lコース）
@@ -79,6 +82,7 @@ RETRY:
 			}
 			leftEdge = true;
 			pidData = pidManager->GetPIDData(LineTraceMiddleSpeedCurve);
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 		case L3:
 			// 二番目のカーブ終了（Lコース）
@@ -86,6 +90,8 @@ RETRY:
 				CurrentState = L4;
 				goto RETRY;
 			}
+			leftEdge = true;
+			InOut->Forward(pidManager->GetPIDData(LineTraceStraight).BasePower);
 			break;
 		case L4:
 			// 三番目のカーブ終了（Lコース）
@@ -114,6 +120,5 @@ RETRY:
 			break;
 	}	
 
-	InOut->LineTraceAction(pidData, CenterValue, true);
 }
 

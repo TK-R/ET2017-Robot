@@ -6,6 +6,7 @@
 #include "ColorDecision.h"
 #include "InOutManager.h"
 #include "SerialSendTask.h"
+#include "PIDDataManager.h"
 
 InOutManager::InOutManager()
 {
@@ -40,14 +41,29 @@ InOutManager* InOutManager::GetInstance()
 // 前進するように左右モータの値を更新する
 void InOutManager::Forward(int power)
 {
-	OutputData.LeftMotorPower = power;
-	OutputData.RightMotorPower = power;
+	int diff = InputData.RightMotorAngle - InputData.LeftMotorAngle;
+	auto pid = PIDDataManager::GetInstance()->GetPIDData(ForwardPID);
+	
+	// 積分時間 = 1s
+	uint IntegralCount = 50;
+
+	// 積分処理
+	IntegralForwardDiff.push_back(diff);
+	if(IntegralForwardDiff.size() > IntegralCount) IntegralForwardDiff.erase(IntegralForwardDiff.begin());
+
+	// 積分偏差
+	double intDiff = 0.0;
+	for(int d : IntegralForwardDiff)
+		intDiff  += d;
+ 	intDiff /= IntegralForwardDiff.size();	
+
+	Forward(power, diff * 30 * pid.PGain + (diff- PrevForwardDiff) * pid.DGain * 30 + intDiff * pid.IGain * 60);
+	PrevForwardDiff = diff;
 }
 
 // 出力値と操舵角から左右モータの値を更新する（0：直進 100：右方向へ -100：左方向へ）
 void InOutManager::Forward(int power, int steering)
 {
-	
 	// ステアリング値は0-100の範囲内
 	if(steering > 100) steering = 100;
 	if(steering < -100) steering = -100;
@@ -141,6 +157,11 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
 	PrevDiff = diff;
 	Forward(data.BasePower, steering);
+
+	// 単純直進時のPID値をクリア
+	PrevForwardDiff = 0;
+	IntegralForwardDiff.clear();
+	
 }
 
 // 広報にライントレースを実施するように、左右モータ値を更新する
