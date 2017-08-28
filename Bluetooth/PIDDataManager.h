@@ -10,9 +10,11 @@ enum StateNo {
 	LineTraceMiddleSpeedCurve,
 	LineTraceSlowSpeedCurve,
 	BlockMovePIDState = 10,
+	BlockMoveHighPIDState,
 	ETSumoPIDState = 20,
-	ETTrainSlow = 21,
-	ETTrainHigh = 22,
+	ETSumoHighPIDState,
+	ETTrainSlow = 30,
+	ETTrainHigh,
 	ForwardPID = 99,
 };
 
@@ -43,9 +45,17 @@ private:
 		PIDData block = {16, 0.4, 0, 0.7, BlockMovePIDState};
 		SetPIDData(block);
 
+		// ブロック並べ中（高速）
+		PIDData blockH = {16, 0.4, 0, 0.7, ETSumoHighPIDState};
+		SetPIDData(blockH);
+
 		// ET相撲中
 		PIDData sumo = {15, 1.2, 0, 1.0, ETSumoPIDState};
 		SetPIDData(sumo);
+
+		// ET相撲中(高速）	
+		PIDData sumoH = {15, 1.2, 0, 1.0, ETSumoHighPIDState};
+		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中
 		PIDData trainS = {15, 1.2, 0, 1.0, ETTrainSlow};
