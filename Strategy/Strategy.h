@@ -23,20 +23,20 @@ public:
 };
 
 // 現在どこを走行中か
-enum CurrentCoursePosition {
+enum CurrentStateEnum {
 	RStraight = 0,
 	RFirstCurve,
 	RSecondCurve,
 	RThirdCurve,
 	RFourthCurve,
 	RLastStraight,
-	LStraight,
-	LFirstCurve,
-	LSecondCurve,
-	LThirdCurve,
-	LFourthCurve,
-	LFifthCurve,
-	LLastStraight
+	L1,
+	L2,
+	L3,
+	L4,
+	L5,
+	L6,
+	L7
 };
 
 class LineTraceStrategy: public AbstractStrategy
@@ -45,15 +45,10 @@ private:
 	// 微分制御用
 	int PrevDiff = 0;
 
-	// 積分制御用
-	std::vector<int> IntegralDiff = {0};
 
 	// 現在走行中のコース箇所
 	// CurrentCoursePosition Position = RStraight;
-	CurrentCoursePosition Position = LFirstCurve;
-
-	// 現在の走行状態を求める
-	int GetCurrentState();
+	CurrentStateEnum CurrentState = L1;
 
 public:
 	int CenterValue = 0;

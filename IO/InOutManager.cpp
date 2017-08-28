@@ -126,8 +126,20 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	int light = InputData.ReflectLight;
 
 	int diff = LeftEdge ? (int)light - center :  (int)center - light;
-	int steering = data.PGain * diff + (diff - PrevDiff) * data.IGain;
-	
+
+	uint IntegralCount = 5;
+	// 積分処理
+	IntegralDiff.push_back(diff);
+	if(IntegralDiff.size() > IntegralCount) IntegralDiff.erase(IntegralDiff.begin());
+
+	// 積分偏差
+	double intDiff = 0.0;
+	for(int d : IntegralDiff)
+		intDiff  += d;
+ 	intDiff /= IntegralDiff.size();	
+
+	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
+	PrevDiff = diff;
 	Forward(data.BasePower, steering);
 }
 

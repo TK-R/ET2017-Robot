@@ -50,6 +50,8 @@ private:
 
 	// ライントレース実施時に使用する値
 	int PrevDiff = 0;
+	// 積分制御用
+	std::vector<int> IntegralDiff = {0};
 
 	InOutManager();
 

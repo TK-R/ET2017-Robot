@@ -84,7 +84,7 @@ void Refresh()
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->UpdatePosition(IOManager->InputData.LeftMotorAngle, IOManager->InputData.RightMotorAngle);   
-    Draw();
+//    Draw();
 }
 
 void main_task(intptr_t unused) 
@@ -107,8 +107,8 @@ RESTART_:
 */
     // 初期位置（ライントレース）
     pData.Angle = 270;
-    pData.PositionX = 5190;
-    pData.PositionY = 380;
+    pData.PositionX = 4790;
+    pData.PositionY = 430;
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
@@ -133,21 +133,21 @@ RESTART_:
 
 
     // 初期値をラインの中心として格納
-//    auto lts = new LineTraceStrategy(StManager);
-//    lts->CenterValue = IOManager->InputData.ReflectLight;
+   auto lts = new LineTraceStrategy(StManager);
+//   lts->CenterValue = IOManager->InputData.ReflectLight;
     
-//    lts->CenterValue = 120;
+   lts->CenterValue = 120;
 // ライントレース戦略にて動作開始
-//    StManager->SetStrategy(lts);
+   StManager->SetStrategy(lts);
 
     // ET相撲列車停止
-    StManager->SetStrategy(new ETTrainStrategy(StManager));
+    // StManager->SetStrategy(new ETTrainStrategy(StManager));
 
     // 初期位置（新幹線停止）
-    pData.Angle = 180;
-    pData.PositionX = 1200;
-    pData.PositionY = 2200;
-    SpManager->ResetPosition(pData);
+    // pData.Angle = 180;
+    // pData.PositionX = 1200;
+    // pData.PositionY = 2200;
+    // SpManager->ResetPosition(pData);
 
     // 初期位置（ET相撲）
     //StManager->SetStrategy(new ETSumoStrategy(StManager));
