@@ -161,7 +161,7 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 
 	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
 	PrevDiff = diff;
-	Forward(data.BasePower, steering);
+	Forward(data.BasePower, steering + data.Steering);
 
 	// 単純直進時のPID値をクリア
 	PrevForwardDiff = 0;

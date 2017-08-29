@@ -50,12 +50,13 @@ struct InputSignalData {
 	uint16_t BatteryVoltage;	//バッテリ電圧[mV]
 };
 
-#define PID_DATA_BYTE_SIZE 20
+#define PID_DATA_BYTE_SIZE 21
 struct PIDData {
 	float BasePower;	// 計算の基準となる出力値
 	float PGain;		// 比例ゲイン
 	float IGain;		// 積分ゲイン
 	float DGain; 		// 微分ゲイン
+	int8_t Steering;	// ステアリング値
 	int State; 			// 変更を適用するステートNo
 };
 
