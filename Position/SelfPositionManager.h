@@ -25,6 +25,7 @@ public:
 
 	// 総走行距離
 	double Distance;
+	
 	static SelfPositionManager* GetInstance();
 
 	void UpdatePosition(int8_t leftMotorCount, int8_t rightMotorCount);

@@ -33,7 +33,7 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	double Tr = TireDiameter * M_PI * rightMotorCount / 360.0; 
 
 	// モータエンコーダ値の変化量
-	double D = (Tl + Tr) / 2.0;
+	Distance = (Tl + Tr) / 2.0;
 	
 	// 角度の変化量	
 	double theta = (Tr - Tl) / d; 
@@ -53,8 +53,8 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	// 変化量を、正規分布の値を加味して算出
 	double sinc = 1 - theta*theta/24.0 * (1 - theta*theta/80.0 * (1 - theta*theta/168.0));	//sinc(theta/2)を3次までテイラー展開
 	// double sinc_theta = fabs(theta/2.0)<1.0e-10 ? 1.0 : sin(theta/2.0)/(theta/2.0);
-	double deltaX = D * cos(theta0 + (theta / 2.0)) * sinc;
-	double deltaY = D * sin(theta0 + (theta / 2.0)) * sinc;
+	double deltaX = Distance * cos(theta0 + (theta / 2.0)) * sinc;
+	double deltaY = Distance * sin(theta0 + (theta / 2.0)) * sinc;
 	// double deltaX = D * cos(theta0 + (theta / 2.0));
 	// double deltaY = D * sin(theta0 + (theta / 2.0));
 		
@@ -149,4 +149,5 @@ void ParticleFilter::Localize()
 	RobotPoint.X = x;
 	RobotPoint.Y = y;
 	RobotAngle = angle;
+	Distance = ParticleArray[0]->Distance;
 }

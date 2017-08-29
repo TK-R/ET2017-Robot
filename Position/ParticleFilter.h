@@ -17,6 +17,9 @@ public:
 	Point RobotPoint;
 	// 粒子が持つ走行体の方向
 	double RobotAngle;
+	// 粒子の移動量
+	double Distance;
+	
 
 	// 計算した尤度
 	double Likelihood;	
@@ -36,7 +39,7 @@ private:
 public:
 	Point RobotPoint;
 	double RobotAngle;
-		 
+	double Distance;
 	void Resampling(Point* newPoint, double newAngle, double pointSigma, double angleSigma);
 	void UpdateParticle(int8_t leftMotorCount, int8_t rightMotorCount);
 	void Localize();

@@ -57,7 +57,12 @@ void InOutManager::Forward(int power)
 		intDiff  += d;
  	intDiff /= IntegralForwardDiff.size();	
 
-	Forward(power, diff * 30 * pid.PGain + (diff- PrevForwardDiff) * pid.DGain * 30 + intDiff * pid.IGain * 60);
+	if(IntegralForwardDiff.size() > 5) {
+		Forward(power, diff * 30 * pid.PGain + (diff- PrevForwardDiff) * pid.DGain * 30 + intDiff * pid.IGain * 60);		
+	} else {
+		Forward(power, 0);
+	}
+
 	PrevForwardDiff = diff;
 }
 

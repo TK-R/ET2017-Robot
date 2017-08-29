@@ -59,6 +59,9 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	RobotPoint.Y = Filter->RobotPoint.Y;
 	RobotAngle = Filter->RobotAngle;
 	
+	// 先頭の粒子の移動量を、自身の移動量に加算
+	Distance += Filter->Distance;
+
 	// 送信処理	
 	SendData();
 }

@@ -9,11 +9,16 @@
 #include "PIDDataManager.h"
 #include "Point.h"
 
+#define EDGE_LINE 120 // 黒線との境界線
+
 void LineTraceStrategy::Run()
 {
 	auto InOut = InOutManager::GetInstance();
 	PIDData pidData;
-	Point p = SelfPositionManager::GetInstance()->RobotPoint;
+	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
+	Point p = SpManager->RobotPoint;
+	int currentAngle = SpManager->RobotAngle;
+	int distance = SpManager->Distance;
 	PIDDataManager* pidManager = PIDDataManager::GetInstance();
 	bool leftEdge = true;
 RETRY:
@@ -64,55 +69,80 @@ RETRY:
 		// 	break;
 		case L1 :
 			// 最初の直線終了（Lコース）
-			if(p.Y > 2550) {
+			if(distance > 2230) {
 				CurrentState = L2;
 				goto RETRY;
 			}
 			leftEdge = true;
 			pidData = pidManager->GetPIDData(LineTraceStraight);
-	//		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
-			InOut->Forward(pidData.BasePower);
-			
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+
+			SpManager->ResetX(4790);
 			break;
 		case L2:
 			// 最初のカーブ終了（Lコース）
-			if(p.Y < 2200){ 
-				CurrentState = L3;
+			if(distance > 3580)
+			{ 
+				CurrentState = L25;
 				goto RETRY;
 			}
 			leftEdge = true;
 			pidData = pidManager->GetPIDData(LineTraceMiddleSpeedCurve);
 			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
+		case L25 :
+			if(distance > 3800) { 
+				CurrentState = L3;
+				goto RETRY;
+				SpManager->ParticleFilterON = true;				
+			}		
+			
+			// ショートカット中は、パーティクルフィルタOFF
+			SpManager->ParticleFilterON = false;
+			
+			pidData = pidManager->GetPIDData(LineTraceStraight);			
+			InOut->Forward(pidData.BasePower);
+			break;
+
 		case L3:
 			// 二番目のカーブ終了（Lコース）
-			if(p.X < 4000){
+			if(p.Y < 1350){
 				CurrentState = L4;
 				goto RETRY;
 			}
-			leftEdge = true;
-			InOut->Forward(pidManager->GetPIDData(LineTraceStraight).BasePower);
+			leftEdge = false;			
+			pidData = pidManager->GetPIDData(LineTraceStraight);			
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 		case L4:
 			// 三番目のカーブ終了（Lコース）
-			if(p.X < 3350) {
+			if(p.X < 3810) {
 				CurrentState = L5;
 				goto RETRY;
 			}
+			leftEdge = false;
+			pidData = pidManager->GetPIDData(LineTraceSlowSpeedCurve);
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 		case L5:
 			// 四番目のカーブ終了（Lコース）
-			if(p.Y > 1150) {
+			if(p.X < 3230 || (p.X < 3500 && InOut->InputData.ReflectLight < EDGE_LINE)) {
 				CurrentState = L6;
 				goto RETRY;
 			}
+			InOut->Forward(pidManager->GetPIDData(LineTraceStraight).BasePower);
 			break;
 		case L6:
 			// 五番目のカーブ終了（Lコース）
-			if(p.X < 2800) {
-				CurrentState = L7;
-				goto RETRY;
+			if(p.X < 1170) {
+				InOut->Stop();
+				// CurrentState = L7;
+				// goto RETRY;
+				break;
 			}
+			leftEdge = true;
+			pidData = pidManager->GetPIDData(LineTraceStraight);
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 		case L7:
 			break;

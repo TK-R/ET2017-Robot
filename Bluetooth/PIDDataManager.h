@@ -26,19 +26,19 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {100, 0.48, 0.02, 0.90, LineTraceStraight};
+		PIDData lineStraight = {65, 0.14, 0, 0.56, LineTraceStraight};
 		SetPIDData(lineStraight);
 
 		// 高速カーブ
-		PIDData lineHCurve = {37, 0.26, 0.03, 0.66, LineTraceHighSpeedCurve};	//未調整
+		PIDData lineHCurve = {65, 0.14, 0.01, 0.22, LineTraceHighSpeedCurve};	//未調整
 		SetPIDData(lineHCurve);
 
 		// 中速カーブ
-		PIDData lineMCurve = {100, 0.53, 0.02, 0.90, LineTraceMiddleSpeedCurve};
+		PIDData lineMCurve = {65, 0.24, 0.0, 0.22, LineTraceMiddleSpeedCurve};
 		SetPIDData(lineMCurve);
 
 		// 低速カーブ
-		PIDData lineSCurve = {30, 0.51, 0, 0.96, LineTraceSlowSpeedCurve};	//未調整
+		PIDData lineSCurve = {65, 0.26, 0.01, 0.22, LineTraceSlowSpeedCurve};	//未調整
 		SetPIDData(lineSCurve);
 
 		// ブロック並べ中

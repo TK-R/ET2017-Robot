@@ -84,7 +84,7 @@ void Refresh()
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->UpdatePosition(IOManager->InputData.LeftMotorAngle, IOManager->InputData.RightMotorAngle);   
-//    Draw();
+    Draw();
 }
 
 void main_task(intptr_t unused) 
