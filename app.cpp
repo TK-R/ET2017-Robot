@@ -36,7 +36,7 @@ extern "C"{
 #endif
 
 // 制御周期
-#define BASE_TIME 20
+#define BASE_TIME 14
 
 imageData_t* image;
 

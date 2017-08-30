@@ -26,7 +26,7 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {65, 0.14, 0, 0.56, LineTraceStraight, 0};
+		PIDData lineStraight = {100, 0.35, 0, 0.33, LineTraceStraight, -6}; 	// 8.2V
 		SetPIDData(lineStraight);
 
 		// 高速カーブ

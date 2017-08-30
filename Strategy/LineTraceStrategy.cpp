@@ -81,7 +81,7 @@ RETRY:
 			break;
 		case L2:
 			// 最初のカーブ終了（Lコース）
-			if(distance > 3580)
+			if(distance > 3700)
 			{ 
 				CurrentState = L25;
 				goto RETRY;
@@ -91,17 +91,14 @@ RETRY:
 			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 		case L25 :
-			if(distance > 3800) { 
+			if(distance > 9000) { 
 				CurrentState = L3;
 				goto RETRY;
-				SpManager->ParticleFilterON = true;				
 			}		
 			
-			// ショートカット中は、パーティクルフィルタOFF
-			SpManager->ParticleFilterON = false;
-			
-			pidData = pidManager->GetPIDData(LineTraceStraight);			
-			InOut->Forward(pidData.BasePower);
+			leftEdge = true;
+			pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);			
+			InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 			break;
 
 		case L3:
