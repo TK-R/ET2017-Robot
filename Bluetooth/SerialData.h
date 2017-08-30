@@ -56,8 +56,8 @@ struct PIDData {
 	float PGain;		// 比例ゲイン
 	float IGain;		// 積分ゲイン
 	float DGain; 		// 微分ゲイン
-	int8_t Steering;	// ステアリング値
 	int State; 			// 変更を適用するステートNo
+	int8_t Steering;	// ステアリング値	
 };
 
 #define SELF_POSITION_BYTE_SIZE 14
