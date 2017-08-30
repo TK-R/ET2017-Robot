@@ -40,7 +40,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);
+		pidData = pidManager->GetPIDData(pR_B);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_C :
@@ -49,7 +49,7 @@ RETRY:
 			goto RETRY;		
 		}		
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceMiddleSpeedCurve);	
+		pidData = pidManager->GetPIDData(pR_C);	
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_D:
@@ -58,7 +58,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;			
-		pidData = pidManager->GetPIDData(LineTraceSlowSpeedCurve);			
+		pidData = pidManager->GetPIDData(pR_D);			
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_E:
@@ -67,7 +67,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);
+		pidData = pidManager->GetPIDData(pR_E);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_F:
@@ -97,7 +97,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceMiddleSpeedCurve);
+		pidData = pidManager->GetPIDData(pL_B);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_C :
@@ -106,7 +106,7 @@ RETRY:
 			goto RETRY;		
 		}		
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);	
+		pidData = pidManager->GetPIDData(pL_C);	
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_D:
@@ -115,7 +115,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;			
-		pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);			
+		pidData = pidManager->GetPIDData(pL_D);			
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_E:
@@ -124,7 +124,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceHighSpeedCurve);
+		pidData = pidManager->GetPIDData(pL_E);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_F:
@@ -133,7 +133,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceSlowSpeedCurve);
+		pidData = pidManager->GetPIDData(pL_F);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_G:
@@ -142,7 +142,7 @@ RETRY:
 			goto RETRY;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceSlowSpeedCurve);
+		pidData = pidManager->GetPIDData(pL_G);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_H:

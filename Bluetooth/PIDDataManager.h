@@ -33,48 +33,70 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {65, 0.14, 0, 0.56, 0, LineTraceStraight};
+		PIDData lineStraight = {100, 0.35, 0, 0.33, LineTraceStraight, -6}; 	// 8.2V
 		SetPIDData(lineStraight);
 
-		// 高速カーブ
-		PIDData lineHCurve = {65, 0.14, 0.01, 0.22, 0, LineTraceHighSpeedCurve};	//未調整
-		SetPIDData(lineHCurve);
+		//Rコース
+		PIDData lineR_B = {100, 0.35, 0, 0.33, pR_B, -6};
+		SetPIDData(lineR_B);
 
-		// 中速カーブ
-		PIDData lineMCurve = {65, 0.24, 0.0, 0.22, 0, LineTraceMiddleSpeedCurve};
-		SetPIDData(lineMCurve);
+		PIDData lineR_C = {100, 0.35, 0, 0.33, pR_C, -6};
+		SetPIDData(lineR_C);
 
-		// 低速カーブ
-		PIDData lineSCurve = {65, 0.26, 0.01, 0.22, 0, LineTraceSlowSpeedCurve};	//未調整
-		SetPIDData(lineSCurve);
+		PIDData lineR_D = {100, 0.35, 0, 0.33, pR_D, -6};
+		SetPIDData(lineR_D);
+
+		PIDData lineR_E = {100, 0.35, 0, 0.33, pR_E, -6};
+		SetPIDData(lineR_E);
+
+		//Lコース
+		PIDData lineL_B = {100, 0.35, 0, 0.33, pL_B, -6};
+		SetPIDData(lineL_B);
+
+		PIDData lineL_C = {100, 0.35, 0, 0.33, pL_C, -6};
+		SetPIDData(lineL_C);
+
+		PIDData lineL_D = {100, 0.35, 0, 0.33, pL_D, -6};
+		SetPIDData(lineL_D);
+
+		PIDData lineL_E = {100, 0.35, 0, 0.33, pL_E, -6};
+		SetPIDData(lineL_E);
+
+		PIDData lineL_F = {100, 0.35, 0, 0.33, pL_F, -6};
+		SetPIDData(lineL_F);
+
+		PIDData lineL_G = {100, 0.35, 0, 0.33, pL_G, -6};
+		SetPIDData(lineL_G);
+
 
 		// ブロック並べ中
-		PIDData block = {16, 0.4, 0, 0.7, 0, BlockMovePIDState};
+		PIDData block = {16, 0.4, 0, 0.7, BlockMovePIDState, 0};
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
-		PIDData blockH = {16, 0.4, 0, 0.7, 0, ETSumoHighPIDState};
+		PIDData blockH = {16, 0.4, 0, 0.7, ETSumoHighPIDState, 0};
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {15, 1.2, 0, 1.0, 0, ETSumoPIDState};
+		PIDData sumo = {15, 1.2, 0, 1.0, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	
-		PIDData sumoH = {15, 1.2, 0, 1.0, 0, ETSumoHighPIDState};
+		PIDData sumoH = {15, 1.2, 0, 1.0, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中
-		PIDData trainS = {15, 1.2, 0, 1.0, 0, ETTrainSlow};
+		PIDData trainS = {15, 1.2, 0, 1.0, ETTrainSlow, 0};
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中
-		PIDData trainH = {25, 0.41, 0.0, 0.8, 0, ETTrainHigh};
+		PIDData trainH = {25, 0.41, 0.0, 0.8, ETTrainHigh, 0};
 		SetPIDData(trainH);
 
 		// 直進中のPID制御
-		PIDData forward = {100, 0.46, 0.88, 0.22, 0, ForwardPID};
+		PIDData forward = {100, 0.46, 0.88, 0.22, ForwardPID, 0};
 		SetPIDData(forward);
+
 	}
 
 public:
