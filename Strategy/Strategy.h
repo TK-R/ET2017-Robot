@@ -24,20 +24,22 @@ public:
 
 // 現在どこを走行中か
 enum CurrentStateEnum {
-	RStraight = 0,
-	RFirstCurve,
-	RSecondCurve,
-	RThirdCurve,
-	RFourthCurve,
-	RLastStraight,
-	L1,
-	L2,
-	L25,
-	L3,
-	L4,
-	L5,
-	L6,
-	L7
+	// Rコース
+	R_A = 0,
+	R_B,
+	R_C,
+	R_D,
+	R_E,
+	R_F,
+	// Lコース
+	L_A,
+	L_B,
+	L_C,
+	L_D,
+	L_E,
+	L_F,
+	L_G,
+	L_H,
 };
 
 class LineTraceStrategy: public AbstractStrategy
@@ -49,7 +51,7 @@ private:
 
 	// 現在走行中のコース箇所
 	// CurrentCoursePosition Position = RStraight;
-	CurrentStateEnum CurrentState = L1;
+	CurrentStateEnum CurrentState = L_A;
 
 public:
 	int CenterValue = 0;
