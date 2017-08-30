@@ -5,7 +5,8 @@
 
 enum BlockMoveStateEnum
 {
-	FirstTurn = 0, // 初回旋回中
+	Initialize = 0, 		// 初回処理
+	FirstTurn, 			// 初回旋回中
 	ImaginaryWaypoint, // 仮想ウェイポイント移動中
 	OverLine,	// ラインをまたぐまで直進中
 	LineTurn, // ライン上で旋回中
@@ -23,40 +24,46 @@ enum BlockPlaceColor
 	Green
 };
 
+class BlockMoveStrategy;
+
 class AbstractMoveState
 {
 protected:
 	// サブステートの最初は必ず初回旋回
-	BlockMoveStateEnum SubState = FirstTurn;
+	BlockMoveStateEnum SubState = Initialize;
 
 	// 左エッジを走行する場合にTrueにセットする
 	bool LeftEdge;
+	
+	BlockMoveStrategy* ParentStrategy;
 
 public:
-	// 初回旋回時の目標角度
-	bool StateMachine();
+	AbstractMoveState(BlockMoveStrategy* strategy)
+	{
+		ParentStrategy = strategy;
+	}
+
+	int CurrentWayPointNo = 26;		
 	virtual void Run(){}
+	virtual ~AbstractMoveState(){}
+	
 };
 
 class ApproachState: public AbstractMoveState
 {
-private:
 	
 public:
 	void Run();
+	using AbstractMoveState::AbstractMoveState;
+	
 };
 
 class MoveState: public AbstractMoveState 
 {
 public:
 	void Run();
-};
-
-class PargeState: public AbstractMoveState
-{
-private: int MoveDistance(); 
-public:
-	void Run();
+	using AbstractMoveState::AbstractMoveState;
+	
 };
 
 
@@ -64,9 +71,9 @@ public:
 class BlockMoveStrategy: public AbstractStrategy
 {
 private:
-	AbstractMoveState* State = new ApproachState();
-
+	AbstractMoveState* State = new ApproachState(this);
 public:
+	
 	void ChangeState(AbstractMoveState* nextState);
 	void Run();
 	using AbstractStrategy::AbstractStrategy;

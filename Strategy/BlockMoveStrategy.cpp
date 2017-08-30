@@ -7,9 +7,16 @@
 #include "InOutManager.h"
 #include "PIDDataManager.h"
 
+#define EDGE_LINE 120 // 黒線との境界線
+#define TURN_POWER 15 // 旋回時のパワー
+#define ONLINE 25	  // 黒線上での輝度値
+#define NotONLINE 60  // 黒線以外での輝度値
+
+
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
 {
+	delete State;
 	State = nextState;
 }
 
@@ -30,27 +37,36 @@ void ApproachState::Run()
 
 	int currentAngle = SpManager->RobotAngle;
 	int ForwardPower = 10;
-	int TurnPower = 10;
-	int CenterValue = 65;
 
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 
 	switch(SubState){
+	// 初回処理
+	case Initialize:
+		// すでにウェイポイント上にいる場合には、ライン上での旋回に遷移（必ず最終ウェイポイントのため）
+		if(CurrentWayPointNo == BtManager->GetSrcWayPointNo()) {
+			SubState = LineTurn;
+		} else {
+			SubState = FirstTurn;
+		}
+		break;
+
 	// 仮想ウェイポイント間を移動中の動作
 	case FirstTurn:
-		// 旋回動作を実行
-		if(targetWaypointAngle != currentAngle) {
-			IoManager->Turn(currentAngle, targetWaypointAngle, TurnPower);
-		} else {
-			// 角度が一致したため、仮想ウェイポイント間の移動に遷移
+		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
+		if (abs(targetWaypointAngle - currentAngle) < 2) {
 			SubState = ImaginaryWaypoint;
 		}
+
+		// 旋回動作を実行
+		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
+		
 		break;
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < 40) {
+		if(IoManager->InputData.ReflectLight < ONLINE) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
@@ -59,10 +75,13 @@ void ApproachState::Run()
 		break;
 	// ラインをまたぐまでの処理
 	case OverLine:
-		if(IoManager->InputData.ReflectLight > 120) {	
+		if(IoManager->InputData.ReflectLight > EDGE_LINE) {	
+			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
+			CurrentWayPointNo = BtManager->GetSrcWayPointNo();
+			
 			// 白認識（ラインを跨いだ）ので、次の状態に繊維
 			bool last = BtManager->ArrivalSrcWayPoint();
-			
+
 			// 最終ウェイポイントの場合
 			if(last) {
 				// ライントレース前の旋回動作に遷移
@@ -71,7 +90,6 @@ void ApproachState::Run()
 				// 初回旋回に遷移
 				SubState = FirstTurn;
 			}
-			// TODO 位置補正
 		} else {	
 			// ラインをまたぐまでは直進
 			IoManager->Forward(ForwardPower);
@@ -80,8 +98,8 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 20 || IoManager->InputData.ReflectLight > 40){
-			IoManager->Turn(currentAngle, targetBlockAngle, TurnPower);
+		if(abs(targetBlockAngle - currentAngle) > 20 || IoManager->InputData.ReflectLight > EDGE_LINE){
+			IoManager->Turn(currentAngle, targetBlockAngle, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
@@ -93,9 +111,17 @@ void ApproachState::Run()
 		break;	
 	// ライントレースする動作	
 	case LineTrace:
-		IoManager->LineTraceAction(BlockMovePID, CenterValue, LeftEdge);
+		//目標とするブロック置き場の色を取得したら、現在のステートをブロック運搬中に変更
+		if(IoManager->HSLKind == BtManager->GetSrcBlockPositionColor()){
+			auto moveState = new MoveState(ParentStrategy);
+			moveState->CurrentWayPointNo = CurrentWayPointNo;
+			ParentStrategy->ChangeState(moveState);
+			break;
+		}
+		
+		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
 
-		// 置き場色を取得
+		
 		break;
 	
 	case Back:
@@ -109,8 +135,3 @@ void MoveState::Run()
 
 }
 
-void PargeState::Run()
-{
-	//BlockMoveManager* manager = BlockMoveManager::GetInstance();
-
-}

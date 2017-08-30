@@ -20,9 +20,8 @@ void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 	RuleData = data;
 	CurrentCommandNo = 0;
 
-	// 暫定の初手無視
-	CurrentSrcWaypointNo = 1;
-	CurrentDstWaypointNo = 0;
+	CurrentSrcWaypointCount = 0;
+	CurrentDstWaypointCount = 0;
 	CurrentCommand = RuleData.Command[CurrentCommandNo];
 
 	HasRuleData = true;
@@ -32,10 +31,10 @@ void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 // trueなら、最終ウェイポイント到着
 bool BlockMoveManager::ArrivalSrcWayPoint()
 {
-	CurrentSrcWaypointNo++;
+	CurrentSrcWaypointCount++;
 							
 	// 最終ウェイポイントの場合
-	if(CurrentSrcWaypointNo == 
+	if(CurrentSrcWaypointCount == 
 			CurrentCommand.ApproachWaypointCount) 
 	{
 		return true;
@@ -48,10 +47,10 @@ bool BlockMoveManager::ArrivalSrcWayPoint()
 // trueなら、最終ウェイポイント到着
 bool BlockMoveManager::ArrivalDstWayPoint()
 {
-	CurrentDstWaypointNo++;
+	CurrentDstWaypointCount++;
 
 	// 最終ウェイポイントの場合
-	if(CurrentDstWaypointNo == 
+	if(CurrentDstWaypointCount == 
 			CurrentCommand.BlockMoveWaypointCount) 
 	{
 		return true;
@@ -65,8 +64,8 @@ bool BlockMoveManager::ArrivalDstWayPoint()
 bool BlockMoveManager::ArrivalSrcBlockPosition()
 {	
 	// ウェイポイント値をクリア	
-	CurrentSrcWaypointNo = 0;
-	CurrentDstWaypointNo = 0;
+	CurrentSrcWaypointCount = 0;
+	CurrentDstWaypointCount = 0;
 	return false;
 }
 
@@ -81,8 +80,8 @@ bool BlockMoveManager::ArrivalDstBlockPosition()
 		return true;
 	}
 
-	CurrentSrcWaypointNo = 0;
-	CurrentDstWaypointNo = 0;
+	CurrentSrcWaypointCount = 0;
+	CurrentDstWaypointCount = 0;
 
 	CurrentCommand = RuleData.Command[CurrentCommandNo];
 	return false;
@@ -122,16 +121,14 @@ int BlockMoveManager::GetDstBlockAngle(double x, double y)
 // 次のウェイポイントの座標を取得する
 Point* BlockMoveManager::GetSrcWaypoint()
 {
-	int waypointNo = CurrentCommand.ApproachWayPoint[CurrentSrcWaypointNo];
-	return  WayPointArray[waypointNo];
+	return  WayPointArray[GetSrcWayPointNo()];
 }
 
 // 運搬先ブロック置き場に到達するため経由する、
 // 次のウェイポイントの座標を取得する
 Point* BlockMoveManager::GetDstWaypoint()
 {
-	int waypointNo = CurrentCommand.BlockMoveWayPoint[CurrentDstWaypointNo];
-	return  WayPointArray[waypointNo];
+	return  WayPointArray[GetDstWayPointNo()];
 }
 
 // 次に向かうべき運搬元ブロック置き場の座標を取得する
@@ -147,3 +144,30 @@ Point* BlockMoveManager::GetDstBlockPoint()
 	int blockNo = CurrentCommand.DestinationBlockPosition;
 	return BlockPlaceArray[blockNo];
 }
+
+// ブロックにアプローチする際の、現在のウェイポイントNoを取得する
+int BlockMoveManager::GetSrcWayPointNo()
+{
+	return CurrentCommand.ApproachWayPoint[CurrentSrcWaypointCount];
+}
+
+// ブロックを運搬する際の、現在のウェイポイントNoを取得する
+int BlockMoveManager::GetDstWayPointNo()
+{
+	return CurrentCommand.BlockMoveWayPoint[CurrentDstWaypointCount];
+}
+
+// 現在の運搬元ブロック置き場色を取得する
+HSLColorKind BlockMoveManager::GetSrcBlockPositionColor()
+{
+	int blockNo = CurrentCommand.SourceBlockPosition;
+	return BlockPositionColors[blockNo];
+}
+	
+// 現在の運搬先ブロック置き場色を取得する
+HSLColorKind BlockMoveManager::GetDstBlockPositionColor()
+{
+	int blockNo = CurrentCommand.DestinationBlockPosition;
+	return BlockPositionColors[blockNo];
+}
+	
