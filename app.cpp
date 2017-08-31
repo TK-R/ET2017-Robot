@@ -57,9 +57,9 @@ void Draw()
 
     auto src = BmManager->GetSrcWaypoint();
     sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d  ", 
-        BmManager->CurrentCommand.ApproachWayPoint[BmManager->CurrentSrcWaypointNo],
-        (int)src->X,
-        (int)src->Y);
+        BmManager->GetSrcWaypoint(),
+        (int)(src->X),
+        (int)(src->Y));
     ev3_lcd_draw_string(buf, 0, 12);
 
     RGBColor rgbMap = FieldMap::GetInstance()->GetRGBColor(

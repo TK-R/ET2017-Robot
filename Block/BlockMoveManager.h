@@ -3,7 +3,7 @@
 
 #include "SerialData.h"
 #include "Point.h"
-
+#include "ColorDecision.h"
 
 class BlockMoveManager {
 private:
@@ -13,7 +13,6 @@ private:
 
 	BlockMoveRuleData RuleData;
 
-	int CurrentCommandNo = 0;
 	bool HasRuleData = false;
 
 	// ブロック置き場の座標
@@ -68,11 +67,32 @@ private:
 		new Point( 446,1168)
 	};
 
+	// ブロック置き場色
+	HSLColorKind BlockPositionColors[15] = 
+	{
+		HSLRed,
+		HSLBlue,
+		HSLYellow,
+		HSLBlue,
+		HSLYellow,
+		HSLGreen,
+		HSLRed,
+		HSLRed,
+		HSLBlue,
+		HSLGreen,
+		HSLGreen,
+		HSLBlue,
+		HSLYellow,
+		HSLRed,
+		HSLYellow
+	};
+
+	int CurrentSrcWaypointCount = 0;
+	int CurrentDstWaypointCount = 0;
 
 public:
-	int CurrentSrcWaypointNo = 0;
-	int CurrentDstWaypointNo = 0;
-
+	int CurrentCommandNo = 0;
+	
 	BlockMoveCommandData CurrentCommand;
 
 	// シングルトンのインスタンスを取得する
@@ -123,6 +143,18 @@ public:
 
 	// 次に向かうべき運搬先ブロック置き場の座標を取得する
 	Point* GetDstBlockPoint();
+
+	// ブロックにアプローチする際の、現在のウェイポイントNoを取得する
+	int GetSrcWayPointNo();
+
+	// ブロックを運搬する際の、現在のウェイポイントNoを取得する
+	int GetDstWayPointNo();
+	
+	// 現在の運搬元ブロック置き場色を取得する
+	HSLColorKind GetSrcBlockPositionColor();
+
+	// 現在の運搬先ブロック置き場色を取得する
+	HSLColorKind GetDstBlockPositionColor();
 
 };
 

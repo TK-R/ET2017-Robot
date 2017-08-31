@@ -16,8 +16,8 @@ void LineTraceStrategy::Run()
 	auto InOut = InOutManager::GetInstance();
 	PIDData pidData;
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-	Point p = SpManager->RobotPoint;
-	int currentAngle = SpManager->RobotAngle;
+//	Point p = SpManager->RobotPoint;
+//	int currentAngle = SpManager->RobotAngle;
 	int distance = SpManager->Distance;
 	PIDDataManager* pidManager = PIDDataManager::GetInstance();
 	bool leftEdge = true;
