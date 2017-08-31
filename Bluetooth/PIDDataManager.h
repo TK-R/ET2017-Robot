@@ -53,19 +53,19 @@ private:
 		PIDData lineL_B = {100, 0.25, 0, 0.52, pL_B, 25};
 		SetPIDData(lineL_B);
 
-		PIDData lineL_C = {100, 0.28, 0, 0.52, pL_C, -20};
+		PIDData lineL_C = {100, 0.28, 0, 0.52, pL_C, -21}; //8.8V
 		SetPIDData(lineL_C);
 
-		PIDData lineL_D = {100, 0.28, 0, 0.52, pL_D, -25};  // 8.5v
+		PIDData lineL_D = {70, 0.12, 0, 0.4, pL_D, -20};  // 8.5v
 		SetPIDData(lineL_D);
 
-		PIDData lineL_E = {100, 0.28, 0, 0.52, pL_E, -25};
+		PIDData lineL_E = {80, 0.28, 0, 0.52, pL_E, -25};
 		SetPIDData(lineL_E);
 
-		PIDData lineL_F = {100, 0.28, 0, 0.52, pL_F, -35};
+		PIDData lineL_F = {80, 0.28, 0, 0.52, pL_F, -40};
 		SetPIDData(lineL_F);
 
-		PIDData lineL_G = {100, 0.28, 0, 0.52, pL_G, -40};
+		PIDData lineL_G = {100, 0.28, 0, 0.52, pL_G, 30};
 		SetPIDData(lineL_G);
 
 

@@ -101,7 +101,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_C :
-		if(distance > 5120) { 
+		if(distance > 5270) { 
 			CurrentState = L_D;
 			goto RETRY;		
 		}		
@@ -119,7 +119,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_E:
-		if(distance > 6870) {
+		if(distance > 7120) {
 			CurrentState = L_F;
 			goto RETRY;
 		}
