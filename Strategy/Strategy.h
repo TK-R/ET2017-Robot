@@ -50,8 +50,8 @@ private:
 
 
 	// 現在走行中のコース箇所
-	// CurrentCoursePosition Position = RStraight;
-	CurrentStateEnum CurrentState = L_A;
+	CurrentStateEnum CurrentState = R_A;
+//	CurrentStateEnum CurrentState = L_A;
 
 public:
 	int CenterValue = 0;

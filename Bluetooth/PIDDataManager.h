@@ -37,16 +37,16 @@ private:
 		SetPIDData(lineStraight);
 
 		//Rコース
-		PIDData lineR_B = {100, 0.35, 0, 0.33, pR_B, -6};
+		PIDData lineR_B = {100, 0.32, 0, 0.52, pR_B, 10};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {100, 0.35, 0, 0.33, pR_C, -6};
+		PIDData lineR_C = {63, 0.23, 0, 0.39, pR_C, -21};
 		SetPIDData(lineR_C);
 
-		PIDData lineR_D = {100, 0.35, 0, 0.33, pR_D, -6};
+		PIDData lineR_D = {50, 0.16, 0, 0.46, pR_D, -45};
 		SetPIDData(lineR_D);
 
-		PIDData lineR_E = {100, 0.35, 0, 0.33, pR_E, -6};
+		PIDData lineR_E = {100, 0.28, 0, 0.52, pR_E, 11};
 		SetPIDData(lineR_E);
 
 		//Lコース

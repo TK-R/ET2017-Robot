@@ -26,7 +26,7 @@ RETRY:
 	switch(CurrentState) {
 	// Rコース
 	case R_A :
-		if(distance > 2160 + 70) {	//スタートラインの手間70mmからスタート
+		if(distance > 2170 + 70) {	//スタートラインの手間70mmからスタート
 			CurrentState = R_B;
 			goto RETRY;
 		}
@@ -35,7 +35,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_B:
-		if(distance > 5390)	{ 
+		if(distance > 5590)	{ 
 			CurrentState = R_C;
 			goto RETRY;
 		}
@@ -44,7 +44,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_C :
-		if(distance > 6390) { 
+		if(distance > 6520) { 
 			CurrentState = R_D;
 			goto RETRY;		
 		}		
@@ -53,7 +53,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_D:
-		if(distance > 7290){
+		if(distance > 7410){
 			CurrentState = R_E;
 			goto RETRY;
 		}
@@ -62,7 +62,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_E:
-		if(distance > 8800) {
+		if(distance > 8900) {
 			CurrentState = R_F;
 			goto RETRY;
 		}
