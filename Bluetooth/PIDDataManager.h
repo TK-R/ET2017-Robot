@@ -50,22 +50,22 @@ private:
 		SetPIDData(lineR_E);
 
 		//Lコース
-		PIDData lineL_B = {100, 0.25, 0, 0.52, pL_B, 25};
+		PIDData lineL_B = {100, 0.28, 0, 0.52, pL_B, 25};
 		SetPIDData(lineL_B);
 
 		PIDData lineL_C = {100, 0.28, 0, 0.52, pL_C, -21}; //8.8V
 		SetPIDData(lineL_C);
 
-		PIDData lineL_D = {70, 0.12, 0, 0.4, pL_D, -20};  // 8.5v
+		PIDData lineL_D = {70.4, 0.14, 0, 0.41, pL_D, -22};  // 8.5v
 		SetPIDData(lineL_D);
 
-		PIDData lineL_E = {80, 0.28, 0, 0.52, pL_E, -25};
+		PIDData lineL_E = {60, 0.15, 0, 0.46, pL_E, -15};
 		SetPIDData(lineL_E);
 
-		PIDData lineL_F = {80, 0.28, 0, 0.52, pL_F, -40};
+		PIDData lineL_F = {50, 0.16, 0, 0.46, pL_F, -45};
 		SetPIDData(lineL_F);
 
-		PIDData lineL_G = {100, 0.28, 0, 0.52, pL_G, 30};
+		PIDData lineL_G = {100, 0.28, 0, 0.52, pL_G, 25};
 		SetPIDData(lineL_G);
 
 
