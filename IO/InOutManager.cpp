@@ -141,6 +141,14 @@ void InOutManager::TurnCCW(int power)
 	OutputData.RightMotorPower = power;
 }
 
+//
+void InOutManager::LineTraceClear(int Center)
+{
+	PrevDiff = Center;
+	IntegralDiff.clear();
+	IntegralDiff.push_back(Center);
+}
+
 // ライントレースを実施するように左右モータ値を更新する
 void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 {

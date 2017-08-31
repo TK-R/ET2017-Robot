@@ -99,6 +99,9 @@ public:
 	void TurnCW(int power);
 	// 反時計回りに回転するように左右モータ値を更新する
 	void TurnCCW(int power);
+
+	// ライントレースにおける過去の値をクリアする
+	void LineTraceClear(int Center);
 	
 	// ライントレースを実施するように左右モータ値を更新する
 	void LineTraceAction(PIDData data, int center, bool LeftEdge);

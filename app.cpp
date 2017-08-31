@@ -136,10 +136,10 @@ RESTART_:
    auto lts = new LineTraceStrategy(StManager);
 //   lts->CenterValue = IOManager->InputData.ReflectLight;
     
-   lts->CenterValue = 120;
+    lts->CenterValue = 120;
 // ライントレース戦略にて動作開始
-   StManager->SetStrategy(lts);
-
+    StManager->SetStrategy(lts);
+    IOManager->LineTraceClear(120);
     // ET相撲列車停止
     // StManager->SetStrategy(new ETTrainStrategy(StManager));
 
