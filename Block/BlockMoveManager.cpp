@@ -121,14 +121,14 @@ int BlockMoveManager::GetDstBlockAngle(double x, double y)
 // 次のウェイポイントの座標を取得する
 Point* BlockMoveManager::GetSrcWaypoint()
 {
-	return  WayPointArray[GetSrcWayPointNo()];
+	return  LineArray[GetSrcWayPointNo()]->WayPoint;
 }
 
 // 運搬先ブロック置き場に到達するため経由する、
 // 次のウェイポイントの座標を取得する
 Point* BlockMoveManager::GetDstWaypoint()
 {
-	return  WayPointArray[GetDstWayPointNo()];
+	return  LineArray[GetDstWayPointNo()]->WayPoint;
 }
 
 // 次に向かうべき運搬元ブロック置き場の座標を取得する

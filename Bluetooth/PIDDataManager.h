@@ -70,19 +70,19 @@ private:
 
 
 		// ブロック並べ中
-		PIDData block = {16, 0.4, 0, 0.7, BlockMovePIDState, 0};
+		PIDData block = {18.5, 0.39, 0, 0.38, BlockMovePIDState, 0};
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
-		PIDData blockH = {16, 0.4, 0, 0.7, ETSumoHighPIDState, 0};
+		PIDData blockH = {18.5, 0.39, 0, 0.38, ETSumoHighPIDState, 0};
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {18, 1.2, 0, 1.0, ETSumoPIDState, 0};
+		PIDData sumo = {18.5, 0.39, 0, 0.38, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	
-		PIDData sumoH = {15, 1.2, 0, 1.0, ETSumoHighPIDState, 0};
+		PIDData sumoH = {18.5, 0.39, 0, 0.38, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中

@@ -4,10 +4,44 @@
 #include "SerialData.h"
 #include "Point.h"
 #include "ColorDecision.h"
+#include "Line.h"
 
 class BlockMoveManager {
 private:
-	BlockMoveManager(){}
+
+	Line* LineArray[27] = { 
+		new Line(0,		0, 	1,	0,  	new Point( 775, 395)),	
+		new Line(1,		1, 	2, 	0,		new Point(1554, 395)),
+		new Line(2, 	2, 	3, 	0, 		new Point(2334, 395)),
+		new Line(3, 	0, 	4, 	150,	new Point( 580, 508)),
+		new Line(4, 	1,	4, 	30,		new Point( 970, 508)),
+		new Line(5, 	1, 	5, 	150,	new Point(1359, 508)),
+		new Line(6, 	2, 	5, 	30, 	new Point(1749, 508)),
+		new Line(7, 	2, 	6, 	150, 	new Point(2139, 508)),
+		new Line(8, 	3, 	6, 	30,		new Point(2528, 508)),
+		new Line(9, 	0, 	9, 	105,	new Point( 467, 702)),
+		new Line(10, 	4, 	7, 	150,	new Point( 970, 702)),
+		new Line(11, 	5, 	7, 	30, 	new Point(1359, 702)),
+		new Line(12, 	5, 	8, 	150,	new Point(1749, 702)),
+		new Line(13, 	6, 	8, 	30, 	new Point(2139, 702)),
+		new Line(14, 	3, 	10, 75,		new Point(2641, 702)),
+		new Line(15, 	4, 	9, 	60, 	new Point( 662, 815)),
+		new Line(16, 	6, 	10, 120,	new Point(2446, 815)),
+		new Line(17, 	7, 	11, 60, 	new Point(1052,1040)),
+		new Line(18, 	7, 	12, 120,	new Point(1277,1040)),
+		new Line(19, 	8, 	13, 60,		new Point(1831,1040)),
+		new Line(20, 	8, 	14, 120,	new Point(2056,1040)),
+		new Line(21, 	9, 	11, 150,	new Point( 745,1122)),
+		new Line(22, 	10, 14, 30,		new Point(2364,1122)),
+		new Line(23, 	11, 12, 0,		new Point(1164,1235)),
+		new Line(24, 	12, 13, 0,		new Point(1554,1235)),
+		new Line(25, 	13, 14, 0,		new Point(1944,1235)),
+		new Line(26, 	9, 	9, 	60,		new Point( 446,1168))
+	};
+
+	BlockMoveManager(){
+	};
+ 
 
 	static int MyAtan2(double x, double y);
 
@@ -33,38 +67,6 @@ private:
 		new Point(1389,1235),
 		new Point(1719,1235),
 		new Point(2169,1235)
-	};
-
-	// ウェイポイントの座標
-	Point* WayPointArray[27] = 
-	{
-		new Point( 775, 395),
-		new Point(1554, 395),
-		new Point(2334, 395),
-		new Point( 580, 508),
-		new Point( 970, 508),
-		new Point(1359, 508),
-		new Point(1749, 508),
-		new Point(2139, 508),
-		new Point(2528, 508),
-		new Point( 467, 702),
-		new Point( 970, 702),
-		new Point(1359, 702),
-		new Point(1749, 702),
-		new Point(2139, 702),
-		new Point(2641, 702),
-		new Point( 662, 815),
-		new Point(2446, 815),
-		new Point(1052,1040),
-		new Point(1277,1040),
-		new Point(1831,1040),
-		new Point(2056,1040),
-		new Point( 745,1122),
-		new Point(2364,1122),
-		new Point(1164,1235),
-		new Point(1554,1235),
-		new Point(1944,1235),
-		new Point( 446,1168)
 	};
 
 	// ブロック置き場色
