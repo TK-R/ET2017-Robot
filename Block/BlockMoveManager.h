@@ -146,6 +146,8 @@ public:
 	// 次に向かうべき運搬先ブロック置き場の座標を取得する
 	Point* GetDstBlockPoint();
 
+	Line* GetLine(int No) { return LineArray[No]; }
+
 	// ブロックにアプローチする際の、現在のウェイポイントNoを取得する
 	int GetSrcWayPointNo();
 
@@ -157,6 +159,7 @@ public:
 
 	// 現在の運搬先ブロック置き場色を取得する
 	HSLColorKind GetDstBlockPositionColor();
+
 
 };
 

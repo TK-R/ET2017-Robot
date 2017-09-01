@@ -69,6 +69,10 @@ void ApproachState::Run()
 		if(IoManager->InputData.ReflectLight < ONLINE) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
+
+			// ラインを跨いだので、ウェイポイントの座標に変更
+			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetSrcWayPointNo())->WayPoint);
+
 		} else {
 			IoManager->Forward(ForwardPower);
 		}
@@ -119,9 +123,12 @@ void ApproachState::Run()
 			break;
 		}
 		
+		// ライントレース中は、ラインの角度に修正
+		{
+			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->GetSrcWayPointNo());
+			SpManager->ResetAngle(angle);
+		}
 		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
-
-		
 		break;
 	
 	case Back:
