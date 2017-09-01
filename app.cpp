@@ -109,13 +109,12 @@ RESTART_:
     pData.Angle = 270;
     pData.PositionX = 4790;
     pData.PositionY = 430;
+    
+    // 灰色検出デバッグ用
+    pData.Distance = 9960;
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
-
-    // デバッグ用
-//    IOManager->UpARMMotor();
-//   IOManager->HSLTargetType = BlockColor;
 
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();

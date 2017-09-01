@@ -31,6 +31,7 @@ enum CurrentStateEnum {
 	R_D,
 	R_E,
 	R_F,
+	R_GRAY, // 灰色検出まで
 	// Lコース
 	L_A,
 	L_B,
@@ -40,6 +41,8 @@ enum CurrentStateEnum {
 	L_F,
 	L_G,
 	L_H,
+	L_GRAY,	// 灰色検出まで
+	L_I
 };
 
 class LineTraceStrategy: public AbstractStrategy
@@ -48,10 +51,9 @@ private:
 	// 微分制御用
 	int PrevDiff = 0;
 
-
 	// 現在走行中のコース箇所
-	CurrentStateEnum CurrentState = R_A;
-//	CurrentStateEnum CurrentState = L_A;
+//	CurrentStateEnum CurrentState = R_A;
+	CurrentStateEnum CurrentState = L_A;
 
 public:
 	int CenterValue = 0;

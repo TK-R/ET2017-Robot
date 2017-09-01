@@ -8,6 +8,8 @@
 #include "SoundPlayTask.h"
 #include "PIDDataManager.h"
 #include "Point.h"
+#include "StrategyManager.h"
+#include "ETTrainStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
 
@@ -72,13 +74,25 @@ RETRY:
 		break;
 	case R_F:
 		if(distance > 10390 + 150) {	//ゴール後150mm余分に進む
-			InOut->Stop();
-			// CurrentState = R_F;
-			// goto RETRY;
+			 CurrentState = R_GRAY;
+			 goto RETRY;
 			break;
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
+		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+		break;
+	case R_GRAY:
+		// 灰色検出
+		if(distance > 10800 && InOut->InputData.ReflectLight > 180) {
+			auto train = new ETTrainStrategy(Manager);
+			Manager->SetStrategy(train);
+			break;
+		}
+
+		// 列車停止時と同じゲインでライントレース
+		leftEdge = true;
+		pidData = pidManager->GetPIDData(ETTrainSlow);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 // Lコース
@@ -147,15 +161,39 @@ RETRY:
 		break;
 	case L_H:
 		if(distance > 10010 + 150) {	//ゴール後150mm余分に進む
-			InOut->Stop();
-			// CurrentState = L_H;
-			// goto RETRY;
+			CurrentState = L_GRAY;
+			goto RETRY;
 			break;
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
+	case L_GRAY:
+		// 灰色検出
+		if(distance > 10420 && InOut->InputData.ReflectLight > 180) {
+			SpManager->Distance = 0;
+			CurrentState = L_I;
+			break;
+		}
+
+		// 列車停止時と同じゲインでライントレース
+		leftEdge = true;
+		pidData = pidManager->GetPIDData(ETTrainSlow);
+		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+		break;
+
+		break;
+	case L_I:
+		if(distance > 800){ 
+			InOut->Stop();
+			break;
+		}
+		leftEdge = false;
+		pidData = pidManager->GetPIDData(ETTrainSlow);
+		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+		break;
+
 	default:
 		break;
 	}	

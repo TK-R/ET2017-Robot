@@ -314,6 +314,14 @@ void InOutManager::ReadInputSensor()
 	int light = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
 	if(light > 255) light = 255;
 
+	// 反射光の値に応じて、本体のLEDライトを変更
+	// 黒線より ： 赤色 
+	// 白より ： オレンジ
+	// いい感じ：緑
+	if (light < 105) 		ev3_led_set_color(LED_RED);
+	else if (light > 135)  	ev3_led_set_color(LED_ORANGE);
+	else					ev3_led_set_color(LED_GREEN);
+
 	InputData.ReflectLight = light;  
 	InputData.AnglarSpeed = Gyro->getAnglerVelocity();
 	InputData.SleepTime = SleepTime;
