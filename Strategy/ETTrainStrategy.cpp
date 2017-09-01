@@ -11,7 +11,8 @@
 #include "PIDDataManager.h"
 
 #define BACK_POWER 20
-#define TURN_SPEED 20 // 旋回時の出力
+#define TURN_SPEED 12 		// 旋回時の出力
+#define FIRST_TURN_SPEED 20	
 #define BACK_ANGLE 1
 #define STATION_ANGLE 90 // 駅に尻尾を向けた方向
 #define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
@@ -37,13 +38,13 @@ ACTION :
 			CurrentState = BackToStation;
 			goto ACTION;
 		}
-		IOManager->TurnCCW(TURN_SPEED);
+		IOManager->TurnCCW(FIRST_TURN_SPEED);
 		break;
 
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > 1600) {
+		if (currentPoint.X > 1620) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -65,7 +66,7 @@ ACTION :
 			goto ACTION;
 		}
 		// 駅角度まで旋回
-		IOManager->Turn(currentAngle, STATION_ANGLE, TURN_SPEED);
+		IOManager->Turn(currentAngle, STATION_ANGLE, FIRST_TURN_SPEED);
 		break;
 
 	// スイッチを操作して、停止側にする
@@ -96,7 +97,7 @@ ACTION :
 			goto ACTION;
 		}
 		// 進行方向まで旋回
-		IOManager->Turn(currentAngle, FORWARD_ANGLE, TURN_SPEED);
+		IOManager->Turn(currentAngle, FORWARD_ANGLE, FIRST_TURN_SPEED);
 		break;
 	
 	case LineTraceToGrayArea:

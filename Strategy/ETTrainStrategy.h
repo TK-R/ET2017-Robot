@@ -31,7 +31,7 @@ private:
 public:
 	void Initialize(){
 		auto sp =  SelfPositionManager::GetInstance();
-		sp->ResetX(1070);
+		sp->ResetX(1180);
 		sp->ResetY(2190);
 		sp->RobotAngle = 180;
 		sp->Distance = 0;

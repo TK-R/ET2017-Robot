@@ -128,22 +128,24 @@ RESTART_:
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
 
-    // 初期値をラインの中心として格納
-   auto lts = new LineTraceStrategy(StManager);
-//   lts->CenterValue = IOManager->InputData.ReflectLight;
-    
+    // ライントレース戦略にて動作開始
+    auto lts = new LineTraceStrategy(StManager);
     lts->CenterValue = 120;
-// ライントレース戦略にて動作開始
     StManager->SetStrategy(lts);
     IOManager->LineTraceClear(120);
-    // ET相撲列車停止
-    // StManager->SetStrategy(new ETTrainStrategy(StManager));
 
-    // 初期位置（新幹線停止）
-    // pData.Angle = 180;
-    // pData.PositionX = 1200;
-    // pData.PositionY = 2200;
-    // SpManager->ResetPosition(pData);
+    pData.Angle = 180;
+    pData.PositionX = 1500;
+    pData.PositionY = 2200;
+    SpManager->ResetPosition(pData);
+    SpManager->Distance = 10240;
+    
+    // ET相撲列車停止
+    /*
+    auto train = new ETTrainStrategy(StManager);
+    train->Initialize();
+    StManager->SetStrategy(train);
+    */
 
     // 初期位置（ET相撲）
     //StManager->SetStrategy(new ETSumoStrategy(StManager));

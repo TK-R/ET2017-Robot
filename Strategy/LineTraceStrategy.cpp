@@ -84,7 +84,7 @@ RETRY:
 		break;
 	case R_GRAY:
 		// 灰色検出
-		if(distance > 10650 && InOut->InputData.ReflectLight > 180) {
+		if(distance > 10650 && InOut->InputData.ReflectLight > 170) {
 			auto train = new ETTrainStrategy(Manager);
 			train->Initialize();
 			Manager->SetStrategy(train);

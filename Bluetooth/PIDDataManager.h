@@ -86,7 +86,7 @@ private:
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中
-		PIDData trainS = {15, 1.2, 0, 1.0, ETTrainSlow, 0};
+		PIDData trainS = {18.5, 0.39, 0, 0.38, ETTrainSlow, 0};
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中
