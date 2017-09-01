@@ -102,7 +102,7 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 20 || IoManager->InputData.ReflectLight > EDGE_LINE){
+		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
 			IoManager->Turn(currentAngle, targetBlockAngle, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
@@ -117,6 +117,9 @@ void ApproachState::Run()
 	case LineTrace:
 		//目標とするブロック置き場の色を取得したら、現在のステートをブロック運搬中に変更
 		if(IoManager->HSLKind == BtManager->GetSrcBlockPositionColor()){
+			// ブロック置き場の座標に修正
+			SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
+
 			auto moveState = new MoveState(ParentStrategy);
 			moveState->CurrentWayPointNo = CurrentWayPointNo;
 			ParentStrategy->ChangeState(moveState);
