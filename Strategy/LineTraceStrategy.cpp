@@ -73,7 +73,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_F:
-		if(distance > 10390 + 150) {	//ゴール後150mm余分に進む
+		if(distance > 10390) {	//ゴール後150mm余分に進む
 			 CurrentState = R_GRAY;
 			 goto RETRY;
 			break;
@@ -84,8 +84,9 @@ RETRY:
 		break;
 	case R_GRAY:
 		// 灰色検出
-		if(distance > 10800 && InOut->InputData.ReflectLight > 180) {
+		if(distance > 10650 && InOut->InputData.ReflectLight > 180) {
 			auto train = new ETTrainStrategy(Manager);
+			train->Initialize();
 			Manager->SetStrategy(train);
 			break;
 		}
