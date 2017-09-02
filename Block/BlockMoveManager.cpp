@@ -47,15 +47,14 @@ bool BlockMoveManager::ArrivalSrcWayPoint()
 // trueなら、最終ウェイポイント到着
 bool BlockMoveManager::ArrivalDstWayPoint()
 {
-	CurrentDstWaypointCount++;
-
 	// 最終ウェイポイントの場合
-	if(CurrentDstWaypointCount == 
+	if((CurrentDstWaypointCount + 1) == 
 			CurrentCommand.BlockMoveWaypointCount) 
 	{
 		return true;
 	}
 
+	CurrentDstWaypointCount++;	
 	return false;
 }
 
@@ -73,13 +72,13 @@ bool BlockMoveManager::ArrivalSrcBlockPosition()
 // Trueなら、全ブロック運搬コマンド終了
 bool BlockMoveManager::ArrivalDstBlockPosition()
 {
-	CurrentCommandNo++;
-	
 	// 最終コマンド終了の場合
-	if(CurrentCommandNo == RuleData.CommandSize){
+	if((CurrentCommandNo + 1) == RuleData.CommandSize){
 		return true;
 	}
 
+	CurrentCommandNo++;
+	
 	CurrentSrcWaypointCount = 0;
 	CurrentDstWaypointCount = 0;
 

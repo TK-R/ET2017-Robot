@@ -11,6 +11,7 @@
 #include "Point.h"
 #include "StrategyManager.h"
 #include "ETTrainStrategy.h"
+#include "BlockMoveStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
 #define AVERAGE_POINT 25 // 灰色検出の平均化回数
@@ -185,20 +186,20 @@ RETRY:
 			break;
 		}
 
-		// 列車停止時と同じゲインでライントレース
+		// ブロック並べ時と同じゲインでライントレース
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(ETTrainSlow);
+		pidData = pidManager->GetPIDData(BlockMovePIDState);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 
 		break;
 	case L_I:
 		if(distance > 800){ 
-			InOut->Stop();
+			Manager->SetStrategy(new BlockMoveStrategy(Manager));
 			break;
 		}
 		leftEdge = false;
-		pidData = pidManager->GetPIDData(ETTrainSlow);
+		pidData = pidManager->GetPIDData(BlockMovePIDState);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 

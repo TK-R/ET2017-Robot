@@ -40,8 +40,8 @@ private:
 	int GrayCount = 0;
 	
 	// 現在走行中のコース箇所
-	CurrentStateEnum CurrentState = R_A;
-//	CurrentStateEnum CurrentState = L_A;
+//	CurrentStateEnum CurrentState = R_A;
+	CurrentStateEnum CurrentState = L_A;
 
 public:
 	int CenterValue = 0;

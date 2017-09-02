@@ -120,15 +120,24 @@ void ApproachState::Run()
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
 
-			auto moveState = new MoveState(ParentStrategy);
-			moveState->CurrentWayPointNo = CurrentWayPointNo;
-			ParentStrategy->ChangeState(moveState);
+			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
+			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
+				// ブロック置き場到達メッセージ
+				BtManager->ArrivalSrcBlockPosition();
+
+				auto moveState = new MoveState(ParentStrategy);
+				moveState->LeftEdge = LeftEdge;
+				moveState->CurrentWayPointNo = CurrentWayPointNo;
+				ParentStrategy->ChangeState(moveState);	
+			} else {
+				IoManager->Stop();
+			}
 			break;
 		}
 		
 		// ライントレース中は、ラインの角度に修正
 		{
-			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->GetSrcWayPointNo());
+			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->CurrentCommand.SourceBlockPosition);
 			SpManager->ResetAngle(angle);
 		}
 		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
@@ -156,19 +165,60 @@ void MoveState::Run()
 	switch(SubState){
 	// 初回処理
 	case Initialize:
-		SubState = FirstTurn;
+		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
+		if (abs(targetWaypointAngle - currentAngle) < 2) {
+			// 初回のみライントレース
+			SubState = FirstStraight;
+		}
+		
+		// 旋回動作を実行
+		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
+		break;
+	case FirstStraight:
+		// 初回は5cmだけ直進
+		if(SpManager->Distance > 50) {
+			SubState = FirstLineTrace;
+		}
+		IoManager->Forward(BlockMovePID.BasePower);
 		break;
 
 	// 仮想ウェイポイント間を移動中の動作
 	case FirstTurn:
 		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
 		if (abs(targetWaypointAngle - currentAngle) < 2) {
-			SubState = ImaginaryWaypoint;
+			if(BtManager->CurrentDstWaypointCount == 0) {
+				// 初回のみライントレース
+				SubState = FirstLineTrace;
+				SpManager->Distance = 0;
+			} else {
+				// 旋回s
+				SubState = ImaginaryWaypoint;				
+			}
+			break;
 		}
-
+		
 		// 旋回動作を実行
 		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
-		
+		break;
+	case FirstLineTrace:
+		// 15cm程度進む
+		if(SpManager->Distance > 150) {
+			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
+			CurrentWayPointNo = BtManager->GetDstWayPointNo();
+			
+			// 次の状態に繊維
+			bool last = BtManager->ArrivalDstWayPoint();
+
+			// 最終ウェイポイントの場合
+			if(last) {
+				// ライントレース前の旋回動作に遷移
+				SubState = LineTurn;
+			} else {
+				// 初回旋回に遷移
+				SubState = FirstTurn;
+			}
+		}
+		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
 		break;
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
@@ -176,7 +226,6 @@ void MoveState::Run()
 		if(IoManager->InputData.ReflectLight < ONLINE) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
-
 			// ラインを跨いだので、ウェイポイントの座標に変更
 			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetDstWayPointNo())->WayPoint);
 
@@ -192,7 +241,6 @@ void MoveState::Run()
 			
 			// 白認識（ラインを跨いだ）ので、次の状態に繊維
 			bool last = BtManager->ArrivalDstWayPoint();
-
 			// 最終ウェイポイントの場合
 			if(last) {
 				// ライントレース前の旋回動作に遷移
@@ -224,6 +272,9 @@ void MoveState::Run()
 	case LineTrace:
 		//目標とするブロック置き場の色を取得したら、現在のステートをブロック運搬中に変更
 		if(IoManager->HSLKind == BtManager->GetDstBlockPositionColor()){
+			// ブロック置き場到達メッセージ
+			BtManager->ArrivalDstBlockPosition();
+
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
 			SpManager->Distance = 200;

@@ -7,11 +7,13 @@ enum BlockMoveStateEnum
 {
 	Initialize = 0, 		// 初回処理
 	FirstTurn, 			// 初回旋回中
+	FirstStraight,		// 初回直進（ブロック運搬のみ）
+	FirstLineTrace,		// 初回ライントレース（ブロック運搬のみ）
 	ImaginaryWaypoint, // 仮想ウェイポイント移動中
 	OverLine,	// ラインをまたぐまで直進中
 	LineTurn, // ライン上で旋回中
 	LineTrace, // ライントレース移動中
-	Back, // 後退中
+	Back, // 後退中（ブロック運搬のみ）
 };
 
 enum BlockPlaceColor
@@ -32,12 +34,13 @@ protected:
 	// サブステートの最初は必ず初回旋回
 	BlockMoveStateEnum SubState = Initialize;
 
-	// 左エッジを走行する場合にTrueにセットする
-	bool LeftEdge;
 	
 	BlockMoveStrategy* ParentStrategy;
 
 public:
+	// 左エッジを走行する場合にTrueにセットする
+	bool LeftEdge;
+	
 	AbstractMoveState(BlockMoveStrategy* strategy)
 	{
 		ParentStrategy = strategy;

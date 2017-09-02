@@ -85,7 +85,7 @@ void Refresh()
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->UpdatePosition(IOManager->InputData.LeftMotorAngle, IOManager->InputData.RightMotorAngle);   
- //   Draw();
+    Draw();
 }
 
 void main_task(intptr_t unused) 
@@ -128,18 +128,27 @@ RESTART_:
     
     // StManager->SetStrategy(new BlockMoveStrategy(StManager));
 
-
     // ライントレース戦略にて動作開始
     auto lts = new LineTraceStrategy(StManager);
     lts->CenterValue = 120;
     StManager->SetStrategy(lts);
     IOManager->LineTraceClear(120);
 
+    // Lコース難所確認用
+    pData.Angle = 180;
+    pData.PositionX = 1500;
+    pData.PositionY = 1780;
+    SpManager->ResetPosition(pData);
+    SpManager->Distance = 10240;
+
+/*
+    //   Rコース難所確認用
     pData.Angle = 180;
     pData.PositionX = 1500;
     pData.PositionY = 2200;
     SpManager->ResetPosition(pData);
     SpManager->Distance = 10240;
+*/
     
     // ET相撲列車停止
     /*

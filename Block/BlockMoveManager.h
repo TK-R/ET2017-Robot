@@ -89,10 +89,11 @@ private:
 		HSLYellow
 	};
 
+
+public:
 	int CurrentSrcWaypointCount = 0;
 	int CurrentDstWaypointCount = 0;
 
-public:
 	int CurrentCommandNo = 0;
 	
 	BlockMoveCommandData CurrentCommand;
