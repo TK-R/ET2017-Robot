@@ -51,7 +51,7 @@ ACTION :
 	// 懸賞前に移動
 	case ForwardLineTrace:
 		// 指定座標に到達したら、懸賞の向きに旋回
-		if(currentPoint.X < 2280) {
+		if(currentPoint.X < 2310) {
 			CurrentState = TurnToPrize;	
 			// ライントレース中なので、角度を修正
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -62,7 +62,7 @@ ACTION :
 	
 	// 懸賞の方向に旋回
 	case TurnToPrize:
-		if(currentAngle > (PRIZE_ANGLE - 5)) {
+		if(currentAngle > PRIZE_ANGLE) {
 			// アームを下げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
@@ -142,8 +142,8 @@ ACTION :
 		 break;
 
 	case BackLastLine:
-		// ブロックを完全に離すまで後退
-		if(IOManager->InputData.SonarDistance > NOT_BLOCK_DISTANCE) {
+		// ブロックを完全に離して、黒線を認識するまで後退
+		if(IOManager->InputData.SonarDistance > NOT_BLOCK_DISTANCE && IOManager->InputData.ReflectLight < 120) {
 			IOManager->Stop();
 			break;
 		}

@@ -36,6 +36,8 @@ void ETSumoStrategy::Run()
 ACTION :
 
 	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState);
+	PIDData pidH = PIDDataManager::GetInstance()->GetPIDData(ETSumoHighPIDState);
+	
 	int currentAngle = SpManager->RobotAngle;
 	Point currentPoint = SpManager->RobotPoint;
 
@@ -52,7 +54,11 @@ ACTION :
 			goto ACTION;
 		}
 		// 黒線まではラインの右エッジに沿ってライントレース
-		IOManager->LineTraceAction(pid, EDGE_LINE, false);
+		if(CurrentArena == 0) {
+			IOManager->LineTraceAction(pidH, EDGE_LINE, false);
+		} else {
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);		
+		}
 		break;
 
 	// 初回黒線横断時
@@ -269,7 +275,7 @@ ACTION :
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-		if (currentAngle > 270 && currentAngle < 355) {
+		if (currentAngle > 305 && currentAngle < 355) {
 			CurrentArena++;
 				
 			// 2枚目の攻略が完了した場合には、線路をまたぐ直進処理に遷移

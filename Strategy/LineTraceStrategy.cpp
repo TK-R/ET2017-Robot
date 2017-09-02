@@ -13,8 +13,8 @@
 #include "ETTrainStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
-#define AVERAGE_POINT 45 // 灰色検出の平均化回数
-#define GRAY_VALUE	123	// 灰色検出の境界値
+#define AVERAGE_POINT 25 // 灰色検出の平均化回数
+#define GRAY_VALUE	123 // 灰色検出の境界値
 
 void LineTraceStrategy::Run()
 {

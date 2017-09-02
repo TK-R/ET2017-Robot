@@ -100,7 +100,7 @@ ACTION :
 		IOManager->Turn(currentAngle, FORWARD_ANGLE, FIRST_TURN_SPEED);
 		break;
 	case LineTraceSlowToGrayArea:
-		if(currentPoint.X < 1500) {
+		if(currentPoint.X < 1570) {
 			CurrentState = LineTraceToGrayArea;
 			goto ACTION;
 		}
@@ -130,7 +130,7 @@ ACTION :
 	// たどり着くまで、ライントレースを実施する
 	case LineTraceToArena:
 		// 段差による角速度を検知したら、土俵入りと認識
-		if(IOManager->InputData.AnglarSpeed > 30) {
+		if(IOManager->InputData.AnglarSpeed > 42) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
 			return;
 		}
