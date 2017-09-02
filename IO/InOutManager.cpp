@@ -102,37 +102,43 @@ void InOutManager::Stop()
 	OutputData.RightMotorPower = 0;
 }
 
-void InOutManager::TurnWithBlock(int currentAngle, int targetAngle, int power)
+// 時計周りすべきか判定して、時計回りならtrueを返す
+bool InOutManager::JudgeTurnCW(int currentAngle, int targetAngle)
+{
+
+	if(currentAngle < 180) {
+		// 回転角度が180度を必ず越えない場合
+		if(currentAngle > targetAngle) {
+			return true;
+		} else if(targetAngle - currentAngle < 180) {
+			return false;
+		} else {
+			return true;
+		}
+	} else {
+		// 回転角度が180度を必ず越えない場合
+		if(targetAngle > currentAngle) {
+			return false;
+		} else if(currentAngle - targetAngle < 180) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+
+void InOutManager::TurnWithBlock(bool CW, int power)
 {
 	double ohterPower = -0.5 * power;
-	if(abs(currentAngle-targetAngle) < 20) power = 10;
-	
-		if(currentAngle < 180) {
-			// 回転角度が180度を必ず越えない場合
-			if(currentAngle > targetAngle) {
-				OutputData.LeftMotorPower = power;
-				OutputData.RightMotorPower = ohterPower;
-			} else if(targetAngle - currentAngle < 180) {
-				OutputData.LeftMotorPower = ohterPower;
-				OutputData.RightMotorPower = power;
-			} else {
-				OutputData.LeftMotorPower = power;
-				OutputData.RightMotorPower = ohterPower;
-			}
-		} else {
-			// 回転角度が180度を必ず越えない場合
-			if(targetAngle > currentAngle) {
-				OutputData.LeftMotorPower = ohterPower;
-				OutputData.RightMotorPower = power;
-			} else if(currentAngle - targetAngle < 180) {
-				OutputData.LeftMotorPower = power;
-				OutputData.RightMotorPower = ohterPower;
-			} else {
-				OutputData.LeftMotorPower = ohterPower;
-				OutputData.RightMotorPower = power;
-			}
-		}
-	
+
+	if(CW) {
+		OutputData.LeftMotorPower = power;
+		OutputData.RightMotorPower = ohterPower;
+	} else {
+		OutputData.LeftMotorPower = ohterPower;
+		OutputData.RightMotorPower = power;
+	} 
 }
 
 void InOutManager::Turn(int currentAngle, int targetAngle, int power)

@@ -44,9 +44,16 @@ void ApproachState::Run()
 	switch(SubState){
 	// 初回処理
 	case Initialize:
-		// すでにウェイポイント上にいる場合には、ライン上での旋回に遷移（必ず最終ウェイポイントのため）
-		if(CurrentWayPointNo == BtManager->GetSrcWayPointNo()) {
+		if(BtManager->CurrentCommand.SourceBlockPosition == 9) {
+			// 最寄の場合には、即ライントレース
+			LeftEdge = false;
+			SubState = LineTrace;	
+		} else if(CurrentWayPointNo == BtManager->GetSrcWayPointNo()) {
+			// すでにウェイポイントの上にいるとき
 			SubState = LineTurn;
+		} else if(CurrentWayPointNo == 26) {
+			// 初回であり、9ではないとき
+			SubState = FirstTurn;
 		} else {
 			SubState = FirstTurn;
 		}
@@ -90,6 +97,8 @@ void ApproachState::Run()
 			if(last) {
 				// ライントレース前の旋回動作に遷移
 				SubState = LineTurn;
+				CW = IoManager->JudgeTurnCW(currentAngle, targetBlockAngle);
+
 			} else {
 				// 初回旋回に遷移
 				SubState = FirstTurn;
@@ -102,16 +111,14 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 5) {
-		//if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->TurnWithBlock(currentAngle, targetBlockAngle, TURN_POWER);
+		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
+			IoManager->TurnWithBlock(CW, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
 
 			// 旋回方向によって、ラインのどちら側を走行するか決定	
-			if(targetBlockAngle > currentAngle) LeftEdge = false;
-			else LeftEdge = true;
+			LeftEdge = CW;
 		}
 		break;	
 	// ライントレースする動作	
@@ -128,6 +135,8 @@ void ApproachState::Run()
 
 				auto moveState = new MoveState(ParentStrategy);
 				moveState->LeftEdge = LeftEdge;
+				int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+				moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);
 				moveState->CurrentWayPointNo = CurrentWayPointNo;
 				ParentStrategy->ChangeState(moveState);	
 			} else {
@@ -172,7 +181,7 @@ void MoveState::Run()
 		}
 		
 		// 旋回動作を実行
-		IoManager->TurnWithBlock(currentAngle, targetWaypointAngle, TURN_POWER);
+		IoManager->TurnWithBlock(CW, TURN_POWER);
 		break;
 	case FirstStraight:
 		// 初回は5cmだけ直進
@@ -198,7 +207,7 @@ void MoveState::Run()
 		}
 		
 		// 旋回動作を実行
-		IoManager->TurnWithBlock(currentAngle, targetWaypointAngle, TURN_POWER);
+		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
 		break;
 	case FirstLineTrace:
 		// 15cm程度進む
@@ -245,6 +254,9 @@ void MoveState::Run()
 			if(last) {
 				// ライントレース前の旋回動作に遷移
 				SubState = LineTurn;
+
+				// 旋回方向を判定
+				CW = IoManager->JudgeTurnCW(currentAngle, targetBlockAngle);
 			} else {
 				// 初回旋回に遷移
 				SubState = FirstTurn;
@@ -258,14 +270,13 @@ void MoveState::Run()
 	case LineTurn:
 		// 旋回動作を実行
 		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->TurnWithBlock(currentAngle, targetBlockAngle, TURN_POWER);
+			IoManager->TurnWithBlock(CW, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
 
 			// 旋回方向によって、ラインのどちら側を走行するか決定	
-			if(targetBlockAngle > currentAngle) LeftEdge = false;
-			else LeftEdge = true;
+			LeftEdge = CW;
 		}
 		break;	
 	// ライントレースする動作	

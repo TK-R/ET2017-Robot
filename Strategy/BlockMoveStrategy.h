@@ -33,11 +33,12 @@ class AbstractMoveState
 protected:
 	// サブステートの最初は必ず初回旋回
 	BlockMoveStateEnum SubState = Initialize;
-
-	
 	BlockMoveStrategy* ParentStrategy;
 
 public:
+	// 次の旋回が時計回りか示す
+	bool CW;
+		
 	// 左エッジを走行する場合にTrueにセットする
 	bool LeftEdge;
 	

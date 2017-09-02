@@ -194,7 +194,12 @@ RETRY:
 
 		break;
 	case L_I:
-		if(distance > 800){ 
+		if(distance > 100){
+			SpManager->ResetX(950);
+			SpManager->ResetY(1770);
+			SpManager->ResetAngle(180); 
+			InOut->Stop();
+
 			Manager->SetStrategy(new BlockMoveStrategy(Manager));
 			break;
 		}
