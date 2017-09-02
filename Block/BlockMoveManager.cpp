@@ -30,16 +30,16 @@ void BlockMoveManager::SetBlockMoveRule(BlockMoveRuleData data){
 // 運搬元ブロック置き場に向かうためのウェイポイント到着を通知する
 // trueなら、最終ウェイポイント到着
 bool BlockMoveManager::ArrivalSrcWayPoint()
-{
-	CurrentSrcWaypointCount++;
-							
+{					
 	// 最終ウェイポイントの場合
-	if(CurrentSrcWaypointCount == 
+	if((CurrentSrcWaypointCount + 1)  == 
 			CurrentCommand.ApproachWaypointCount) 
 	{
 		return true;
 	}
-
+	
+	CurrentSrcWaypointCount++;
+	
 	return false;
 }
 

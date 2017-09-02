@@ -7,6 +7,7 @@
 #include "InOutManager.h"
 #include "PIDDataManager.h"
 
+#define FIELD 	220
 #define EDGE_LINE 120 // 黒線との境界線
 #define TURN_POWER 15 // 旋回時のパワー
 #define ONLINE 25	  // 黒線上での輝度値
@@ -36,7 +37,6 @@ void ApproachState::Run()
 	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
 
 	int currentAngle = SpManager->RobotAngle;
-	int ForwardPower = 10;
 
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
@@ -74,12 +74,12 @@ void ApproachState::Run()
 			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetSrcWayPointNo())->WayPoint);
 
 		} else {
-			IoManager->Forward(ForwardPower);
+			IoManager->Forward(BlockMovePID.BasePower);
 		}
 		break;
 	// ラインをまたぐまでの処理
 	case OverLine:
-		if(IoManager->InputData.ReflectLight > EDGE_LINE) {	
+		if(IoManager->InputData.ReflectLight > FIELD) {	
 			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
 			CurrentWayPointNo = BtManager->GetSrcWayPointNo();
 			
@@ -96,14 +96,15 @@ void ApproachState::Run()
 			}
 		} else {	
 			// ラインをまたぐまでは直進
-			IoManager->Forward(ForwardPower);
+			IoManager->Forward(BlockMovePID.BasePower);
 		}
 		break;
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->Turn(currentAngle, targetBlockAngle, TURN_POWER);
+		if(abs(targetBlockAngle - currentAngle) > 5) {
+		//if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
+			IoManager->TurnWithBlock(currentAngle, targetBlockAngle, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
@@ -153,11 +154,10 @@ void MoveState::Run()
 	BlockMoveManager* BtManager = BlockMoveManager::GetInstance();
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
-
+	SpManager->ParticleFilterON = false;
 	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
 
 	int currentAngle = SpManager->RobotAngle;
-	int ForwardPower = 10;
 
 	int targetWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetDstBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
@@ -172,7 +172,7 @@ void MoveState::Run()
 		}
 		
 		// 旋回動作を実行
-		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
+		IoManager->TurnWithBlock(currentAngle, targetWaypointAngle, TURN_POWER);
 		break;
 	case FirstStraight:
 		// 初回は5cmだけ直進
@@ -198,7 +198,7 @@ void MoveState::Run()
 		}
 		
 		// 旋回動作を実行
-		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
+		IoManager->TurnWithBlock(currentAngle, targetWaypointAngle, TURN_POWER);
 		break;
 	case FirstLineTrace:
 		// 15cm程度進む
@@ -230,7 +230,7 @@ void MoveState::Run()
 			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetDstWayPointNo())->WayPoint);
 
 		} else {
-			IoManager->Forward(ForwardPower);
+			IoManager->Forward(BlockMovePID.BasePower);
 		}
 		break;
 	// ラインをまたぐまでの処理
@@ -251,14 +251,14 @@ void MoveState::Run()
 			}
 		} else {	
 			// ラインをまたぐまでは直進
-			IoManager->Forward(ForwardPower);
+			IoManager->Forward(BlockMovePID.BasePower);
 		}
 		break;
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
 		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->Turn(currentAngle, targetBlockAngle, TURN_POWER);
+			IoManager->TurnWithBlock(currentAngle, targetBlockAngle, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
@@ -272,22 +272,24 @@ void MoveState::Run()
 	case LineTrace:
 		//目標とするブロック置き場の色を取得したら、現在のステートをブロック運搬中に変更
 		if(IoManager->HSLKind == BtManager->GetDstBlockPositionColor()){
+			// ブロック置き場の座標に修正
+			SpManager->ResetPoint(BtManager->GetDstBlockPoint());
+			SpManager->Distance = 200;
+			SubState = Back;
+
 			// ブロック置き場到達メッセージ
 			BtManager->ArrivalDstBlockPosition();
 
-			// ブロック置き場の座標に修正
-			SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
-			SpManager->Distance = 200;
-			SubState = Back;
 			break;
 		}
 		
 		// ライントレース中は、ラインの角度に修正
 		{
-			int angle = BtManager->GetLine(BtManager->GetDstWayPointNo())->GetAngle(BtManager->GetDstWayPointNo());
+			int angle = BtManager->GetLine(CurrentWayPointNo)->GetAngle(BtManager->CurrentCommand.DestinationBlockPosition);
 			SpManager->ResetAngle(angle);
-		}
+		}			
 		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+		
 		break;
 	// 後退する動作
 	case Back:
@@ -296,6 +298,7 @@ void MoveState::Run()
 			auto approachState = new ApproachState(ParentStrategy);
 			approachState->CurrentWayPointNo = CurrentWayPointNo;
 			ParentStrategy->ChangeState(approachState);
+
 			break;
 		}
 		IoManager->Back(BlockMovePID.BasePower);

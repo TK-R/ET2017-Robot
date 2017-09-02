@@ -112,18 +112,19 @@ HSLColorKind ColorDecision::Decision(HSLColor* color, DetectTargetType type)
         kind = HSLYellow;
     }
 
-    // 青を判定
-    tmpLikelihood = GetLikelihood(&colors.Blue, color);
-    if(tmpLikelihood > bestLikelihood){
-        bestLikelihood = tmpLikelihood;
-        kind = HSLBlue;
-    }
-
     // 緑を判定
     tmpLikelihood = GetLikelihood(&colors.Green, color);
     if(tmpLikelihood > bestLikelihood){
         bestLikelihood = tmpLikelihood;
         kind = HSLGreen;
+    }
+
+    // 青を判定
+    tmpLikelihood = GetLikelihood(&colors.Blue, color);
+    // 彩度が低い青は存在しない
+    if(tmpLikelihood > bestLikelihood && color->Saturation > 70){
+        bestLikelihood = tmpLikelihood;
+        kind = HSLBlue;
     }
 
     return kind;

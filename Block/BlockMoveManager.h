@@ -10,9 +10,9 @@ class BlockMoveManager {
 private:
 
 	Line* LineArray[27] = { 
-		new Line(0,		0, 	1,	0,  	new Point( 775, 395)),	
-		new Line(1,		1, 	2, 	0,		new Point(1554, 395)),
-		new Line(2, 	2, 	3, 	0, 		new Point(2334, 395)),
+		new Line(0,		1, 	0,	0,  	new Point( 775, 395)),	
+		new Line(1,		2, 	1, 	0,		new Point(1554, 395)),
+		new Line(2, 	3, 	2, 	0, 		new Point(2334, 395)),
 		new Line(3, 	0, 	4, 	150,	new Point( 580, 508)),
 		new Line(4, 	1,	4, 	30,		new Point( 970, 508)),
 		new Line(5, 	1, 	5, 	150,	new Point(1359, 508)),
@@ -33,9 +33,9 @@ private:
 		new Line(20, 	8, 	14, 120,	new Point(2056,1040)),
 		new Line(21, 	9, 	11, 150,	new Point( 745,1122)),
 		new Line(22, 	10, 14, 30,		new Point(2364,1122)),
-		new Line(23, 	11, 12, 0,		new Point(1164,1235)),
-		new Line(24, 	12, 13, 0,		new Point(1554,1235)),
-		new Line(25, 	13, 14, 0,		new Point(1944,1235)),
+		new Line(23, 	12, 11, 0,		new Point(1164,1235)),
+		new Line(24, 	13, 12, 0,		new Point(1554,1235)),
+		new Line(25, 	14, 13, 0,		new Point(1944,1235)),
 		new Line(26, 	9, 	9, 	60,		new Point( 446,1168))
 	};
 
