@@ -4,6 +4,7 @@
 #include "ev3api.h"
 #include "InOutManager.h"
 #include "Strategy.h"
+#include "LineTraceStrategy.h"
 #include "SelfPositionManager.h"
 #include "SoundPlayTask.h"
 #include "PIDDataManager.h"
@@ -12,6 +13,8 @@
 #include "ETTrainStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
+#define AVERAGE_POINT 45 // 灰色検出の平均化回数
+#define GRAY_VALUE	123	// 灰色検出の境界値
 
 void LineTraceStrategy::Run()
 {
@@ -23,6 +26,7 @@ void LineTraceStrategy::Run()
 	int distance = SpManager->Distance;
 	PIDDataManager* pidManager = PIDDataManager::GetInstance();
 	bool leftEdge = true;
+
 RETRY:
 
 	switch(CurrentState) {
@@ -83,8 +87,11 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_GRAY:
+		if(distance > 10500 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
+		else GrayCount = 0;
+
 		// 灰色検出
-		if(distance > 10650 && InOut->InputData.ReflectLight > 170) {
+		if(GrayCount > AVERAGE_POINT) {
 			auto train = new ETTrainStrategy(Manager);
 			train->Initialize();
 			Manager->SetStrategy(train);

@@ -44,7 +44,7 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > 1620) {
+		if (currentPoint.X > 1640) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -87,8 +87,8 @@ ACTION :
 
 	// 進行方向を向くまで旋回する
 	case TurnFront:
-		if (abs(currentAngle - FORWARD_ANGLE) < 10){
-			CurrentState = LineTraceToGrayArea;
+		if (IOManager->InputData.ReflectLight < 120 && abs(currentAngle - FORWARD_ANGLE) < 45){
+			CurrentState = LineTraceSlowToGrayArea;
 
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
@@ -99,7 +99,14 @@ ACTION :
 		// 進行方向まで旋回
 		IOManager->Turn(currentAngle, FORWARD_ANGLE, FIRST_TURN_SPEED);
 		break;
-	
+	case LineTraceSlowToGrayArea:
+		if(currentPoint.X < 1500) {
+			CurrentState = LineTraceToGrayArea;
+			goto ACTION;
+		}
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 120, false);
+		break;
+
 	case LineTraceToGrayArea:
 		// 灰色エリアに到達したら、直進処理に変更
 		if(currentPoint.X < 1200) {
@@ -108,7 +115,7 @@ ACTION :
 			SpManager->ResetAngle(FORWARD_ANGLE);
 			goto ACTION;
 		}
-		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 120, false);
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainHigh), 120, false);
 		break;
 
 	case ForwardGrayArea:

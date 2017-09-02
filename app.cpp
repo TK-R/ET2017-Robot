@@ -8,6 +8,7 @@
 #include "InOutManager.h"
 #include "Strategy.h"
 #include "StrategyManager.h"
+#include "LineTraceStrategy.h"
 #include "BlockMoveStrategy.h"
 #include "ETSumoStrategy.h"
 #include "SelfPositionManager.h"
