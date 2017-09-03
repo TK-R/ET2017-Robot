@@ -7,6 +7,7 @@
 #include "SelfPositionManager.h"
 #include "BlockMoveManager.h"
 #include "PIDDataManager.h"
+#include "SerialSendTask.h"
 
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
@@ -43,6 +44,9 @@ void HeaderDataState::Receive(uint8_t data)
 			break;
 		case COMMAND_BLOCK_MOVE_RULE_DATA:
 			Context->SetState(new BlockMoveRuleState(Context, header.Size));
+			break;
+		case COMMAND_BLUETOOTH_CONTROL:
+			Context->SetState(new BluetoothControlState(Context));
 			break;
 		default:
 			Context->SetState(new HeaderState(Context));
@@ -205,8 +209,37 @@ void BlockMoveRuleState::Receive(uint8_t data)
 		BlockMoveManager::GetInstance()->SetBlockMoveRule(rule);
 
 	}
+	Context->SetState(new HeaderState(Context));
+}
 
+
+
+// 自己位置情報電文受信ステートにおける受信処理
+void BluetoothControlState::Receive(uint8_t data)
+{
+	buff.push_back(data);
+	if (buff.size() < sizeof(BluetoothControlData) + 1) return;
+
+	// ヘッダデータ受信完了のため、チェックサムを取得
+	uint8_t checkSum = buff.back();
+	// 末尾を削除
+	buff.pop_back();
+	
+	// チェックサムを計算
+	uint8_t calcCheckSum = 0;
+	for(uint8_t elm : buff)
+	{
+		calcCheckSum += elm; 
+	}
+
+	if (calcCheckSum == checkSum)
+	{
+		// チェックサムが一致したら、構造体を構築
+		BluetoothControlData bData;
+		memcpy(&bData, buff.data(), sizeof(BluetoothControlData));
+		serial_send_flag = (bool)bData.SendON;
+	}
 
 	Context->SetState(new HeaderState(Context));
-
 }
+

@@ -32,6 +32,9 @@ uint8_t buff_self_position[sizeof(SelfPositionData)];
 // HSL情報電文のデータ領域
 uint8_t buff_hsl_color[sizeof(HSLColorData)];
 
+// ONのときのみシリアル送信
+bool serial_send_flag = true;
+
 // 電文送信処理
 void send_data(uint8_t buff[], uint8_t Command, int dataSize)
 {
@@ -65,10 +68,13 @@ void serial_send_task(intptr_t exinf)
 {
 	while(true)
 	{
-		send_data(buff_input_signal, COMMAND_INPUT_SIGNAL_DATA, sizeof(InputSignalData));
-		send_data(buff_output_signal, COMMAND_OUTPUT_SIGNAL_DATA, sizeof(OutputSignalData));
-		send_data(buff_self_position, COMMAND_SELF_POSITION_DATA, sizeof(SelfPositionData));
-		send_data(buff_hsl_color, COMMAND_HSL_COLOR_DATA, sizeof(HSLColorData));
+		// 送信許可時のみ送信
+		if(serial_send_flag){
+			send_data(buff_input_signal, COMMAND_INPUT_SIGNAL_DATA, sizeof(InputSignalData));
+			send_data(buff_output_signal, COMMAND_OUTPUT_SIGNAL_DATA, sizeof(OutputSignalData));
+			send_data(buff_self_position, COMMAND_SELF_POSITION_DATA, sizeof(SelfPositionData));
+			send_data(buff_hsl_color, COMMAND_HSL_COLOR_DATA, sizeof(HSLColorData));
+		}
 		dly_tsk(100);
 
 	}

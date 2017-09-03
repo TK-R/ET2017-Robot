@@ -13,6 +13,7 @@
 #define COMMAND_BLOCK_MOVE_RULE_DATA 0x20
 #define COMMAND_SELF_POSITION_DATA 0x30
 #define COMMAND_HSL_COLOR_DATA 0x31
+#define COMMAND_BLUETOOTH_CONTROL 0x40
 
 #define HEADER_BYTE_SIZE 4
 struct Header {
@@ -74,6 +75,11 @@ struct HSLColorData {
 	float Saturation; 	// 彩度
 	float Luminosity; 	// 輝度
 	uint8_t HSLKind;	// 色種別
+};
+
+#define BLUETOOTH_CONTROL_BYTE_SIZE 1
+struct BluetoothControlData {
+	uint8_t SendON;		// 送信フラグ
 };
 
 #pragma pack(pop)

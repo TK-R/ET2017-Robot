@@ -83,4 +83,11 @@ public:
 	using SerialState::SerialState;
 };
 
+class BluetoothControlState : public SerialState 
+{
+public:
+	virtual void Receive(uint8_t data);
+	using SerialState::SerialState;
+};
+
 #endif
