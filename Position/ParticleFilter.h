@@ -34,9 +34,10 @@ public:
 class ParticleFilter
 {
 private:
-	Particle* ParticleArray[PARTICLE_COUNT];
 
 public:
+	Particle* ParticleArray[PARTICLE_COUNT];
+	
 	Point RobotPoint;
 	double RobotAngle;
 	double Distance;

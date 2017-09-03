@@ -43,24 +43,34 @@ void SelfPositionManager::UpdatePosition(int8_t leftMotorCount, int8_t rightMoto
 	// パーティクルフィルタONなら、フィルタに対してリサンプリングを実施する
 	if (ParticleFilterON) {
 		Filter->Resampling(&RobotPoint,RobotAngle, POS_SIGMA, ANGLE_SIGMA);
-	} else {
-		// OFFなら、標準偏差0でリサンプリングを行う
-		Filter->Resampling(&RobotPoint,RobotAngle, 0, 0);
-	}
 
-	// パーティクルフィルタの状態遷移を実施
-	Filter->UpdateParticle(leftMotorCount, rightMotorCount);
-
-	// パーティクルフィルタの尤度計算と位置確定
-	Filter->Localize();
-
-	// パーティクルフィルタからフィルタ透過後の位置を取得して、自己位置とする
-	RobotPoint.X = Filter->RobotPoint.X;
-	RobotPoint.Y = Filter->RobotPoint.Y;
-	RobotAngle = Filter->RobotAngle;
+		// パーティクルフィルタの状態遷移を実施
+		Filter->UpdateParticle(leftMotorCount, rightMotorCount);
 	
-	// 先頭の粒子の移動量を、自身の移動量に加算
-	Distance += Filter->Distance;
+		// パーティクルフィルタの尤度計算と位置確定
+		Filter->Localize();
+	
+		// パーティクルフィルタからフィルタ透過後の位置を取得して、自己位置とする
+		RobotPoint.X = Filter->RobotPoint.X;
+		RobotPoint.Y = Filter->RobotPoint.Y;
+		RobotAngle = Filter->RobotAngle;
+		
+		// 先頭の粒子の移動量を、自身の移動量に加算
+		Distance += Filter->Distance;
+	
+	} else {
+		// OFFなら、先頭の粒子のみ使用して自己位置推定を行う
+		auto p = Filter->ParticleArray[0];
+		p->Reset(&RobotPoint, RobotAngle, 0, 0);
+		p->Update(leftMotorCount, rightMotorCount);
+		
+		RobotPoint.X = p->RobotPoint.X;
+		RobotPoint.Y = p->RobotPoint.Y;
+		RobotAngle = p->RobotAngle;
+		
+		// 先頭の粒子の移動量を、自身の移動量に加算
+		Distance += p->Distance;
+	}
 
 	// 送信処理	
 	SendData();

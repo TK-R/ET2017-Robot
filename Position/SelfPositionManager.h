@@ -15,7 +15,7 @@ private:
 
 public:
 	// ONなら自己位置推定を実施する
-	bool ParticleFilterON = true;
+	bool ParticleFilterON = false;
 
 	// 走行体の座標
 	Point RobotPoint;

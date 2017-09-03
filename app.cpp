@@ -37,7 +37,7 @@ extern "C"{
 #endif
 
 // 制御周期
-#define BASE_TIME 14
+#define BASE_TIME 4
 
 imageData_t* image;
 
@@ -45,7 +45,6 @@ void Draw()
 {
     static char buf[256];
     
-    InOutManager* IOManager = InOutManager::GetInstance();
     BlockMoveManager * BmManager = BlockMoveManager::GetInstance();
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
   
@@ -54,28 +53,7 @@ void Draw()
         BmManager->CurrentCommand.SourceBlockPosition,
         BmManager->CurrentCommand.DestinationBlockPosition,
         BmManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y));
-    ev3_lcd_draw_string(buf, 0, 0);
-
-    auto src = BmManager->GetSrcWaypoint();
-    sprintf(buf, "W* No:%d srcX:%2d, srcY:%2d  ", 
-        BmManager->GetSrcWaypoint(),
-        (int)(src->X),
-        (int)(src->Y));
-    ev3_lcd_draw_string(buf, 0, 12);
-
-    RGBColor rgbMap = FieldMap::GetInstance()->GetRGBColor(
-                            SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
-    HSLColor hslMap = HSLColor::FromRGB(rgbMap.R, rgbMap.G, rgbMap.B);
-
-    sprintf(buf, "MAP-H:%3.2f,S:%3.2f,L%3.2f",
-        hslMap.Hue,
-        hslMap.Saturation,
-        hslMap.Luminosity);
-    ev3_lcd_draw_string(buf, 0, 24);
-
-    sprintf(buf, "LFood: %1.4f", ColorDecision::GetLikelihoodLuminosity(hslMap.Luminosity, IOManager->HSLValue.Luminosity));
-    ev3_lcd_draw_string(buf, 0, 36);
-    
+    ev3_lcd_draw_string(buf, 0, 0);    
 }
 
 void Refresh()
@@ -85,12 +63,14 @@ void Refresh()
 
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->UpdatePosition(IOManager->InputData.LeftMotorAngle, IOManager->InputData.RightMotorAngle);   
-    Draw();
+//    Draw();
 }
 
 void main_task(intptr_t unused) 
 {
     PlaySound(SensorInitialStart);
+    static char buf[256];
+    
     InOutManager* IOManager = InOutManager::GetInstance();
     FieldMap * Map = FieldMap::GetInstance();
     Map->ReadImage("/ev3rt/image/Field.bmp");
@@ -103,70 +83,85 @@ RESTART_:
     SelfPositionData pData;
     // 初期位置（ライントレース）
     pData.Angle = 270;
- //   pData.PositionX = 4790;
-    pData.PositionY = 430;  
- //R
-    pData.PositionX = 5190;
+    pData.PositionY = 430;             
+    pData.PositionX = 4790;
     
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
- 
+
+    auto str = new LineTraceStrategy(StManager);
+    str->CenterValue = 120;
+    dly_tsk(100);
+    sprintf(buf, "Curse: L-Normal");
+    pData.PositionX = 4790;
+    pData.PositionY = 430;             
+    pData.Angle = 270;            
+    SpManager->Distance = 0;
+    
+    str->CurrentState = L_A;
+
+    
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
-		dly_tsk(10);
+        // Lボタンが押されているときは、Lコースの攻略
+        if(ev3_button_is_pressed(LEFT_BUTTON)){
+            pData.PositionX = 4790;
+            pData.PositionY = 430;             
+            pData.Angle = 270;            
+            SpManager->Distance = 0;
+            
+            str->CurrentState = L_A;
+
+            sprintf(buf, "Curse: L-Normal");
+        // Rボタンが押されているときは、Rコースの攻略
+        } else if(ev3_button_is_pressed(RIGHT_BUTTON)) {
+            pData.PositionX = 5190; 
+            pData.PositionY = 430;             
+            pData.Angle = 270;            
+            SpManager->Distance = 0;
+            
+            str->CurrentState = R_A;
+            
+            sprintf(buf, "Curse: R-Normal");
+
+        // 上ボタンが押されているときには、Lコースの難所攻略
+        } else if(ev3_button_is_pressed(UP_BUTTON)){
+            pData.Angle = 180;
+            pData.PositionX = 1500;
+            pData.PositionY = 1780;
+            SpManager->Distance = 10240;
+                    
+            str->CurrentState = L_A;
+            
+            sprintf(buf, "Curse: L-Bonus");
+            
+        // 下ボタンが押されているときは、Rコースの難所攻略
+        } else if(ev3_button_is_pressed(DOWN_BUTTON)){
+            pData.Angle = 180;
+            pData.PositionX = 1500;
+            pData.PositionY = 2200;
+            SpManager->Distance = 10240;
+        
+            str->CurrentState = R_A;
+        
+            sprintf(buf, "Curse: R-Bonus");            
+        }
+        ev3_lcd_draw_string(buf, 0, 0);
+        dly_tsk(100);
     }
+
+    SpManager->ResetPosition(pData);        
+    
 
     while(IOManager->InputData.TouchSensor == 1){
         Refresh();
 		dly_tsk(10);
     }
 
-    ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT,  EV3_LCD_WHITE);
-    
-    // StManager->SetStrategy(new BlockMoveStrategy(StManager));
-
-    // ライントレース戦略にて動作開始
-    auto lts = new LineTraceStrategy(StManager);
-    lts->CenterValue = 120;
-//    lts->CurrentState = R_A;
-  
-    lts->CurrentState = L_A;
-    StManager->SetStrategy(lts);
+    // ライントレースを初期化
     IOManager->LineTraceClear(120);
-    
+    StManager->SetStrategy(str);
 
-    // Lコース難所確認用
-/*
-    pData.Angle = 180;
-    pData.PositionX = 1500;
-    pData.PositionY = 1780;
-    SpManager->ResetPosition(pData);
-    SpManager->Distance = 10240;
-*/
-/*
-    //   Rコース難所確認用
-    pData.Angle = 180;
-    pData.PositionX = 1500;
-    pData.PositionY = 2200;
-    SpManager->ResetPosition(pData);
-    SpManager->Distance = 10240;
-*/
-    
-    // ET相撲列車停止
-    /*
-    auto train = new ETTrainStrategy(StManager);
-    train->Initialize();
-    StManager->SetStrategy(train);
-    */
-
-    // 初期位置（ET相撲）
-    //StManager->SetStrategy(new ETSumoStrategy(StManager));
-    // 初期位置（ET相撲）
-    //pData.Angle = 0;
-    //pData.PositionX = 1530;
-    //pData.PositionY = 2940;
-    //SpManager->ResetPosition(pData);
- 
     Clock* clock = new Clock();
     while(1)
     {
