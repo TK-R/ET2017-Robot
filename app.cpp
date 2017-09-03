@@ -98,22 +98,19 @@ void main_task(intptr_t unused)
     PlaySound(SensorInitialEnd);    
     
 RESTART_:
-
+    
     // 初期位置
     SelfPositionData pData;
-/*
-    pData.Angle = 0;
-    pData.PositionX = 1360;
-    pData.PositionY = 2900;
-*/
     // 初期位置（ライントレース）
     pData.Angle = 270;
-    pData.PositionX = 4790;
-    pData.PositionY = 430;
-
+ //   pData.PositionX = 4790;
+    pData.PositionY = 430;  
+ //R
+    pData.PositionX = 5190;
+    
     SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
     SpManager->ResetPosition(pData);
-
+ 
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
 		dly_tsk(10);
@@ -131,16 +128,21 @@ RESTART_:
     // ライントレース戦略にて動作開始
     auto lts = new LineTraceStrategy(StManager);
     lts->CenterValue = 120;
+//    lts->CurrentState = R_A;
+  
+    lts->CurrentState = L_A;
     StManager->SetStrategy(lts);
     IOManager->LineTraceClear(120);
+    
 
     // Lコース難所確認用
+/*
     pData.Angle = 180;
     pData.PositionX = 1500;
     pData.PositionY = 1780;
     SpManager->ResetPosition(pData);
     SpManager->Distance = 10240;
-
+*/
 /*
     //   Rコース難所確認用
     pData.Angle = 180;

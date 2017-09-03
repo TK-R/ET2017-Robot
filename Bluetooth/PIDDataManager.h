@@ -43,10 +43,10 @@ private:
 		PIDData lineR_C = {43, 0.23, 0, 0.43, pR_C, -21};
 		SetPIDData(lineR_C);
 
-		PIDData lineR_D = {50, 0.16, 0, 0.46, pR_D, -45};
+		PIDData lineR_D = {40, 0.16, 0, 0.47, pR_D, -42};
 		SetPIDData(lineR_D);
 
-		PIDData lineR_E = {65.5, 0.16, 0, 0.23, pR_E, 8};
+		PIDData lineR_E = {36.4, 0.27, 0, 0.36, pR_E, 10};
 		SetPIDData(lineR_E);
 
 		//Lコース
