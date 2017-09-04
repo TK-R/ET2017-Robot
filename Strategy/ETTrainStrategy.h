@@ -13,6 +13,7 @@ enum ETTrainStateEnum
 	BackToStation,			// 旋回後、駅の前まで移動する
 	TurnToStation,			// 駅に尻尾を向ける形で旋回する
 	TurnOffSwitch,			// スイッチを操作して、停止側にする
+	TurnNextBack,			// もう一度背面を向く
 	TurnFront,				// 進行方向まで旋回する
 	LineTraceSlowToGrayArea, // 灰色領域までゆっくりライントレースする
 	LineTraceToGrayArea,	// 灰色領域までライントレースする
@@ -27,7 +28,7 @@ private:
 
 	// 現在のステート情報
 	ETTrainStateEnum CurrentState = TurnToBack;
-
+	int KillCount = 0;
 	
 public:
 	void Initialize(){

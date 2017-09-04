@@ -44,7 +44,7 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > 1690) {
+		if (currentPoint.X > (1680 + KillCount * 20)) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -58,6 +58,7 @@ ACTION :
 	case TurnToStation:
 		if (abs(currentAngle - STATION_ANGLE) < 5) {
 			CurrentState = TurnOffSwitch;
+			
 			// 尻尾を下げている間、スレッドが停止するため強制的に周期書き込みを発生させる
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
@@ -72,20 +73,34 @@ ACTION :
 	// スイッチを操作して、停止側にする
 	case TurnOffSwitch:
 		if (abs(currentAngle - SWITCH_OFF_ANGLE) < 5){
-			CurrentState = TurnFront;
 			// 尻尾をあげている間、スレッドが停止するため強制的に周期書き込みを発生させる
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 
 			// 遷移時に、尻尾を上げる
 			IOManager->UpTailMotor();
+			
+			KillCount++;
+			// 2回実行したら前を向く
+			if(KillCount == 2) CurrentState = TurnFront;
+			else CurrentState = TurnNextBack;
+
 			goto ACTION;
 		}
 		// スイッチオフ角度まで旋回
 		IOManager->Turn(currentAngle, SWITCH_OFF_ANGLE, TURN_SPEED);
 		break;
+	
+	// もう一度
+	case TurnNextBack:
+		if (abs(currentAngle - BACK_ANGLE) < 10) {
+			CurrentState = BackToStation;
+			goto ACTION;
+		}
+		IOManager->TurnCW(FIRST_TURN_SPEED);
+		break;
 
-	// 進行方向を向くまで旋回する
+// 進行方向を向くまで旋回する
 	case TurnFront:
 		if (IOManager->InputData.ReflectLight < 120 && abs(currentAngle - FORWARD_ANGLE) < 45){
 			CurrentState = LineTraceSlowToGrayArea;
