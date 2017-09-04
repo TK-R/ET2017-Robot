@@ -90,7 +90,9 @@ RESTART_:
     SpManager->ResetPosition(pData);
 
     auto str = new LineTraceStrategy(StManager);
-    str->CenterValue = 120;
+    
+    // 調整ポイント
+    str->CenterValue = 130;
     dly_tsk(100);
     sprintf(buf, "Curse: L-Normal");
     pData.PositionX = 4790;
