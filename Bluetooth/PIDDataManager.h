@@ -37,16 +37,16 @@ private:
 		SetPIDData(lineStraight);
 
 		//Rコース
-		PIDData lineR_B = {100, 0.30, 0, 0.52, pR_B, 9};
+		PIDData lineR_B = {61.7, 0.14, 0, 0.63, pR_B, 9};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {43, 0.23, 0, 0.43, pR_C, -21};
+		PIDData lineR_C = {50.9, 0.19, 0, 0.99, pR_C, -10};
 		SetPIDData(lineR_C);
 
-		PIDData lineR_D = {40, 0.16, 0, 0.47, pR_D, -42};
+		PIDData lineR_D = {44.7, 0.24, 0, 0.99, pR_D, -27};
 		SetPIDData(lineR_D);
 
-		PIDData lineR_E = {36.4, 0.27, 0, 0.36, pR_E, 10};
+		PIDData lineR_E = {50.6, 0.18, 0, 0.96, pR_E, 6};
 		SetPIDData(lineR_E);
 
 		//Lコース
@@ -70,7 +70,7 @@ private:
 
 
 		// ブロック並べ中
-		PIDData block = {21, 0.71, 0, 0.4, BlockMovePIDState, 0};
+		PIDData block = {21, 0.71, 0, 0.99, BlockMovePIDState, 0};
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
@@ -86,7 +86,7 @@ private:
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中
-		PIDData trainS = {15.5, 1, 0.08, 0.91, ETTrainSlow, 0};
+		PIDData trainS = {22.2, 1, 0.00, 0.65, ETTrainSlow, 0};
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中

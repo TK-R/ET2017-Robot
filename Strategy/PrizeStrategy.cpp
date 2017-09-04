@@ -133,7 +133,7 @@ ACTION :
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 
-			IOManager->ARMMotorAtBottom();
+			IOManager->DownARMMotor();
 			CurrentState = BackLastLine;
 			goto ACTION;
 		}

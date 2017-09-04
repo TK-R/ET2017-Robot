@@ -110,7 +110,7 @@ RESTART_:
             pData.PositionX = 4790;
             pData.PositionY = 430;             
             pData.Angle = 270;            
-            SpManager->Distance = 0;
+            pData.Distance = 0;
             
             str->CurrentState = L_A;
 
@@ -120,7 +120,7 @@ RESTART_:
             pData.PositionX = 5190; 
             pData.PositionY = 430;             
             pData.Angle = 270;            
-            SpManager->Distance = 0;
+            pData.Distance = 0;
             
             str->CurrentState = R_A;
             
@@ -131,7 +131,7 @@ RESTART_:
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 1780;
-            SpManager->Distance = 10240;
+            pData.Distance = 10240;
                     
             str->CurrentState = L_A;
             
@@ -142,7 +142,7 @@ RESTART_:
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 2200;
-            SpManager->Distance = 10240;
+            pData.Distance = 10240;
         
             str->CurrentState = R_A;
         
