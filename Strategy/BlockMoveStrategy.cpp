@@ -243,7 +243,7 @@ void MoveState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// 一定距離進んだ後、ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 40) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 120) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 			// ラインを跨いだので、ウェイポイントの座標に変更
