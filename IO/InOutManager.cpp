@@ -128,9 +128,9 @@ bool InOutManager::JudgeTurnCW(int currentAngle, int targetAngle)
 }
 
 
-void InOutManager::TurnWithBlock(bool CW, int power)
+void InOutManager::TurnWithBlock(bool CW, int power, double ratio)
 {
-	double ohterPower = -0.5 * power;
+	double ohterPower = ratio * power;
 
 	if(CW) {
 		OutputData.LeftMotorPower = power;
@@ -139,6 +139,19 @@ void InOutManager::TurnWithBlock(bool CW, int power)
 		OutputData.LeftMotorPower = ohterPower;
 		OutputData.RightMotorPower = power;
 	} 
+}
+
+void InOutManager::Turn(bool CW, int power)
+{
+	double ohterPower = -1 * power;
+	
+	if(CW) {
+		OutputData.LeftMotorPower = power;
+		OutputData.RightMotorPower = ohterPower;
+	} else {
+		OutputData.LeftMotorPower = ohterPower;
+		OutputData.RightMotorPower = power;
+	}
 }
 
 void InOutManager::Turn(int currentAngle, int targetAngle, int power)

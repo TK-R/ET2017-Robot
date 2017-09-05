@@ -98,7 +98,10 @@ public:
 	bool JudgeTurnCW(int currentAngle, int targetAngle);
 
 	// ブロックを保持しながら、旋回する
-	void TurnWithBlock(bool CW, int power);
+	void TurnWithBlock(bool CW, int power, double ratio);
+	
+	void Turn(bool CW, int power);
+
 	// 目標角度になるように旋回する
 	void Turn(int currentAngle, int targetAngle, int power);
 	// 時計回りに回転するように左右モータの値を更新する

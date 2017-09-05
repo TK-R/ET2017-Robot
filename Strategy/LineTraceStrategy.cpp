@@ -179,8 +179,11 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_GRAY:
+		if(distance > 10500 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
+		else GrayCount = 0;
+
 		// 灰色検出
-		if(distance > 10420 && InOut->InputData.ReflectLight > 180) {
+		if(GrayCount > AVERAGE_POINT) {
 			SpManager->Distance = 0;
 			CurrentState = L_I;
 			break;
@@ -194,10 +197,10 @@ RETRY:
 
 		break;
 	case L_I:
-		if(distance > 100){
-			SpManager->ResetX(950);
-			SpManager->ResetY(1770);
-			SpManager->ResetAngle(180); 
+		if(distance > 1030){
+			SpManager->ResetX(450);
+			SpManager->ResetY(1290);
+			SpManager->ResetAngle(90); 
 			InOut->Stop();
 
 			Manager->SetStrategy(new BlockMoveStrategy(Manager));

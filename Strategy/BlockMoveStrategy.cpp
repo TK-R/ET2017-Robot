@@ -112,7 +112,7 @@ void ApproachState::Run()
 	case LineTurn:
 		// 旋回動作を実行
 		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->TurnWithBlock(CW, TURN_POWER);
+			IoManager->Turn(CW, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
@@ -139,6 +139,9 @@ void ApproachState::Run()
 				moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);
 				moveState->CurrentWayPointNo = CurrentWayPointNo;
 				ParentStrategy->ChangeState(moveState);	
+
+				// 積算距離をリセット
+				SpManager->Distance = 0;
 			} else {
 				IoManager->Stop();
 			}
@@ -174,14 +177,25 @@ void MoveState::Run()
 	switch(SubState){
 	// 初回処理
 	case Initialize:
+		// ウェイポイントが複数ある場合には、最初の１個は無視して、初回旋回に遷移
+		if(BtManager->CurrentCommand.BlockMoveWaypointCount > 1) {
+			// それ以外の場合には、最初のウェイポイントに即到達して、初回旋回に遷移
+			BtManager->ArrivalDstWayPoint();
+
+			
+			// 角度を再計算して、方向を判定
+			SubState = FirstTurn;
+			break; 
+		}	
+
 		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
-		if (abs(targetWaypointAngle - currentAngle) < 2) {
-			// 初回のみライントレース
+		if (abs(targetWaypointAngle - currentAngle) < 3) {
 			SubState = FirstStraight;
 		}
-		
+
+		LeftEdge = CW;
 		// 旋回動作を実行
-		IoManager->TurnWithBlock(CW, TURN_POWER);
+		IoManager->TurnWithBlock(CW, TURN_POWER , 0);
 		break;
 	case FirstStraight:
 		// 初回は5cmだけ直進
@@ -195,23 +209,20 @@ void MoveState::Run()
 	case FirstTurn:
 		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
 		if (abs(targetWaypointAngle - currentAngle) < 2) {
-			if(BtManager->CurrentDstWaypointCount == 0) {
-				// 初回のみライントレース
-				SubState = FirstLineTrace;
-				SpManager->Distance = 0;
-			} else {
-				// 旋回s
-				SubState = ImaginaryWaypoint;				
-			}
+			SubState = ImaginaryWaypoint;				
+
+			// 移動距離をクリア
+			SpManager->Distance = 0;
 			break;
 		}
-		
+		CW = IoManager->JudgeTurnCW(currentAngle, targetWaypointAngle);
+
 		// 旋回動作を実行
-		IoManager->Turn(currentAngle, targetWaypointAngle, TURN_POWER);
+		IoManager->TurnWithBlock(CW, TURN_POWER, -0.2);
 		break;
 	case FirstLineTrace:
-		// 15cm程度進む
-		if(SpManager->Distance > 150) {
+		// 10cm程度進む
+		if(SpManager->Distance > 100) {
 			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
 			CurrentWayPointNo = BtManager->GetDstWayPointNo();
 			
@@ -231,8 +242,8 @@ void MoveState::Run()
 		break;
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
-		// ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE) {
+		// 一定距離進んだ後、ラインを認識した場合には、直進ステートに遷移
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 40) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 			// ラインを跨いだので、ウェイポイントの座標に変更
@@ -269,8 +280,9 @@ void MoveState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
-			IoManager->TurnWithBlock(CW, TURN_POWER);
+		if(abs(targetBlockAngle - currentAngle) > 70 || 
+		      (IoManager->InputData.ReflectLight > EDGE_LINE && IoManager->HSLKind != BtManager->GetDstBlockPositionColor())){
+			IoManager->TurnWithBlock(CW, TURN_POWER, -0.3);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
 			SubState = LineTrace;
