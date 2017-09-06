@@ -179,7 +179,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_GRAY:
-		if(distance > 10500 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
+		if(distance > 10260 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
 		else GrayCount = 0;
 
 		// 灰色検出

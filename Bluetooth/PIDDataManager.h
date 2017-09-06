@@ -33,14 +33,14 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {66.7, 0.08, 0, 0.90, LineTraceStraight, 0}; 	// 8.7V
+		PIDData lineStraight = {67, 0.09, 0, 0.95, LineTraceStraight, 0}; 	// 8.7V
 		SetPIDData(lineStraight);
 
 		//Rコース
 		PIDData lineR_B = {61.7, 0.14, 0, 0.63, pR_B, 9};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {50.9, 0.19, 0, 0.99, pR_C, -10};
+		PIDData lineR_C = {45.9, 0.19, 0, 0.99, pR_C, -10};
 		SetPIDData(lineR_C);
 
 		PIDData lineR_D = {44.7, 0.24, 0, 0.99, pR_D, -27};
@@ -53,7 +53,7 @@ private:
 		PIDData lineL_B = {61.7, 0.14, 0, 0.63, pL_B, 21};
 		SetPIDData(lineL_B);
 
-		PIDData lineL_C = {50.9, 0.19, 0, 0.99, pL_C, -10}; //8.8V
+		PIDData lineL_C = {45.7, 0.2, 0, 1.37, pL_C, -7}; //8.8V
 		SetPIDData(lineL_C);
 
 		PIDData lineL_D = {50.6, 0.18, 0, 0.96, pL_D, -13};  // 8.5v

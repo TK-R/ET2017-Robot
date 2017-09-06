@@ -131,7 +131,7 @@ RESTART_:
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 1780;
-            pData.Distance = 10240;
+            pData.Distance = 10010;
                     
             str->CurrentState = L_A;
             
