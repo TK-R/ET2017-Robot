@@ -17,7 +17,7 @@ private:
 		new Line(4, 	1,	4, 	30,		new Point( 970, 508)),
 		new Line(5, 	1, 	5, 	150,	new Point(1359, 508)),
 		new Line(6, 	2, 	5, 	30, 	new Point(1749, 508)),
-		new Line(7, 	2, 	6, 	150, 	new Point(2139, 508)),
+		new Line(7, 	2, 	6, 	150, 	new Point(2159, 508)),
 		new Line(8, 	3, 	6, 	30,		new Point(2528, 508)),
 		new Line(9, 	0, 	9, 	105,	new Point( 467, 702)),
 		new Line(10, 	4, 	7, 	150,	new Point( 970, 702)),
