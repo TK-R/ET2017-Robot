@@ -8,8 +8,9 @@ enum SoundType
 {
 	SensorInitialStart = 0,
 	SensorInitialEnd,
-	Start,
-	LineTraceEnd
+	LCourseStart,
+	RCourseStart,
+	BlockEnd
 };
 
 extern void PlaySound(SoundType s);

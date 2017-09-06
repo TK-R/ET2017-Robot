@@ -76,6 +76,8 @@ void main_task(intptr_t unused)
     Map->ReadImage("/ev3rt/image/Field.bmp");
     StrategyManager *StManager = new StrategyManager();
     PlaySound(SensorInitialEnd);    
+    ev3_lcd_set_font(EV3_FONT_MEDIUM);
+
     
 RESTART_:
     
@@ -94,7 +96,7 @@ RESTART_:
     // 調整ポイント
     str->CenterValue = 130;
     dly_tsk(100);
-    sprintf(buf, "Curse: L-Normal");
+    sprintf(buf, "Curse: L-N");
     pData.PositionX = 4790;
     pData.PositionY = 430;             
     pData.Angle = 270;            
@@ -107,6 +109,13 @@ RESTART_:
         Refresh();
         // Lボタンが押されているときは、Lコースの攻略
         if(ev3_button_is_pressed(LEFT_BUTTON)){
+            // ボタンが離されるまで待つ
+            while(ev3_button_is_pressed(LEFT_BUTTON)){
+                dly_tsk(100);                
+            }                  
+            
+            PlaySound(LCourseStart);
+
             pData.PositionX = 4790;
             pData.PositionY = 430;             
             pData.Angle = 270;            
@@ -114,9 +123,16 @@ RESTART_:
             
             str->CurrentState = L_A;
 
-            sprintf(buf, "Curse: L-Normal");
+            sprintf(buf, "Curse: L-N");
         // Rボタンが押されているときは、Rコースの攻略
         } else if(ev3_button_is_pressed(RIGHT_BUTTON)) {
+            // ボタンが離されるまで待つ
+            while(ev3_button_is_pressed(RIGHT_BUTTON)){
+                dly_tsk(100);                
+            }
+
+            PlaySound(RCourseStart);
+
             pData.PositionX = 5190; 
             pData.PositionY = 430;             
             pData.Angle = 270;            
@@ -124,10 +140,15 @@ RESTART_:
             
             str->CurrentState = R_A;
             
-            sprintf(buf, "Curse: R-Normal");
+            sprintf(buf, "Curse: R-N");
 
         // 上ボタンが押されているときには、Lコースの難所攻略
         } else if(ev3_button_is_pressed(UP_BUTTON)){
+            // ボタンが離されるまで待つ
+            while(ev3_button_is_pressed(UP_BUTTON)){
+                dly_tsk(100);                
+            }
+
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 1780;
@@ -135,10 +156,15 @@ RESTART_:
                     
             str->CurrentState = L_A;
             
-            sprintf(buf, "Curse: L-Bonus");
+            sprintf(buf, "Curse: L-B");
             
         // 下ボタンが押されているときは、Rコースの難所攻略
         } else if(ev3_button_is_pressed(DOWN_BUTTON)){
+            // ボタンが離されるまで待つ
+            while(ev3_button_is_pressed(DOWN_BUTTON)){
+                dly_tsk(100);                
+            }
+
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 2200;
@@ -146,8 +172,9 @@ RESTART_:
         
             str->CurrentState = R_A;
         
-            sprintf(buf, "Curse: R-Bonus");            
+            sprintf(buf, "Curse: R-B");            
         }
+        
         ev3_lcd_draw_string(buf, 0, 0);
         dly_tsk(100);
     }

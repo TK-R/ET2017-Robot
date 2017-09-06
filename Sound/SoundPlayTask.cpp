@@ -27,10 +27,13 @@ void sound_play_task(intptr_t exinf)
             case SensorInitialEnd:
                 Play("/ev3rt/sound/S02.wav");
                 break;
-            case Start:
+            case LCourseStart:
                 Play("/ev3rt/sound/S03.wav");
                 break;
-            case LineTraceEnd:
+            case RCourseStart:
+                Play("/ev3rt/sound/S04.wav");
+                break;
+            case BlockEnd:
                 Play("/ev3rt/sound/S04.wav");
                 break;
         }

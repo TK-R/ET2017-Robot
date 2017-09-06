@@ -7,6 +7,7 @@
 #include "BlockMoveStrategy.h"
 #include "InOutManager.h"
 #include "PIDDataManager.h"
+#include "SoundPlayTask.h"
 
 #define FIELD 	220
 #define EDGE_LINE 120 // 黒線との境界線
@@ -325,6 +326,9 @@ void MoveState::Run()
 			// 最後までやったら、やりきった感を出す
 			if (last) {
 				IoManager->Stop();
+				IoManager->WriteOutputMotor();
+				PlaySound(BlockEnd);
+				
 				ParentStrategy->Manager->SetStrategy(NULL);
 				break;
 			} 
