@@ -86,11 +86,11 @@ private:
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中
-		PIDData trainS = {22.2, 1, 0.00, 0.65, ETTrainSlow, 0};
+		PIDData trainS = {19, 0.8, 0.00, 0.81, ETTrainSlow, 0};
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中
-		PIDData trainH = {32, 0.38, 0.0, 0.5, ETTrainHigh, 0};
+		PIDData trainH = {34.6, 0.54, 0.0, 1.07, ETTrainHigh, 0};
 		SetPIDData(trainH);
 
 		// 直進中のPID制御

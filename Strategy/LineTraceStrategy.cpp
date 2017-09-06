@@ -14,8 +14,8 @@
 #include "BlockMoveStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
-#define AVERAGE_POINT 110 // 灰色検出の平均化回数
-#define GRAY_VALUE	123 // 灰色検出の境界値
+#define AVERAGE_POINT 120 // 灰色検出の平均化回数
+#define GRAY_VALUE	100 // 灰色検出の境界値
 
 void LineTraceStrategy::Run()
 {
@@ -88,7 +88,7 @@ RETRY:
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_GRAY:
-		if(distance > 10500 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
+		if(distance > 10450 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
 		else GrayCount = 0;
 
 		// 灰色検出
@@ -102,7 +102,7 @@ RETRY:
 		// 列車停止時と同じゲインでライントレース
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(ETTrainSlow);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+		InOut->LineTraceAction(pidData, 90, leftEdge);
 		break;
 // Lコース
 	case L_A :
@@ -192,7 +192,7 @@ RETRY:
 		// ブロック並べ時と同じゲインでライントレース
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(BlockMovePIDState);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
+		InOut->LineTraceAction(pidData, 90, leftEdge);
 		break;
 
 		break;

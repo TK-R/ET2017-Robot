@@ -8,8 +8,8 @@
 
 #define OSHIDASHI_SPEED 20 // 押し出し動作時のスピード
 
-#define FIRST_TURN_SPEED 25 // 高速旋回時の出力
-#define TURN_SPEED 15 // 旋回時の出力
+#define FIRST_TURN_SPEED 40 // 高速旋回時の出力
+#define TURN_SPEED 25 // 旋回時の出力
 
 #define BACK_ANGLE 180   // 後退方向
 #define FORWARD_ANGLE 1 // 正面方向
@@ -109,7 +109,7 @@ ACTION :
 	
 	case TurnPrizePlaceLine:
 		// 直線の方向に旋回したら、懸賞置き場まで移動する
-		if(currentAngle < 45) {
+		if(currentAngle < 45 && currentAngle > 12) {
 			CurrentState = ForwardPrizePlace;
 			goto ACTION;
 		}
@@ -148,7 +148,7 @@ ACTION :
 			break;
 		}
 
-		IOManager->Back(pid.BasePower);
+		IOManager->Back(30);
 		break;
 	
 	default:
