@@ -10,7 +10,8 @@ enum SoundType
 	SensorInitialEnd,
 	LCourseStart,
 	RCourseStart,
-	BlockEnd
+	BlockEnd,
+	RuleReceive
 };
 
 extern void PlaySound(SoundType s);

@@ -34,8 +34,11 @@ void sound_play_task(intptr_t exinf)
                 Play("/ev3rt/sound/S04.wav");
                 break;
             case BlockEnd:
-                Play("/ev3rt/sound/S04.wav");
+                Play("/ev3rt/sound/S05.wav");
                 break;
+            case RuleReceive:
+                Play("/ev3rt/sound/S06.wav");
+                break;        
         }
     }
 }

@@ -8,6 +8,7 @@
 #include "BlockMoveManager.h"
 #include "PIDDataManager.h"
 #include "SerialSendTask.h"
+#include "SoundPlayTask.h"
 
 // シリアル受信メソッド
 void HeaderState::Receive(uint8_t data)
@@ -207,6 +208,9 @@ void BlockMoveRuleState::Receive(uint8_t data)
 		
 		// 構築したブロック運搬ルールをブロック運搬管理クラスに登録
 		BlockMoveManager::GetInstance()->SetBlockMoveRule(rule);
+		
+		// 受信したので、音声再生
+		PlaySound(RuleReceive);
 
 	}
 	Context->SetState(new HeaderState(Context));
