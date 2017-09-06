@@ -2,6 +2,7 @@
 #include "SerialData.h"
 #include "PIDDataManager.h"
 #include "SelfPositionManager.h"
+#include "StrategyManager.h"
 #include "BlockMoveManager.h"
 #include "BlockMoveStrategy.h"
 #include "InOutManager.h"
@@ -156,6 +157,8 @@ void ApproachState::Run()
 		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
 		break;
 	
+	case FirstStraight:
+	case FirstLineTrace:	
 	case Back:
 		break;
 	}
@@ -300,9 +303,6 @@ void MoveState::Run()
 			SpManager->Distance = 200;
 			SubState = Back;
 
-			// ブロック置き場到達メッセージ
-			BtManager->ArrivalDstBlockPosition();
-
 			break;
 		}
 		
@@ -316,8 +316,20 @@ void MoveState::Run()
 		break;
 	// 後退する動作
 	case Back:
-		if(SpManager->Distance < 100) {
-			// 10cm後退したら、アプローチに遷移する
+		if(SpManager->Distance < 80) {
+			// 12cm後退したら、アプローチに遷移する
+
+			// ブロック置き場到達メッセージ
+			bool last = BtManager->ArrivalDstBlockPosition();
+
+			// 最後までやったら、やりきった感を出す
+			if (last) {
+				IoManager->Stop();
+				ParentStrategy->Manager->SetStrategy(NULL);
+				break;
+			} 
+			
+			
 			auto approachState = new ApproachState(ParentStrategy);
 			approachState->CurrentWayPointNo = CurrentWayPointNo;
 			ParentStrategy->ChangeState(approachState);

@@ -171,7 +171,6 @@ RESTART_:
     
         // 入力情報更新
         Refresh();
-
         StManager->Run();
         
         // ボタン押されたらリスタート

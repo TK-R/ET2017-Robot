@@ -9,7 +9,9 @@ void StrategyManager::Run()
 
 void StrategyManager::SetStrategy(AbstractStrategy* nextStrategy)
 {
-	// TODO DELETE!!
-	delete CurrentStrategy;
+	
+	if(CurrentStrategy != NULL)
+		delete CurrentStrategy;
+	
 	CurrentStrategy = nextStrategy;
 }

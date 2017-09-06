@@ -9,9 +9,9 @@ class StrategyManager;
 class AbstractStrategy
 {
 protected:
+public:	
 	StrategyManager* Manager;
 
-public:
 	AbstractStrategy(StrategyManager* manager)
 	{
 		Manager = manager;
