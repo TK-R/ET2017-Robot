@@ -249,7 +249,8 @@ void MoveState::Run()
 
 			// 最終ウェイポイントの場合
 			if(last) {
-				if(CurrentWayPointNo == 6 && BtManager->CurrentCommand.DestinationBlockPosition == 5) {
+				if(BtManager->CurrentCommand.DestinationBlockPosition == 2
+					 && BtManager->CurrentCommand.DestinationBlockPosition == 5) {
 					CW = true;
 				}
 	
