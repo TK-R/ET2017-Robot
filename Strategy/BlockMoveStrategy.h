@@ -65,6 +65,8 @@ public:
 class MoveState: public AbstractMoveState 
 {
 public:
+	int ColorDetectCount = 0;
+	
 	void Run();
 	using AbstractMoveState::AbstractMoveState;
 	
@@ -77,7 +79,6 @@ class BlockMoveStrategy: public AbstractStrategy
 private:
 	AbstractMoveState* State = new ApproachState(this);
 public:
-	
 	void ChangeState(AbstractMoveState* nextState);
 	void Run();
 	using AbstractStrategy::AbstractStrategy;
