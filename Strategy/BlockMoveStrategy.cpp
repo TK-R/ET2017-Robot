@@ -350,7 +350,7 @@ void MoveState::Run()
 	// 後退する動作
 	case Back:
 		if(SpManager->Distance < 60) {
-			// 12cm後退したら、アプローチに遷移する
+			// 14cm後退したら、アプローチに遷移する
 
 			// ブロック置き場到達メッセージ
 			bool last = BtManager->ArrivalDstBlockPosition();
