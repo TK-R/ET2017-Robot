@@ -16,3 +16,10 @@ int Line::GetAngle(int PlaceNo)
 	else if(PlaceNo == EndPlaceNo) return Angle + 180;
 	else return 0;	// ありえないパターン
 }
+
+int Line::GetAngleWithSource(int SourcePlaceNo)
+{
+	if(SourcePlaceNo == StartPlaceNo) return Angle + 180;
+	else if(SourcePlaceNo == EndPlaceNo) return Angle;
+	else return 0;	// ありえないパターン
+}

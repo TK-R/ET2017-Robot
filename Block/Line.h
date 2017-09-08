@@ -15,6 +15,9 @@ public:
 	// 向かっているブロック置き場Noから、補正座標を取得する
 	int GetAngle(int PlaceNo);
 
+	// 運搬元ブロック置き場Noから、補正角度を取得する
+	int GetAngleWithSource(int SourcePlaceNo);
+	
 	// コンストラクタ
 	Line(int no, int startPlaceNo, int endPlaceNo, int angle, Point* wayPoint);
 };

@@ -47,6 +47,7 @@ public:
 		ParentStrategy = strategy;
 	}
 
+	int ColorDetectCount = 0;
 	int CurrentWayPointNo = 26;		
 	virtual void Run(){}
 	virtual ~AbstractMoveState(){}
@@ -65,7 +66,6 @@ public:
 class MoveState: public AbstractMoveState 
 {
 public:
-	int ColorDetectCount = 0;
 	
 	void Run();
 	using AbstractMoveState::AbstractMoveState;
