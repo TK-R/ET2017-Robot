@@ -50,12 +50,13 @@ void ApproachState::Run()
 			// 最寄の場合には、即ライントレース
 			LeftEdge = false;
 			SubState = LineTrace;	
+		} else if(CurrentWayPointNo == 26) {
+			// 初回であり、9ではないとき
+			BtManager->ArrivalSrcWayPoint();
+			SubState = FirstTurn;
 		} else if(CurrentWayPointNo == BtManager->GetSrcWayPointNo()) {
 			// すでにウェイポイントの上にいるとき
 			SubState = LineTurn;
-		} else if(CurrentWayPointNo == 26) {
-			// 初回であり、9ではないとき
-			SubState = FirstTurn;
 		} else {
 			SubState = FirstTurn;
 		}
@@ -66,6 +67,7 @@ void ApproachState::Run()
 		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
 		if (abs(targetWaypointAngle - currentAngle) < 2) {
 			SubState = ImaginaryWaypoint;
+			SpManager->Distance = 0;
 		}
 
 		// 旋回動作を実行
@@ -75,7 +77,7 @@ void ApproachState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 35) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 
@@ -155,7 +157,13 @@ void ApproachState::Run()
 				auto moveState = new MoveState(ParentStrategy);
 				moveState->LeftEdge = LeftEdge;
 				int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
-				moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);
+				
+				if(BtManager->CurrentCommand.BlockMoveWaypointCount == 1) {
+					moveState->CW = CW;	
+				} else {
+					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
+				}
+
 				moveState->CurrentWayPointNo = CurrentWayPointNo;
 				ParentStrategy->ChangeState(moveState);	
 
@@ -204,6 +212,8 @@ void MoveState::Run()
 
 		if(CurrentWayPointNo == 22 && BtManager->CurrentCommand.SourceBlockPosition == 10) {
 			CW = false;
+		} else if(CurrentWayPointNo == 5 && BtManager->CurrentCommand.SourceBlockPosition == 1 ) {
+			CW = false;
 		}
 
 		LeftEdge = CW;
@@ -214,7 +224,7 @@ void MoveState::Run()
 		if(dstWayPointNo == 0 || dstWayPointNo == 1 || dstWayPointNo == 2){
 			moveDistance = 340;
 		} else {
-			moveDistance = 50;
+			moveDistance = 70;
 		}
 	
 		if(SpManager->Distance > moveDistance) {
@@ -259,6 +269,11 @@ void MoveState::Run()
 				{
 					CW = true;
 					LeftEdge = true;
+				} else if(BtManager->CurrentCommand.SourceBlockPosition == 1
+					&& BtManager->CurrentCommand.DestinationBlockPosition == 5)
+				{
+					CW = true;
+					LeftEdge = false;
 				}
 
 				// ライントレースに遷移
@@ -273,7 +288,7 @@ void MoveState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// 一定距離進んだ後、ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 30) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 60) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 			// ラインを跨いだので、ウェイポイントの座標に変更

@@ -84,13 +84,14 @@ private:
 		// ET相撲中(高速）	
 		PIDData sumoH = {30, 0.39, 0, 0.5, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
+		
 
 		// ET相撲前の列車停止中
 		PIDData trainS = {19, 0.8, 0.00, 0.81, ETTrainSlow, 0};
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中
-		PIDData trainH = {35.4, 0.36, 0.0, 1.32, ETTrainHigh, 0};
+		PIDData trainH = {34.6, 0.36, 0.0, 1.30, ETTrainHigh, 0};
 		SetPIDData(trainH);
 
 		// 直進中のPID制御
