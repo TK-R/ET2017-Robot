@@ -165,26 +165,14 @@ RESTART_:
             while(ev3_button_is_pressed(DOWN_BUTTON)){
                 dly_tsk(100);                
             }
-/*
+
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 2200;
             pData.Distance = 10240;
         
             str->CurrentState = R_A;
-  */
   
-            // 座標をクリア
-            pData.PositionX = 2470;
-            pData.PositionY = 2900;
-            pData.Angle = 180;
-            
-            
-            IOManager->WriteOutputMotor();
-            dly_tsk(100);
-
-            StManager->SetStrategy(new PrizeStrategy(StManager));
-            
             sprintf(buf, "Curse: R-B");            
         }
         
