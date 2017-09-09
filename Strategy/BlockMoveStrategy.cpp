@@ -330,7 +330,7 @@ void MoveState::Run()
 		if(IoManager->HSLKind == BtManager->GetDstBlockPositionColor()) ColorDetectCount++;
 		if(IoManager->HSLKind == HSLBlack) ColorDetectCount = 0;
 
-		if(ColorDetectCount > 10)
+		if(ColorDetectCount > 8)
 		{
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetDstBlockPoint());

@@ -9,7 +9,7 @@ struct HSLColors ColorDecision::FieldColors =
     {300,   5,   100},  // White
     {252,   24,    4},  // Black
     {3,     53,   52},  // Red
-    {40,    57,   58},  // Yellow
+    {62,    70,   50},  // Yellow
     {218,   81,   42},  // Blue
     {125,   56,   35}   // Green
 };

@@ -70,7 +70,7 @@ private:
 
 
 		// ブロック並べ中
-		PIDData block = {23.5, 0.6, 0, 1.74, BlockMovePIDState, 0};
+		PIDData block = {23.5, 0.65, 0, 1.74, BlockMovePIDState, 0};
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
