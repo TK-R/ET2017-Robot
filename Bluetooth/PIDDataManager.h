@@ -78,13 +78,13 @@ private:
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {15, 1.2, 0, 0, ETSumoPIDState, 0};
+		PIDData sumo = {16, 1, 0, 0.67, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	
 		PIDData sumoH = {30, 0.39, 0, 0.5, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
-		
+
 
 		// ET相撲前の列車停止中
 		PIDData trainS = {19, 0.8, 0.00, 0.81, ETTrainSlow, 0};

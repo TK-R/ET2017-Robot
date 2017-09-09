@@ -44,7 +44,7 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > (1660 + KillCount * 40)) {
+		if (currentPoint.X > (1660 + KillCount * 30)) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -145,7 +145,7 @@ ACTION :
 	// たどり着くまで、ライントレースを実施する
 	case LineTraceToArena:
 		// 段差による角速度を検知したら、土俵入りと認識
-		if(IOManager->InputData.AnglarSpeed > 42) {
+		if(SpManager->Distance > 2850) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
 			return;
 		}

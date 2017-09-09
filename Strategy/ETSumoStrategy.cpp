@@ -20,7 +20,8 @@
 
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
-#define EDGE_LINE 120 // 黒線との境界線
+//#define EDGE_LINE 120 // 黒線との境界線
+#define EDGE_LINE 109 // 黒線との境界線
 
 #define NOT_BLOCK_DISTANCE 8 // ブロックを認識していないときの距離
 #define BLOCK_DISTANCE 3	 // ブロックを認識した時のきょり　
@@ -275,11 +276,12 @@ ACTION :
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-		if (currentAngle > 305 && currentAngle < 355) {
+		if (currentAngle > 305 && currentAngle < 350) {
 			CurrentArena++;
 				
 			// 2枚目の攻略が完了した場合には、線路をまたぐ直進処理に遷移
 			if(CurrentArena == 2) {
+				SpManager->Distance = 0;
 				CurrentState = ForwardRail;
 				// 座標修正
 				SpManager->ResetX(1920);
@@ -304,7 +306,15 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Forward(30);
+		// 最初はライントレース
+		if(SpManager->Distance < 90) {
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);
+		} else if(SpManager->Distance < 130){
+			IOManager->Forward(25);	
+		} else {
+			IOManager->LineTraceAction(pid, EDGE_LINE, false);		
+		}
+
 		break;
 	default:
 		break;
