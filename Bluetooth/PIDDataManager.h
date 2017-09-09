@@ -40,7 +40,7 @@ private:
 		PIDData lineR_B = {61.7, 0.14, 0, 0.63, pR_B, 9};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {45.9, 0.19, 0, 0.99, pR_C, -10};
+		PIDData lineR_C = {45.9, 0.19, 0, 1.3, pR_C, -1};
 		SetPIDData(lineR_C);
 
 		PIDData lineR_D = {44.7, 0.24, 0, 0.99, pR_D, -27};
@@ -90,7 +90,7 @@ private:
 		SetPIDData(trainS);
 	
 		// ET相撲前の列車停止中
-		PIDData trainH = {34.6, 0.54, 0.0, 1.07, ETTrainHigh, 0};
+		PIDData trainH = {35.4, 0.36, 0.0, 1.32, ETTrainHigh, 0};
 		SetPIDData(trainH);
 
 		// 直進中のPID制御

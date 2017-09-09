@@ -15,7 +15,7 @@
 #define FIRST_TURN_SPEED 20	
 #define BACK_ANGLE 1
 #define STATION_ANGLE 90 // 駅に尻尾を向けた方向
-#define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
+#define SWITCH_OFF_ANGLE 20 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
 
 void ETTrainStrategy::Run()
@@ -44,7 +44,7 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > (1700 + KillCount * 40)) {
+		if (currentPoint.X > (1660 + KillCount * 40)) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
@@ -81,8 +81,8 @@ ACTION :
 			IOManager->UpTailMotor();
 			
 			KillCount++;
-			// 2回実行したら前を向く
-			if(KillCount == 2) CurrentState = TurnFront;
+			// 3回実行したら前を向く
+			if(KillCount == 3) CurrentState = TurnFront;
 			else CurrentState = TurnNextBack;
 
 			goto ACTION;

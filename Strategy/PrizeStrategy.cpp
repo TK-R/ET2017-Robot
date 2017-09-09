@@ -80,8 +80,8 @@ ACTION :
 	case ForwardPrize:
 		// 懸賞を認識したら、アームを上げて後退状態に遷移する
 		if(IOManager->InputData.SonarDistance <= DETECT_PRIZE_DISTANCE){
-			// 追加で0.2秒間だけ進む
-			dly_tsk(200);
+			// 追加で0.3秒間だけ進む
+			dly_tsk(300);
 
 			// アームを上げるまで、いったん停止する
 			IOManager->Stop();
@@ -99,7 +99,7 @@ ACTION :
 
 	case BackPrize:
 		// 一定距離後退したら、懸賞置き場に向かう直線の方向に旋回
-		if(currentPoint.Y < 2960) {
+		if(currentPoint.Y < 2990) {
 			CurrentState = TurnPrizePlaceLine;
 			goto ACTION;
 		}
@@ -109,7 +109,7 @@ ACTION :
 	
 	case TurnPrizePlaceLine:
 		// 直線の方向に旋回したら、懸賞置き場まで移動する
-		if(currentAngle < 45 && currentAngle > 12) {
+		if(currentAngle < 45 && currentAngle > 2) {
 			CurrentState = ForwardPrizePlace;
 			goto ACTION;
 		}

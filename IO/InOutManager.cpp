@@ -247,10 +247,10 @@ void InOutManager::UpARMMotor()
 	if(ArmState == ArmStateUp) return;
 
 	if(ArmState == ArmStateBottom) {
-		ev3_motor_rotate(EV3_PORT_C, 80, 30, true);		
+		ev3_motor_rotate(EV3_PORT_C, 75, 30, true);		
 
 	} else { // At Down
-		ev3_motor_rotate(EV3_PORT_C, 55, 30, true);	
+		ev3_motor_rotate(EV3_PORT_C, 50, 30, true);	
 	}
 	ArmState = ArmStateUp;
 }
@@ -267,7 +267,7 @@ void InOutManager::DownARMMotor()
 		ev3_motor_rotate(EV3_PORT_C, 25, 30, true);		
 
 	} else { // At UP
-		ev3_motor_rotate(EV3_PORT_C, -55, 30, true);		
+		ev3_motor_rotate(EV3_PORT_C, -50, 30, true);		
 	}
 
 	ArmState = ArmStateDown;
@@ -282,7 +282,7 @@ void InOutManager::ARMMotorAtBottom()
 	if(ArmState == ArmStateDown) {
 		ev3_motor_rotate(EV3_PORT_C, -25, 30, true);
 	} else { // At UP
-		ev3_motor_rotate(EV3_PORT_C, -80, 30, true);		
+		ev3_motor_rotate(EV3_PORT_C, -75, 30, true);		
 
 	}
 	ArmState = ArmStateBottom;		
@@ -298,7 +298,7 @@ void InOutManager::UpTailMotor()
 		ev3_motor_rotate(EV3_PORT_D, -100, 100, true);	
 	} else {
 		// Bottom
-		ev3_motor_rotate(EV3_PORT_D, -200, 100, true);	
+		ev3_motor_rotate(EV3_PORT_D, -160, 100, true);	
 	}
 
 	TailState = TailStateUp;
@@ -313,7 +313,7 @@ void InOutManager::DownTailMotor()
 		ev3_motor_rotate(EV3_PORT_D, 100, 100, true);		
 	} else {
 		// BOTTOM
-		ev3_motor_rotate(EV3_PORT_D, -100, 100, true);		
+		ev3_motor_rotate(EV3_PORT_D, -60, 100, true);		
 	}
 	TailState = TailStateDown;
 }
@@ -324,9 +324,9 @@ void InOutManager::BottomTailMotor()
 	if(TailState == TailStateBottom) return;
 	
 	if(TailState == TailStateUp) {
-		ev3_motor_rotate(EV3_PORT_D, 200, 100, true);		
+		ev3_motor_rotate(EV3_PORT_D, 160, 100, true);		
 	} else {
-		ev3_motor_rotate(EV3_PORT_D, 100, 100, true);		
+		ev3_motor_rotate(EV3_PORT_D, 60, 100, true);		
 	}
 
 	TailState = TailStateBottom;
