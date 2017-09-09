@@ -261,7 +261,7 @@ ACTION :
 				
 				IOManager->Stop();
 				IOManager->WriteOutputMotor();
-			    dly_tsk(500);
+			    dly_tsk(100);
 	
 				Manager->SetStrategy(new PrizeStrategy(Manager));
 				break;

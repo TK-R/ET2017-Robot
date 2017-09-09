@@ -15,6 +15,7 @@
 #include "BlockMoveManager.h"
 #include "ETTrainStrategy.h"
 #include "SoundPlayTask.h"
+#include "PrizeStrategy.h"
 #include "HSLColor.h"
 #include "FieldMap.h"
 
@@ -103,7 +104,7 @@ RESTART_:
     SpManager->Distance = 0;
     
     str->CurrentState = L_A;
-
+    StManager->SetStrategy(str);    
     
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
@@ -164,14 +165,26 @@ RESTART_:
             while(ev3_button_is_pressed(DOWN_BUTTON)){
                 dly_tsk(100);                
             }
-
+/*
             pData.Angle = 180;
             pData.PositionX = 1500;
             pData.PositionY = 2200;
             pData.Distance = 10240;
         
             str->CurrentState = R_A;
-        
+  */
+  
+            // 座標をクリア
+            pData.PositionX = 2470;
+            pData.PositionY = 2900;
+            pData.Angle = 180;
+            
+            
+            IOManager->WriteOutputMotor();
+            dly_tsk(100);
+
+            StManager->SetStrategy(new PrizeStrategy(StManager));
+            
             sprintf(buf, "Curse: R-B");            
         }
         
@@ -189,7 +202,6 @@ RESTART_:
 
     // ライントレースを初期化
     IOManager->LineTraceClear(120);
-    StManager->SetStrategy(str);
 
     Clock* clock = new Clock();
     while(1)

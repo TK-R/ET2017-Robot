@@ -5,6 +5,7 @@
 #include "ColorDecision.h"
 #include "SerialData.h"
 #include "PIDDataManager.h"
+#include "StrategyManager.h"
 
 #define OSHIDASHI_SPEED 20 // 押し出し動作時のスピード
 
@@ -132,9 +133,11 @@ ACTION :
 		if(currentAngle > 90 && currentAngle < (PRIZE_ANGLE + 5)) {
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
-
+			
 			IOManager->DownARMMotor();
 			CurrentState = BackLastLine;
+
+			SpManager->Distance = 1000;
 			goto ACTION;
 		}
 		 
@@ -142,15 +145,33 @@ ACTION :
 		 break;
 
 	case BackLastLine:
-		// ブロックを完全に離して、黒線を認識するまで後退
-		if(IOManager->InputData.SonarDistance > NOT_BLOCK_DISTANCE && IOManager->InputData.ReflectLight < 120) {
-			IOManager->Stop();
-			break;
+		// 7cmほど後退して、黒線を認識するまで後退
+		if(SpManager->Distance < 930 && IOManager->InputData.ReflectLight < 120) {
+			CurrentState = TurnGurage; 
+			goto ACTION;
 		}
 
-		IOManager->Back(30);
+		IOManager->Back(20);
 		break;
-	
+	case TurnGurage:
+		if(currentAngle < 180) {
+			CurrentState = ForwardGurage;
+			SpManager->Distance = 0;
+			goto ACTION;
+		}
+
+		IOManager->TurnCCW(TURN_SPEED);
+		break;
+	case ForwardGurage:
+		if(SpManager->Distance > 840) {
+			IOManager->Stop();
+							
+			Manager->SetStrategy(NULL);
+			break;
+		}
+		
+		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState), 120, true);
+		break;
 	default:
 		break;
 	}
