@@ -9,10 +9,10 @@ BlockMoveManager* BlockMoveManager::GetInstance(){
 }
 
 // y軸方向を0度とした、0～360の角度を求める
-int BlockMoveManager::MyAtan2(double x, double y)
+int BlockMoveManager::MyAtan2(double x1, double x2, double y1, double y2)
 {	
-	int val = (int)(atan2(x , y) * 180 / M_PI);
-	return (val + 270) % 360;
+	int val = (int)(atan2(y1 - y2 , x2 - x1) * 180 / M_PI);
+	return (val + 360) % 360;
 }
 
 // 運搬ルールを初期化する
@@ -91,7 +91,7 @@ bool BlockMoveManager::ArrivalDstBlockPosition()
 int BlockMoveManager::GetSrcWaypointAngle(double x, double y)
 {	
 	Point* wayPoint = GetSrcWaypoint();
-	return MyAtan2(wayPoint->X - x, wayPoint->Y -y);
+	return MyAtan2(x, wayPoint->X, y,  wayPoint->Y);
 }
 
 // 運搬先ブロック置き場に到達するため経由する、
@@ -99,21 +99,21 @@ int BlockMoveManager::GetSrcWaypointAngle(double x, double y)
 int BlockMoveManager::GetDstWaypointAngle(double x, double y)
 {
 	Point* wayPoint = GetDstWaypoint();
-	return MyAtan2(wayPoint->X - x, wayPoint->Y -y);
+	return MyAtan2(x, wayPoint->X, y,  wayPoint->Y);
 }
 
 // 次に向かうべき運搬元ブロック置き場の角度を取得する
 int BlockMoveManager::GetSrcBlockAngle(double x, double y)
 {
 	Point* blockPoint = GetSrcBlockPoint();
-	return MyAtan2(blockPoint->X - x, blockPoint->Y -y);
+	return MyAtan2(x, blockPoint->X, y,  blockPoint->Y);
 }
 
 // 次に向かうべき運搬先ブロック置き場の角度を取得する
 int BlockMoveManager::GetDstBlockAngle(double x, double y)
 {
 	Point* blockPoint = GetDstBlockPoint();
-	return MyAtan2(blockPoint->X - x, blockPoint->Y -y);
+	return MyAtan2(x, blockPoint->X, y,  blockPoint->Y);
 }
 
 // 運搬元ブロック置き場に到達するため経由する、

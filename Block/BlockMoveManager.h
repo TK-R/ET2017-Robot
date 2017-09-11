@@ -45,7 +45,7 @@ private:
 	};
  
 
-	static int MyAtan2(double x, double y);
+	static int MyAtan2(double x1, double x2, double y1, double y2);
 
 	BlockMoveRuleData RuleData;
 

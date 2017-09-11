@@ -347,6 +347,10 @@ void MoveState::Run()
 
 		if(ColorDetectCount > 8)
 		{
+			IoManager->Stop();
+			IoManager->WriteOutputMotor();
+			dly_tsk(1000);
+			
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetDstBlockPoint());
 			SpManager->Distance = 200;
