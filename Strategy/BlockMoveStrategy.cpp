@@ -82,10 +82,6 @@ void ApproachState::Run()
 		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 35) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
-
-			// ラインを跨いだので、ウェイポイントの座標に変更
-//			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetSrcWayPointNo())->WayPoint);
-
 		} else {
 			IoManager->Forward(BlockMovePID.BasePower);
 		}
@@ -117,7 +113,7 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 45 || IoManager->InputData.ReflectLight > EDGE_LINE){
+		if(abs(targetBlockAngle - currentAngle) > 60 || IoManager->InputData.ReflectLight > EDGE_LINE){
 			IoManager->Turn(CW, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
@@ -297,9 +293,6 @@ void MoveState::Run()
 		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 60) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
-			// ラインを跨いだので、ウェイポイントの座標に変更
-//			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetDstWayPointNo())->WayPoint);
-
 		} else {
 			IoManager->Forward(BlockMovePID.BasePower);
 		}
@@ -388,7 +381,7 @@ void MoveState::Run()
 	// 後退する動作
 	case Back:
 		if(SpManager->Distance < 220) {
-			// 14cm後退したら、アプローチに遷移する
+			// 18cm後退したら、アプローチに遷移する
 
 			// ブロック置き場到達メッセージ
 			bool last = BtManager->ArrivalDstBlockPosition();
