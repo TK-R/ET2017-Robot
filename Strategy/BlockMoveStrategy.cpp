@@ -1,3 +1,4 @@
+#include <math.h>
 
 #include "SerialData.h"
 #include "PIDDataManager.h"
@@ -15,6 +16,7 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
+#define RANGE 40
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -82,7 +84,7 @@ void ApproachState::Run()
 			SubState = OverLine;
 
 			// ラインを跨いだので、ウェイポイントの座標に変更
-			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetSrcWayPointNo())->WayPoint);
+//			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetSrcWayPointNo())->WayPoint);
 
 		} else {
 			IoManager->Forward(BlockMovePID.BasePower);
@@ -147,7 +149,11 @@ void ApproachState::Run()
 
 		if(SpManager->Distance > 20) { 
 			// ブロック置き場の座標に修正
-			SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
+	//		SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
+			Point *p = BtManager->GetSrcBlockPoint();
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180) * RANGE);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180) * RANGE);
+
 
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
@@ -292,11 +298,20 @@ void MoveState::Run()
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 			// ラインを跨いだので、ウェイポイントの座標に変更
-			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetDstWayPointNo())->WayPoint);
+//			SpManager->ResetPoint(BtManager->GetLine(BtManager->GetDstWayPointNo())->WayPoint);
 
 		} else {
 			IoManager->Forward(BlockMovePID.BasePower);
 		}
+
+		//目標とするブロック置き場の色を取得したら、現在のステートをラインとレース中に変更
+		if(IoManager->HSLKind == BtManager->GetDstBlockPositionColor()) ColorDetectCount++;
+		if(IoManager->HSLKind == HSLBlack) ColorDetectCount = 0;
+		
+		if(ColorDetectCount > 8) {
+			SubState = LineTrace;
+		}
+		
 		break;
 	// ラインをまたぐまでの処理
 	case OverLine:
@@ -349,11 +364,15 @@ void MoveState::Run()
 		{
 			IoManager->Stop();
 			IoManager->WriteOutputMotor();
-			dly_tsk(1000);
+			dly_tsk(300);
+			
+			Point *p = BtManager->GetDstBlockPoint();
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180) * RANGE);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180) * RANGE);
 			
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetDstBlockPoint());
-			SpManager->Distance = 200;
+			SpManager->Distance = 400;
 			SubState = Back;
 			break;
 		}
@@ -368,7 +387,7 @@ void MoveState::Run()
 		break;
 	// 後退する動作
 	case Back:
-		if(SpManager->Distance < 60) {
+		if(SpManager->Distance < 220) {
 			// 14cm後退したら、アプローチに遷移する
 
 			// ブロック置き場到達メッセージ
@@ -383,7 +402,6 @@ void MoveState::Run()
 				ParentStrategy->Manager->SetStrategy(NULL);
 				break;
 			} 
-			
 			
 			auto approachState = new ApproachState(ParentStrategy);
 			approachState->CurrentWayPointNo = CurrentWayPointNo;
