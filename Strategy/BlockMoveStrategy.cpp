@@ -380,8 +380,8 @@ void MoveState::Run()
 		break;
 	// 後退する動作
 	case Back:
-		if(SpManager->Distance < 220) {
-			// 18cm後退したら、アプローチに遷移する
+		if(SpManager->Distance < 230) {
+			// 17cm後退したら、アプローチに遷移する
 
 			// ブロック置き場到達メッセージ
 			bool last = BtManager->ArrivalDstBlockPosition();
@@ -399,6 +399,7 @@ void MoveState::Run()
 			auto approachState = new ApproachState(ParentStrategy);
 			approachState->CurrentWayPointNo = CurrentWayPointNo;
 			ParentStrategy->ChangeState(approachState);
+			approachState->CW = CW;
 
 			break;
 		}
