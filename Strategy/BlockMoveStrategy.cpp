@@ -16,7 +16,7 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
-#define RANGE 70
+#define RANGE 40
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -150,7 +150,6 @@ void ApproachState::Run()
 			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180) * RANGE);
 			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180) * RANGE);
 
-
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
 				// ブロック置き場到達メッセージ
@@ -160,8 +159,9 @@ void ApproachState::Run()
 				moveState->LeftEdge = LeftEdge;
 				int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 				
-				if(BtManager->CurrentCommand.BlockMoveWaypointCount == 1) {
-					moveState->CW = CW;	
+				if(CurrentWayPointNo == 26) {
+//					moveState->CW = CW;	
+					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
 				} else {
 					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
 				}
