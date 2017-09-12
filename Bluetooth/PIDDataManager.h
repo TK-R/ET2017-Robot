@@ -33,17 +33,17 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {67, 0.09, 0, 0.95, LineTraceStraight, 0}; 	// 8.7V
+		PIDData lineStraight = {67.9, 0.12, 0, 0.92, LineTraceStraight, 0}; 	// 8.7V
 		SetPIDData(lineStraight);
 
 		//Rコース
 		PIDData lineR_B = {61.7, 0.14, 0, 0.63, pR_B, 9};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {45.9, 0.19, 0, 1.3, pR_C, -1};
+		PIDData lineR_C = {39.5, 0.25, 0, 1.22, pR_C, 0};
 		SetPIDData(lineR_C);
 
-		PIDData lineR_D = {44.7, 0.24, 0, 0.99, pR_D, -27};
+		PIDData lineR_D = {37, 0.27, 0, 0.9, pR_D, -36};
 		SetPIDData(lineR_D);
 
 		PIDData lineR_E = {50.6, 0.18, 0, 0.96, pR_E, 6};
@@ -78,13 +78,12 @@ private:
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {16, 1, 0, 0.67, ETSumoPIDState, 0};
+		PIDData sumo = {18, 1, 0, 0.31, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	
 		PIDData sumoH = {30, 0.39, 0, 0.5, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
-
 
 		// ET相撲前の列車停止中
 		PIDData trainS = {19, 0.8, 0.00, 0.81, ETTrainSlow, 0};

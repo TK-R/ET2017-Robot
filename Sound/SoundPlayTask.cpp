@@ -45,5 +45,5 @@ void sound_play_task(intptr_t exinf)
 
 void PlaySound(SoundType s)
 {
-//    snd_dtq(DT_QID, s);
+    snd_dtq(DT_QID, s);
 }

@@ -11,8 +11,8 @@
 
 #define OSHIDASHI_SPEED 20 // 押し出し動作時のスピード
 
-#define FIRST_TURN_SPEED 25 // 高速旋回時の出力
-#define TURN_SPEED 15 // 旋回時の出力
+#define FIRST_TURN_SPEED 28 // 高速旋回時の出力
+#define TURN_SPEED 20 // 旋回時の出力
 
 #define LEFT_ANGLE 90   // 左ブロック方向
 #define RIGHT_ANGLE 270 // 右ブロック方向
@@ -173,6 +173,7 @@ ACTION :
 			CurrentState = DetectRightBlock;
 			// 右ブロックを検知したため、座標を修正
 			SpManager->ResetY(3050);
+			dly_tsk(100);			
 			IOManager->Stop();
 			break;
 		}
@@ -276,7 +277,7 @@ ACTION :
 
 	case TurnForward:
 		// 黒線上に乗ったら一枚の土俵攻略が終了
-		if (currentAngle > 305 && currentAngle < 350) {
+		if (currentAngle > 305 && currentAngle < 355) {
 			CurrentArena++;
 				
 			// 2枚目の攻略が完了した場合には、線路をまたぐ直進処理に遷移
