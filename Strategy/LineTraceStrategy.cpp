@@ -191,7 +191,7 @@ RETRY:
 
 		// ブロック並べ時と同じゲインでライントレース
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(BlockMovePIDState);
+		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
 		InOut->LineTraceAction(pidData, 90, leftEdge);
 		break;
 

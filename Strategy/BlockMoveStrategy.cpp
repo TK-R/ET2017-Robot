@@ -12,7 +12,7 @@
 
 #define FIELD 	220
 #define EDGE_LINE 120 // 黒線との境界線
-#define TURN_POWER 9 // 旋回時のパワー
+#define TURN_POWER 11 // 旋回時のパワー
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
@@ -146,10 +146,9 @@ void ApproachState::Run()
 
 		if(SpManager->Distance > 20) { 
 			// ブロック置き場の座標に修正
-	//		SpManager->ResetPoint(BtManager->GetSrcBlockPoint());
 			Point *p = BtManager->GetSrcBlockPoint();
-			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180) * RANGE);
-			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180) * RANGE);
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
 
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
@@ -363,8 +362,8 @@ void MoveState::Run()
 			dly_tsk(300);
 			
 			Point *p = BtManager->GetDstBlockPoint();
-			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180) * RANGE);
-			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180) * RANGE);
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
 			
 			// ブロック置き場の座標に修正
 			SpManager->ResetPoint(BtManager->GetDstBlockPoint());
