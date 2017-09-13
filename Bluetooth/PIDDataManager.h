@@ -78,7 +78,7 @@ private:
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {16.1, 1.5, 0, 1.5, ETSumoPIDState, 0};
+		PIDData sumo = {16.1, 1.5, 0, 1.84, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	

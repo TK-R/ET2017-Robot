@@ -90,6 +90,7 @@ ACTION :
 
 			// アームを上げて、後退状態に遷移
 			IOManager->UpARMMotor();
+			IOManager->TopARMMotor();
 			CurrentState = BackPrize;
 			break;
 		}
@@ -100,7 +101,7 @@ ACTION :
 
 	case BackPrize:
 		// 一定距離後退したら、懸賞置き場に向かう直線の方向に旋回
-		if(currentPoint.Y < 2990) {
+		if(currentPoint.Y < 2950) {
 			CurrentState = TurnPrizePlaceLine;
 			goto ACTION;
 		}
@@ -129,20 +130,30 @@ ACTION :
 		break;
 	
 	case TurnPrizePlace:
-		// 懸賞置き場の方向を向いたら、アームを下げて後退する
+		// 懸賞置き場の方向を向いたら、最後の直進を実施する
 		if(currentAngle > 90 && currentAngle < (PRIZE_ANGLE + 5)) {
-			IOManager->Stop();
-			IOManager->WriteOutputMotor();
-			
-			IOManager->DownARMMotor();
-			CurrentState = BackLastLine;
-
-			SpManager->Distance = 1000;
+			CurrentState = LastForwardPrizePlace;
+			SpManager->Distance = 0;
 			goto ACTION;
 		}
 		 
-		 IOManager->TurnCW(TURN_SPEED);
-		 break;
+		IOManager->TurnCW(TURN_SPEED);
+		break;
+
+	case LastForwardPrizePlace:
+		if(SpManager->Distance > 50) {
+			// アームを下げて後退する
+			SpManager->Distance = 1000;
+			IOManager->Stop();
+			IOManager->WriteOutputMotor();
+			IOManager->DownARMMotor();	
+
+			CurrentState = BackLastLine;
+			goto ACTION;
+		}
+
+		IOManager->Forward(10);
+		break;
 
 	case BackLastLine:
 		// 7cmほど後退して、黒線を認識するまで後退

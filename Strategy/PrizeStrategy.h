@@ -17,6 +17,7 @@ enum PrizeStrategyStateEnum
 	TurnPrizePlaceLine,	// 懸賞置き場に向かう直線の方向に旋回
 	ForwardPrizePlace,	// 懸賞置き場まで移動
 	TurnPrizePlace,		// 懸賞置き場の方向に旋回
+	LastForwardPrizePlace,	// 懸賞置き場の直進	
 	BackLastLine,		// 最後の直線の方向まで後退
 	TurnGurage,			// ガレージに向くまで旋回
 	ForwardGurage

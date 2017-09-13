@@ -241,14 +241,30 @@ void InOutManager::BackLineTraceAction(PIDData data, int center, bool LeftEdge)
 
 }
 
+void InOutManager::TopARMMotor()
+{
+	if(ArmState == ArmStateTop) return;
+
+	if(ArmState == ArmStateUp) {
+		ev3_motor_rotate(EV3_PORT_C, 10, 100, false);		
+	} else if(ArmState == ArmStateDown) {
+		ev3_motor_rotate(EV3_PORT_C, 60, 100, false);		
+	} else {
+		ev3_motor_rotate(EV3_PORT_C, 85, 100, false);		
+	} 
+	
+	ArmState = ArmStateTop;
+}
+
 void InOutManager::UpARMMotor()
 {
 	// 既に上昇済なら何もしない
 	if(ArmState == ArmStateUp) return;
 
-	if(ArmState == ArmStateBottom) {
+	if(ArmState == ArmStateTop){ 
+		ev3_motor_rotate(EV3_PORT_C, -10, 100, true);		
+	} else if(ArmState == ArmStateBottom) {
 		ev3_motor_rotate(EV3_PORT_C, 75, 100, true);		
-
 	} else { // At Down
 		ev3_motor_rotate(EV3_PORT_C, 50, 100, true);	
 	}
@@ -263,11 +279,12 @@ void InOutManager::DownARMMotor()
 	// ターゲットタイプがブロックなら床に戻す
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
-	if(ArmState == ArmStateBottom) {
-		ev3_motor_rotate(EV3_PORT_C, 25, 30, true);		
-
+	if(ArmState == ArmStateTop){ 
+		ev3_motor_rotate(EV3_PORT_C, -60, 35, true);		
+	} else if(ArmState == ArmStateBottom) {
+		ev3_motor_rotate(EV3_PORT_C, 25, 35, true);		
 	} else { // At UP
-		ev3_motor_rotate(EV3_PORT_C, -50, 30, true);		
+		ev3_motor_rotate(EV3_PORT_C, -50, 35, true);		
 	}
 
 	ArmState = ArmStateDown;
@@ -279,7 +296,9 @@ void InOutManager::ARMMotorAtBottom()
 	// 既に懸賞回収箇所なら何もしない
 	if(ArmState == ArmStateBottom) return;
 
-	if(ArmState == ArmStateDown) {
+	if(ArmState == ArmStateTop) {
+		ev3_motor_rotate(EV3_PORT_C, -85, 100, true);		
+	} else if(ArmState == ArmStateDown) {
 		ev3_motor_rotate(EV3_PORT_C, -25, 100, true);
 	} else { // At UP
 		ev3_motor_rotate(EV3_PORT_C, -75, 100, true);		

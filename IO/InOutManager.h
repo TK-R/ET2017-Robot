@@ -21,6 +21,7 @@ using ev3api::ColorSensor;
 
 enum ArmStateEnum
 {
+	ArmStateTop,
 	ArmStateUp,
 	ArmStateDown,
 	ArmStateBottom
@@ -118,7 +119,8 @@ public:
 	// 後退しながらライントレースを実施するように左右モータ値を更新する
 	void BackLineTraceAction(PIDData data, int center, bool LeftEdge);
 
-
+	// アームを一番上まで上昇させる
+	void TopARMMotor();
 	// アームを上昇させる
 	void UpARMMotor();
 	// アームを下降させる
