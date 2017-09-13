@@ -144,11 +144,17 @@ void ApproachState::Run()
 		
 		IoManager->Forward(BlockMovePID.BasePower);
 
-		if(SpManager->Distance > 20) { 
+		if(SpManager->Distance > 20) { 			
+			IoManager->Stop();
+			IoManager->WriteOutputMotor();
+			dly_tsk(300);
+
 			// ブロック置き場の座標に修正
 			Point *p = BtManager->GetSrcBlockPoint();
 			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
 			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
+
+			dly_tsk(1000);
 
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
@@ -360,13 +366,14 @@ void MoveState::Run()
 			IoManager->Stop();
 			IoManager->WriteOutputMotor();
 			dly_tsk(300);
-			
+
+			// ブロック置き場の座標に修正			
 			Point *p = BtManager->GetDstBlockPoint();
 			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
 			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
-			
-			// ブロック置き場の座標に修正
-			SpManager->ResetPoint(BtManager->GetDstBlockPoint());
+
+			dly_tsk(1000);
+
 			SpManager->Distance = 400;
 			SubState = Back;
 			break;
