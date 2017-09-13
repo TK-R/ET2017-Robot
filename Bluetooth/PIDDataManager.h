@@ -70,11 +70,11 @@ private:
 
 
 		// ブロック並べ中
-		PIDData block = {23.5, 0.65, 0, 1.74, BlockMovePIDState, 0};
+		PIDData block = {16, 1, 0, 0.61, BlockMovePIDState, 0};
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
-		PIDData blockH = {18.5, 0.39, 0, 0.38, ETSumoHighPIDState, 0};
+		PIDData blockH = {23.5, 0.65, 0, 1.74, ETSumoHighPIDState, 0};
 		SetPIDData(blockH);
 
 		// ET相撲中

@@ -12,7 +12,7 @@
 
 #define FIELD 	220
 #define EDGE_LINE 120 // 黒線との境界線
-#define TURN_POWER 15 // 旋回時のパワー
+#define TURN_POWER 9 // 旋回時のパワー
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
@@ -39,7 +39,8 @@ void ApproachState::Run()
 	InOutManager* IoManager = InOutManager::GetInstance();			
 
 	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
-
+	PIDData BlockMoveHighPID = PIDDataManager::GetInstance()->GetPIDData(BlockMoveHighPIDState);
+	
 	int currentAngle = SpManager->RobotAngle;
 
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
@@ -83,7 +84,7 @@ void ApproachState::Run()
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
-			IoManager->Forward(BlockMovePID.BasePower);
+			IoManager->Forward(BlockMoveHighPID.BasePower);
 		}
 		break;
 	// ラインをまたぐまでの処理
@@ -191,8 +192,10 @@ void MoveState::Run()
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
 	InOutManager* IoManager = InOutManager::GetInstance();			
 	SpManager->ParticleFilterON = false;
-	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
 
+	PIDData BlockMovePID = PIDDataManager::GetInstance()->GetPIDData(BlockMovePIDState);
+	PIDData BlockMoveHighPID = PIDDataManager::GetInstance()->GetPIDData(BlockMoveHighPIDState);
+	
 	int currentAngle = SpManager->RobotAngle;
 	int dstWayPointNo = BtManager->GetDstWayPointNo();
 	int moveDistance = 0;
@@ -294,7 +297,7 @@ void MoveState::Run()
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
-			IoManager->Forward(BlockMovePID.BasePower);
+			IoManager->Forward(BlockMoveHighPID.BasePower);
 		}
 
 		//目標とするブロック置き場の色を取得したら、現在のステートをラインとレース中に変更

@@ -24,7 +24,7 @@
 #define EDGE_LINE 109 // 黒線との境界線
 
 #define NOT_BLOCK_DISTANCE 8 // ブロックを認識していないときの距離
-#define BLOCK_DISTANCE 3	 // ブロックを認識した時のきょり　
+#define BLOCK_DISTANCE 3	 // ブロックを認識した時の距離　
 
 void ETSumoStrategy::Run()
 {
@@ -296,8 +296,11 @@ ACTION :
 		}
 
 		// 正面を向くまで旋回	
-		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
-		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * TURN_SPEED;
+//		IOManager->OutputData.LeftMotorPower = TURN_SPEED;
+//		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * TURN_SPEED;
+		IOManager->OutputData.LeftMotorPower = FIRST_TURN_SPEED;
+		IOManager->OutputData.RightMotorPower =  -1 * 0.5 * FIRST_TURN_SPEED;
+
 		break;
 
 	case ForwardRail:
