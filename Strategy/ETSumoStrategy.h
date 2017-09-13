@@ -52,10 +52,10 @@ private:
 	// ET相撲における土俵の定義 !! 当日変更箇所
 	Arena ArenaArray[4] = {
 		// Left, Right
-		{ HSLGreen, HSLYellow },
-		{ HSLBlue, HSLRed },
 		{ HSLRed, HSLBlue },
-		{ HSLYellow, HSLGreen }
+		{ HSLYellow, HSLGreen },
+		{ HSLRed, HSLBlue },		
+		{ HSLGreen, HSLYellow }
 	};
 
 	

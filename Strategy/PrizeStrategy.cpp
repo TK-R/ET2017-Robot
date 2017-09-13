@@ -63,7 +63,7 @@ ACTION :
 	
 	// 懸賞の方向に旋回
 	case TurnToPrize:
-		if(currentAngle > PRIZE_ANGLE) {
+		if(currentAngle > (PRIZE_ANGLE - 4)) {
 			// アームを下げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
