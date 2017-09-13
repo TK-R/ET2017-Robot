@@ -207,7 +207,7 @@ RETRY:
 			break;
 		}
 		leftEdge = false;
-		pidData = pidManager->GetPIDData(BlockMovePIDState);
+		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
 		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 

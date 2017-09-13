@@ -16,7 +16,8 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
-#define RANGE 40
+#define APPROACH_OFFSET 0
+#define MOVE_OFFSET 30
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -132,7 +133,12 @@ void ApproachState::Run()
 			// ライントレース中は、ラインの角度に修正
 			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->CurrentCommand.SourceBlockPosition);
 			SpManager->ResetAngle(angle);
-			IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+			// 初回ライントレースのみ高速移動
+			if(BtManager->CurrentCommand.SourceBlockPosition == 9) {
+				IoManager->LineTraceAction(BlockMoveHighPID, EDGE_LINE, LeftEdge);		
+			} else {
+				IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+			}
 			break;
 		}
 
@@ -144,17 +150,17 @@ void ApproachState::Run()
 		
 		IoManager->Forward(BlockMovePID.BasePower);
 
-		if(SpManager->Distance > 20) { 			
+		if(SpManager->Distance > 58) { 			
 			IoManager->Stop();
 			IoManager->WriteOutputMotor();
-			dly_tsk(300);
+			dly_tsk(200);
 
 			// ブロック置き場の座標に修正
 			Point *p = BtManager->GetSrcBlockPoint();
-			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
-			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
 
-			dly_tsk(1000);
+			dly_tsk(300);
 
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
@@ -270,6 +276,7 @@ void MoveState::Run()
 
 			// 最終ウェイポイントの場合
 			if(last) {
+			/*
 				if(BtManager->CurrentCommand.SourceBlockPosition == 2
 					 && BtManager->CurrentCommand.DestinationBlockPosition == 5) {
 					CW = true;
@@ -277,15 +284,15 @@ void MoveState::Run()
 				} else if(BtManager->CurrentCommand.SourceBlockPosition == 11
 					&& BtManager->CurrentCommand.DestinationBlockPosition == 12)
 				{
-					CW = true;
-					LeftEdge = true;
+					CW = false;
+					LeftEdge = false;
 				} else if(BtManager->CurrentCommand.SourceBlockPosition == 1
 					&& BtManager->CurrentCommand.DestinationBlockPosition == 5)
 				{
 					CW = true;
 					LeftEdge = false;
 				}
-
+				*/ 
 				// ライントレースに遷移
 				SubState = LineTrace;
 			} else {
@@ -369,16 +376,19 @@ void MoveState::Run()
 
 			// ブロック置き場の座標に修正			
 			Point *p = BtManager->GetDstBlockPoint();
-			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
-			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * RANGE);
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * MOVE_OFFSET);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * MOVE_OFFSET);
 
-			dly_tsk(1000);
+			dly_tsk(200);
 
 			SpManager->Distance = 400;
 			SubState = Back;
 			break;
 		}
 		
+		// 特定の移動では、角度を強制的に変更
+
+
 		// ライントレース中は、ラインの角度に修正
 		{
 			int angle = BtManager->GetLine(CurrentWayPointNo)->GetAngle(BtManager->CurrentCommand.DestinationBlockPosition);
