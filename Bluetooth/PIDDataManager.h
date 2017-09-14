@@ -50,7 +50,7 @@ private:
 		SetPIDData(lineR_E);
 
 		//Lコース
-		PIDData lineL_B = {61.7, 0.14, 0, 0.63, pL_B, 21};
+		PIDData lineL_B = {51.9, 0.17, 0, 0.81, pL_B, 21};
 		SetPIDData(lineL_B);
 
 		PIDData lineL_C = {45.7, 0.2, 0, 1.37, pL_C, -7}; //8.8V
@@ -74,7 +74,7 @@ private:
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
-		PIDData blockH = {29.7, 0.47, 0, 1.52, BlockMoveHighPIDState, 7};
+		PIDData blockH = {28.4, 0.43, 0, 1.25, BlockMoveHighPIDState, 8};
 		SetPIDData(blockH);
 
 		// ET相撲中
