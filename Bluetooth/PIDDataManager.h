@@ -74,7 +74,7 @@ private:
 		SetPIDData(block);
 
 		// ブロック並べ中（高速）
-		PIDData blockH = {23.5, 0.65, 0, 1.74, BlockMoveHighPIDState, 0};
+		PIDData blockH = {29.7, 0.47, 0, 1.52, BlockMoveHighPIDState, 7};
 		SetPIDData(blockH);
 
 		// ET相撲中
@@ -82,7 +82,7 @@ private:
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	
-		PIDData sumoH = {33.4, 0.47, 7, 1.52, ETSumoHighPIDState, 0};
+		PIDData sumoH = {30, 0.39, 0, 0.5, ETSumoHighPIDState, 0};
 		SetPIDData(sumoH);
 
 		// ET相撲前の列車停止中

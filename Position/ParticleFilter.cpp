@@ -100,7 +100,7 @@ void Particle::Update(int8_t leftMotorCount, int8_t rightMotorCount)
 	
 	// 角度の変化量	
 //	double theta = (Tr - Tl) / d; 
-	double theta = (Tr - Tl) / d * (171.0 / 180.0); 
+	double theta = (Tr - Tl) / d * (173.0 / 180.0); 
 
 	// ラジアンに変換した前回の角度
 	double theta0 = RobotAngle * M_PI / 180.0;

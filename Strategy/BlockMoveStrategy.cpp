@@ -80,7 +80,7 @@ void ApproachState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 35) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 105) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
@@ -150,7 +150,7 @@ void ApproachState::Run()
 		IoManager->Forward(BlockMovePID.BasePower);
 		{
 			int moveDistance = 58;
-			if(CurrentWayPointNo == 21 || CurrentWayPointNo == 22) {
+			if(CurrentWayPointNo == 21 || (CurrentWayPointNo == 22 && BtManager->CurrentCommand.SourceBlockPosition == 14)) {
 				moveDistance = 160;
 			}
 
@@ -281,23 +281,6 @@ void MoveState::Run()
 
 			// 最終ウェイポイントの場合
 			if(last) {
-			/*
-				if(BtManager->CurrentCommand.SourceBlockPosition == 2
-					 && BtManager->CurrentCommand.DestinationBlockPosition == 5) {
-					CW = true;
-					LeftEdge = true;
-				} else if(BtManager->CurrentCommand.SourceBlockPosition == 11
-					&& BtManager->CurrentCommand.DestinationBlockPosition == 12)
-				{
-					CW = false;
-					LeftEdge = false;
-				} else if(BtManager->CurrentCommand.SourceBlockPosition == 1
-					&& BtManager->CurrentCommand.DestinationBlockPosition == 5)
-				{
-					CW = true;
-					LeftEdge = false;
-				}
-				*/ 
 				// ライントレースに遷移
 				SubState = LineTrace;
 			} else {
@@ -310,7 +293,7 @@ void MoveState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// 一定距離進んだ後、ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 70) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 105) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
@@ -427,7 +410,7 @@ void MoveState::Run()
 
 			break;
 		}
-		IoManager->Back(BlockMoveHighPID.BasePower);
+		IoManager->Back(BlockMovePID.BasePower);
 		break;
 	}
 
