@@ -56,7 +56,6 @@ void ApproachState::Run()
 			SubState = LineTrace;	
 		} else if(CurrentWayPointNo == 26) {
 			// 初回であり、9ではないとき
-			BtManager->ArrivalSrcWayPoint();
 			SubState = FirstTurn;
 		} else if(CurrentWayPointNo == BtManager->GetSrcWayPointNo()) {
 			// すでにウェイポイントの上にいるとき
@@ -149,44 +148,50 @@ void ApproachState::Run()
 		}
 		
 		IoManager->Forward(BlockMovePID.BasePower);
-
-		if(SpManager->Distance > 58) { 			
-			IoManager->Stop();
-			IoManager->WriteOutputMotor();
-			dly_tsk(200);
-
-			// ブロック置き場の座標に修正
-			Point *p = BtManager->GetSrcBlockPoint();
-			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
-			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
-
-			dly_tsk(300);
-
-			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
-			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
-				// ブロック置き場到達メッセージ
-				BtManager->ArrivalSrcBlockPosition();
-
-				auto moveState = new MoveState(ParentStrategy);
-				moveState->LeftEdge = LeftEdge;
-				int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
-				
-				if(CurrentWayPointNo == 26) {
-//					moveState->CW = CW;	
-					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
-				} else {
-					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
-				}
-
-				moveState->CurrentWayPointNo = CurrentWayPointNo;
-				ParentStrategy->ChangeState(moveState);	
-
-				// 積算距離をリセット
-				SpManager->Distance = 0;
-			} else {
-				IoManager->Stop();
+		{
+			int moveDistance = 58;
+			if(CurrentWayPointNo == 21 || CurrentWayPointNo == 22) {
+				moveDistance = 160;
 			}
-			break;
+
+
+			if(SpManager->Distance > moveDistance) { 			
+				IoManager->Stop();
+				IoManager->WriteOutputMotor();
+				dly_tsk(200);
+
+				// ブロック置き場の座標に修正
+				Point *p = BtManager->GetSrcBlockPoint();
+				SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
+				SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
+
+				dly_tsk(100);
+
+				// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
+				if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
+					// ブロック置き場到達メッセージ
+					BtManager->ArrivalSrcBlockPosition();
+
+					auto moveState = new MoveState(ParentStrategy);
+					moveState->LeftEdge = LeftEdge;
+					int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+					
+					if(CurrentWayPointNo == 26) {
+						moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
+					} else {
+						moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
+					}
+
+					moveState->CurrentWayPointNo = CurrentWayPointNo;
+					ParentStrategy->ChangeState(moveState);	
+
+					// 積算距離をリセット
+					SpManager->Distance = 0;
+				} else {
+					IoManager->Stop();
+				}
+				break;
+			}
 		}
 		break;
 	
@@ -238,7 +243,7 @@ void MoveState::Run()
 		break;
 	case FirstStraight:
 		if(dstWayPointNo == 0 || dstWayPointNo == 1 || dstWayPointNo == 2){
-			moveDistance = 340;
+			moveDistance = 200;
 		} else {
 			moveDistance = 70;
 		}
@@ -305,7 +310,7 @@ void MoveState::Run()
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
 		// 一定距離進んだ後、ラインを認識した場合には、直進ステートに遷移
-		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 60) {
+		if(IoManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 70) {
 			// ラインをまたぐまで直進
 			SubState = OverLine;
 		} else {
@@ -422,7 +427,7 @@ void MoveState::Run()
 
 			break;
 		}
-		IoManager->Back(BlockMovePID.BasePower);
+		IoManager->Back(BlockMoveHighPID.BasePower);
 		break;
 	}
 
