@@ -14,8 +14,9 @@
 #define TURN_SPEED 12 		// 旋回時の出力
 #define FIRST_TURN_SPEED 20	
 #define BACK_ANGLE 1
+#define ONLINE 60
 #define STATION_ANGLE 90 // 駅に尻尾を向けた方向
-#define SWITCH_OFF_ANGLE 20 // スイッチを切れる角度
+#define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
 
 void ETTrainStrategy::Run()
@@ -102,7 +103,7 @@ ACTION :
 
 // 進行方向を向くまで旋回する
 	case TurnFront:
-		if (IOManager->InputData.ReflectLight < 120 && abs(currentAngle - FORWARD_ANGLE) < 45){
+		if (IOManager->InputData.ReflectLight < ONLINE && abs(currentAngle - FORWARD_ANGLE) < 60){
 			CurrentState = LineTraceSlowToGrayArea;
 
 			IOManager->Stop();

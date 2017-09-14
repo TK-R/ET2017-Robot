@@ -141,7 +141,7 @@ ACTION :
 		break;
 
 	case LastForwardPrizePlace:
-		if(SpManager->Distance > 50) {
+		if(SpManager->Distance > 85) {
 			// アームを下げて後退する
 			SpManager->Distance = 1000;
 			IOManager->Stop();
