@@ -21,7 +21,7 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 //#define EDGE_LINE 120 // 黒線との境界線
-#define EDGE_LINE 109 // 黒線との境界線
+#define EDGE_LINE 113 // 黒線との境界線
 
 #define NOT_BLOCK_DISTANCE 8 // ブロックを認識していないときの距離
 #define BLOCK_DISTANCE 3	 // ブロックを認識した時の距離　

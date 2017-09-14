@@ -280,11 +280,11 @@ void InOutManager::DownARMMotor()
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
 	if(ArmState == ArmStateTop){ 
-		ev3_motor_rotate(EV3_PORT_C, -60, 35, true);		
+		ev3_motor_rotate(EV3_PORT_C, -60, 55, true);		
 	} else if(ArmState == ArmStateBottom) {
-		ev3_motor_rotate(EV3_PORT_C, 25, 35, true);		
+		ev3_motor_rotate(EV3_PORT_C, 25, 55, true);		
 	} else { // At UP
-		ev3_motor_rotate(EV3_PORT_C, -50, 35, true);		
+		ev3_motor_rotate(EV3_PORT_C, -50, 55, true);		
 	}
 
 	ArmState = ArmStateDown;
