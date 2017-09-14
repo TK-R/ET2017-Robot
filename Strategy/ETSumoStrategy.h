@@ -40,6 +40,7 @@ class ETSumoStrategy: public AbstractStrategy
 private:
 	// 色認識回数
 	int ColorDetectCount = 0;
+	int ColorChangeCount = 0;
 	HSLColorKind PrevColor = HSLBlack;
 
 	// 現在のステート情報

@@ -21,7 +21,7 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 //#define EDGE_LINE 120 // 黒線との境界線
-#define EDGE_LINE 113 // 黒線との境界線
+#define EDGE_LINE 120 // 黒線との境界線
 
 #define NOT_BLOCK_DISTANCE 8 // ブロックを認識していないときの距離
 #define BLOCK_DISTANCE 3	 // ブロックを認識した時の距離　
@@ -114,6 +114,7 @@ ACTION :
 			ColorDetectCount++;
 			if (ColorDetectCount > 5) {
 				ColorDetectCount = 0;
+				ColorChangeCount = 0;
 				// 色認識が完了したため、アームを下降させる
 				IOManager->DownARMMotor();
 				// フィールドの色と土俵の色が一致した場合、寄り切り
@@ -127,7 +128,14 @@ ACTION :
 			}
 		} else {
 			PrevColor = DetectColor;
-			ColorDetectCount = 0;
+			ColorChangeCount++;
+			
+			// 色の変更を繰り返す場合には、強制的に次の認識色とする
+			if(ColorChangeCount > 50) {
+				ColorDetectCount = 11;
+			} else {
+				ColorDetectCount = 0;	
+			}	
 		}
 		break;
 
@@ -192,8 +200,9 @@ ACTION :
 		// 色が一致している場合には、カウントを進める
 		if (DetectColor == PrevColor && DetectColor != HSLBlack) {
 			ColorDetectCount++;
-			if (ColorDetectCount > 10) {
+			if (ColorDetectCount > 5) {
 				ColorDetectCount = 0;
+				ColorChangeCount = 0;
 				// 色認識が完了したため、アームを下降させる
 				IOManager->DownARMMotor();
 				// フィールドの色と土俵の色が一致した場合、寄り切り
@@ -208,7 +217,15 @@ ACTION :
 		} else {
 			// 色が異なった場合には再度カウント
 			PrevColor = DetectColor;
-			ColorDetectCount = 0;
+			ColorChangeCount++;
+			
+			// 色の変更を繰り返す場合には、強制的に次の認識色とする
+			if(ColorChangeCount > 50) {
+				ColorDetectCount = 11;
+			} else {
+				ColorDetectCount = 0;	
+			}	
+			break;
 		}
 		break;
 

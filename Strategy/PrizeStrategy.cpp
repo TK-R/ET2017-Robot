@@ -126,7 +126,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Forward(pid.BasePower);
+		IOManager->Forward(25);
 		break;
 	
 	case TurnPrizePlace:
@@ -152,7 +152,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Forward(10);
+		IOManager->Forward(25);
 		break;
 
 	case BackLastLine:
@@ -162,7 +162,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Back(20);
+		IOManager->Back(25);
 		break;
 	case TurnGurage:
 		if(currentAngle < 180) {
