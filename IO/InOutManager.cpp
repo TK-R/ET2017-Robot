@@ -271,6 +271,21 @@ void InOutManager::UpARMMotor()
 	ArmState = ArmStateUp;
 }
 
+void InOutManager::UpARMMotor(int power) {
+
+	// 既に上昇済なら何もしない
+	if(ArmState == ArmStateUp) return;
+
+	if(ArmState == ArmStateTop){ 
+		ev3_motor_rotate(EV3_PORT_C, -10, power, true);		
+	} else if(ArmState == ArmStateBottom) {
+		ev3_motor_rotate(EV3_PORT_C, 75, power, true);		
+	} else { // At Down
+		ev3_motor_rotate(EV3_PORT_C, 50, power, true);	
+	}
+	ArmState = ArmStateUp;
+}
+
 void InOutManager::DownARMMotor()
 {
 	// 既に下降済なら何もしない

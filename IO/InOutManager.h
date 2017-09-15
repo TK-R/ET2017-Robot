@@ -123,6 +123,7 @@ public:
 	void TopARMMotor();
 	// アームを上昇させる
 	void UpARMMotor();
+	void UpARMMotor(int power);
 	// アームを下降させる
 	void DownARMMotor();
 	// アームを懸賞箇所まで下げる

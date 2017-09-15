@@ -89,7 +89,8 @@ ACTION :
 			IOManager->WriteOutputMotor();	
 
 			// アームを上げて、後退状態に遷移
-			IOManager->UpARMMotor();
+			IOManager->UpARMMotor(40);
+
 			IOManager->TopARMMotor();
 			CurrentState = BackPrize;
 			break;
