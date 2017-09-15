@@ -283,10 +283,10 @@ ACTION :
 				Manager->SetStrategy(new PrizeStrategy(Manager));
 				break;
 			}
-		
+			dly_tsk(50);			
 			CurrentState = TurnForward;
 			SpManager->ResetAngle(LEFT_ANGLE);
-			goto ACTION;
+			break;
 		}
 		IOManager->LineTraceAction(pid, EDGE_LINE, false);		
 		break;

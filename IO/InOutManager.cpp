@@ -295,14 +295,33 @@ void InOutManager::DownARMMotor()
 	if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
 
 	if(ArmState == ArmStateTop){ 
-		ev3_motor_rotate(EV3_PORT_C, -60, 55, true);		
+		ev3_motor_rotate(EV3_PORT_C, -60, 100, true);		
 	} else if(ArmState == ArmStateBottom) {
-		ev3_motor_rotate(EV3_PORT_C, 25, 55, true);		
+		ev3_motor_rotate(EV3_PORT_C, 25, 100, true);		
 	} else { // At UP
-		ev3_motor_rotate(EV3_PORT_C, -50, 55, true);		
+		ev3_motor_rotate(EV3_PORT_C, -50, 100, true);		
 	}
 
 	ArmState = ArmStateDown;
+}
+
+void InOutManager::DownARMMotor(int power) {
+	// 既に下降済なら何もしない
+	if(ArmState == ArmStateDown) return;
+	
+		// ターゲットタイプがブロックなら床に戻す
+		if(HSLTargetType == BlockColor) HSLTargetType = FieldColor;
+	
+		if(ArmState == ArmStateTop){ 
+			ev3_motor_rotate(EV3_PORT_C, -60, power, true);		
+		} else if(ArmState == ArmStateBottom) {
+			ev3_motor_rotate(EV3_PORT_C, 25, power, true);		
+		} else { // At UP
+			ev3_motor_rotate(EV3_PORT_C, -50, power, true);		
+		}
+	
+		ArmState = ArmStateDown;
+	
 }
 
 // 懸賞回収箇所までモータを下げる

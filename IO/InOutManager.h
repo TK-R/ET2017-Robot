@@ -126,6 +126,7 @@ public:
 	void UpARMMotor(int power);
 	// アームを下降させる
 	void DownARMMotor();
+	void DownARMMotor(int power);
 	// アームを懸賞箇所まで下げる
 	void ARMMotorAtBottom();
 

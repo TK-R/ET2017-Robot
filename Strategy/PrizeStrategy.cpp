@@ -63,7 +63,7 @@ ACTION :
 	
 	// 懸賞の方向に旋回
 	case TurnToPrize:
-		if(currentAngle > (PRIZE_ANGLE - 4)) {
+		if(currentAngle > (PRIZE_ANGLE - 6)) {
 			// アームを下げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
@@ -87,7 +87,8 @@ ACTION :
 			// アームを上げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();	
-
+			dly_tsk(500);
+			
 			// アームを上げて、後退状態に遷移
 			IOManager->UpARMMotor(40);
 
@@ -147,7 +148,7 @@ ACTION :
 			SpManager->Distance = 1000;
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
-			IOManager->DownARMMotor();	
+			IOManager->DownARMMotor(55);	
 
 			CurrentState = BackLastLine;
 			goto ACTION;

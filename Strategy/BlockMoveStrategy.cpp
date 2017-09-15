@@ -17,7 +17,7 @@
 #define NotONLINE 60  // 黒線以外での輝度値
 
 #define APPROACH_OFFSET 0
-#define MOVE_OFFSET 30
+#define MOVE_OFFSET 40
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -132,12 +132,8 @@ void ApproachState::Run()
 			// ライントレース中は、ラインの角度に修正
 			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->CurrentCommand.SourceBlockPosition);
 			SpManager->ResetAngle(angle);
-			// 初回ライントレースのみ高速移動
-			if(BtManager->CurrentCommand.SourceBlockPosition == 9) {
-				IoManager->LineTraceAction(BlockMoveHighPID, EDGE_LINE, LeftEdge);		
-			} else {
-				IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
-			}
+
+			IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
 			break;
 		}
 
