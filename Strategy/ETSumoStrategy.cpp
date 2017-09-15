@@ -161,6 +161,7 @@ ACTION :
 		if(currentPoint.Y < 2750) {
 			CurrentState = OSHIDASHILeftBack;
 			IOManager->UpARMMotor();
+			IOManager->DownARMMotor();			
 			goto ACTION;			
 		}
 		IOManager->Forward(OSHIDASHI_SPEED);
@@ -168,7 +169,6 @@ ACTION :
 	case OSHIDASHILeftBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
 		if(currentPoint.Y > 2775){
-			IOManager->DownARMMotor();
 			CurrentState = YORIKIRILeft;
 			goto ACTION;			
 		}
@@ -232,10 +232,10 @@ ACTION :
 	// 右ブロックを寄り切り
 	case YORIKIRIRight:
 		// 斜め方向を向いたらフィールド走行状態に遷移
-		if (abs(currentAngle - (LEFT_ANGLE)) < 10) {
+		if (abs(currentAngle - (LEFT_ANGLE)) < 15) {
 			CurrentState = ForwardCenterFromRight;
 			goto ACTION;			
-		} else if(abs(currentAngle - (LEFT_ANGLE)) < 25) {
+		} else if(abs(currentAngle - (LEFT_ANGLE)) < 35) {
 			// 中央方向を向くまで旋回
 			IOManager->TurnCCW(TURN_SPEED);
 		} else {
@@ -250,6 +250,7 @@ ACTION :
 		if(currentPoint.Y > 3090) {
 			IOManager->UpARMMotor();
 			CurrentState = OSHIDASHIRightBack;
+			IOManager->DownARMMotor();			
 			goto ACTION;			
 		}
 		IOManager->Forward(OSHIDASHI_SPEED);
@@ -257,7 +258,6 @@ ACTION :
 	case OSHIDASHIRightBack:
 		// 一定距離後退したら、以降は寄り切りと一緒
 		if(currentPoint.Y < 3070){
-			IOManager->DownARMMotor();
 
 			CurrentState = YORIKIRIRight;
 			goto ACTION;			
@@ -283,7 +283,6 @@ ACTION :
 				Manager->SetStrategy(new PrizeStrategy(Manager));
 				break;
 			}
-			dly_tsk(50);			
 			CurrentState = TurnForward;
 			SpManager->ResetAngle(LEFT_ANGLE);
 			break;
