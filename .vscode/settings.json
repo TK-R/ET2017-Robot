@@ -39,6 +39,14 @@
 		"xutility": "cpp",
 		"string.h": "c",
 		"stdlib.h": "c",
-		"map": "cpp"
+		"map": "cpp",
+		"functional": "cpp",
+		"iterator": "cpp",
+		"list": "cpp",
+		"numeric": "cpp",
+		"set": "cpp",
+		"tuple": "cpp",
+		"xfunctional": "cpp",
+		"xtree": "cpp"
 	}
 }
