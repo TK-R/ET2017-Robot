@@ -32,7 +32,7 @@ void MotorTestStrategy::Run()
 		}
 	} else {
 		if(InOut->InputData.TouchSensor == 0) {
-			SwitchON == false;
+			SwitchON = false;
 		}
 	}
 
