@@ -1,5 +1,5 @@
-#ifndef __LINE_TRACE__
-#define __LINE_TRACE__
+#ifndef __MOTOR_TEST__
+#define __MOTOR_TEST__
 
 #include "Strategy.h"
 #include <vector>
