@@ -18,6 +18,7 @@
 #include "PrizeStrategy.h"
 #include "HSLColor.h"
 #include "FieldMap.h"
+#include "MotorTestStrategy.h"
 
 using ev3api::Clock;
 
@@ -79,11 +80,11 @@ void main_task(intptr_t unused)
     PlaySound(SensorInitialEnd);    
     ev3_lcd_set_font(EV3_FONT_MEDIUM);
 
-    
 RESTART_:
     
     // 初期位置
     SelfPositionData pData;
+
     // 初期位置（ライントレース）
     pData.Angle = 270;
     pData.PositionY = 430;             
@@ -93,17 +94,12 @@ RESTART_:
     SpManager->ResetPosition(pData);
 
     auto str = new LineTraceStrategy(StManager);
-    
     // 調整ポイント
     str->CenterValue = 130;
+
     dly_tsk(100);
-    sprintf(buf, "Curse: L-N");
-    pData.PositionX = 4790;
-    pData.PositionY = 430;             
-    pData.Angle = 270;            
-    SpManager->Distance = 0;
-    
-    str->CurrentState = L_A;
+
+    sprintf(buf, "Please Select Course.");
     StManager->SetStrategy(str);    
     
     while(IOManager->InputData.TouchSensor == 0){
@@ -124,7 +120,7 @@ RESTART_:
             
             str->CurrentState = L_A;
 
-            sprintf(buf, "Curse: L-N");
+            sprintf(buf, "Course: L-N");
         // Rボタンが押されているときは、Rコースの攻略
         } else if(ev3_button_is_pressed(RIGHT_BUTTON)) {
             // ボタンが離されるまで待つ
@@ -141,7 +137,7 @@ RESTART_:
             
             str->CurrentState = R_A;
             
-            sprintf(buf, "Curse: R-N");
+            sprintf(buf, "Course: R-N");
 
         // 上ボタンが押されているときには、Lコースの難所攻略
         } else if(ev3_button_is_pressed(UP_BUTTON)){
@@ -157,7 +153,7 @@ RESTART_:
                     
             str->CurrentState = L_A;
             
-            sprintf(buf, "Curse: L-B");
+            sprintf(buf, "Course: L-B");
             
         // 下ボタンが押されているときは、Rコースの難所攻略
         } else if(ev3_button_is_pressed(DOWN_BUTTON)){
@@ -173,7 +169,7 @@ RESTART_:
         
             str->CurrentState = R_A;
   
-            sprintf(buf, "Curse: R-B");            
+            sprintf(buf, "Course: R-B");            
         }
         
         ev3_lcd_draw_string(buf, 0, 0);
@@ -181,7 +177,6 @@ RESTART_:
     }
 
     SpManager->ResetPosition(pData);        
-    
 
     while(IOManager->InputData.TouchSensor == 1){
         Refresh();
@@ -192,6 +187,29 @@ RESTART_:
     IOManager->LineTraceClear(120);
 
     Clock* clock = new Clock();
+
+    //////// テスト用処理 //////////
+    auto testStr = new MotorTestStrategy(StManager);
+    StManager->SetStrategy(testStr);    
+
+    while(1){
+        uint32_t baseTime = clock->now();
+        
+        // 入力情報更新
+        Refresh();
+        StManager->Run();
+
+        // 出力情報更新
+        IOManager->WriteOutputMotor();
+        
+        // 制御に掛かった時間を格納
+        IOManager->SleepTime = clock->now() - baseTime;
+
+        // 基準周期から、制御に掛かった時間を引く
+        dly_tsk(BASE_TIME - IOManager->SleepTime);
+    }
+
+/*
     while(1)
     {
         uint32_t baseTime = clock->now();
@@ -223,4 +241,5 @@ RESTART_:
         // 基準周期から、制御に掛かった時間を引く
 		dly_tsk(BASE_TIME - IOManager->SleepTime);
     }
+*/
 }
