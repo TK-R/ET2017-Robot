@@ -188,28 +188,6 @@ RESTART_:
 
     Clock* clock = new Clock();
 
-    //////// テスト用処理 //////////
-    auto testStr = new MotorTestStrategy(StManager);
-    StManager->SetStrategy(testStr);    
-
-    while(1){
-        uint32_t baseTime = clock->now();
-        
-        // 入力情報更新
-        Refresh();
-        StManager->Run();
-
-        // 出力情報更新
-        IOManager->WriteOutputMotor();
-        
-        // 制御に掛かった時間を格納
-        IOManager->SleepTime = clock->now() - baseTime;
-
-        // 基準周期から、制御に掛かった時間を引く
-        dly_tsk(BASE_TIME - IOManager->SleepTime);
-    }
-
-/*
     while(1)
     {
         uint32_t baseTime = clock->now();
@@ -241,5 +219,4 @@ RESTART_:
         // 基準周期から、制御に掛かった時間を引く
 		dly_tsk(BASE_TIME - IOManager->SleepTime);
     }
-*/
 }
