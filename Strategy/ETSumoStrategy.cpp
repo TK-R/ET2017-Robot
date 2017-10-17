@@ -131,7 +131,7 @@ ACTION :
 			ColorChangeCount++;
 			
 			// 色の変更を繰り返す場合には、強制的に次の認識色とする
-			if(ColorChangeCount > 50) {
+			if(ColorChangeCount > 70) {
 				ColorDetectCount = 11;
 			} else {
 				ColorDetectCount = 0;	
@@ -220,7 +220,7 @@ ACTION :
 			ColorChangeCount++;
 			
 			// 色の変更を繰り返す場合には、強制的に次の認識色とする
-			if(ColorChangeCount > 50) {
+			if(ColorChangeCount > 70) {
 				ColorDetectCount = 11;
 			} else {
 				ColorDetectCount = 0;	

@@ -54,9 +54,9 @@ private:
 	Arena ArenaArray[4] = {
 		// Left, Right
 		{ HSLRed, HSLBlue },
-		{ HSLYellow, HSLGreen },
+		{ HSLGreen, HSLYellow },	
 		{ HSLRed, HSLBlue },		
-		{ HSLGreen, HSLYellow }
+		{ HSLYellow, HSLGreen }
 	};
 
 	
