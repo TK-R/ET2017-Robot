@@ -14,7 +14,7 @@ private:
 	int RateCount = 0; // モニタ更新周期管理変数
 	bool SwitchON = false;
 
-	// 1秒分の回転角度(20個)
+	// 1秒分の回転角度(200個)
 	std::vector<int> AngleVector = {0};
 	
 public:

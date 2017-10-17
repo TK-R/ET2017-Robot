@@ -13,6 +13,7 @@
 #include "ETTrainStrategy.h"
 #include "BlockMoveStrategy.h"
 
+// 5ms * 200 = 1秒分
 #define AVERAGE_COUNT 200
 
 void MotorTestStrategy::Run()
@@ -40,10 +41,9 @@ void MotorTestStrategy::Run()
 	AngleVector.push_back(InOut->InputData.LeftMotorAngle);
 	if(AngleVector.size() > AVERAGE_COUNT) AngleVector.erase(AngleVector.begin());
 
-	// 平均値を算出
+	// 1秒分の回転角度を算出
 	double average = 0.0;
 	for(int d : AngleVector) average  += d;
-	average /= AngleVector.size();	
 
 	// 5ms * 20 = 100ms周期でモニタを更新
 	if(RateCount < 20) {
@@ -56,10 +56,10 @@ void MotorTestStrategy::Run()
 		ev3_lcd_draw_string(buf, 0, 0);    
 	
 		sprintf(buf, "Ave:%f:::", average); 
-		ev3_lcd_draw_string(buf, 12, 0);    
+		ev3_lcd_draw_string(buf, 0, 24);    
 	}
 
 	// モータの出力値を更新
-	InOut->OutputData.LeftMotorPower = Power;
+	InOut->OutputData.LeftMotorPower = Power * -1;
 }
 
