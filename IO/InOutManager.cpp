@@ -1,12 +1,15 @@
 #include "ev3api.h"
 #include <string.h>
-
+#include "app.h"
 #include "SerialData.h"
 #include "HSLColor.h"
 #include "ColorDecision.h"
 #include "InOutManager.h"
 #include "SerialSendTask.h"
 #include "PIDDataManager.h"
+
+// 加減速制御における0-100到達時間（秒）
+#define ACCEL_RATE 1.0
 
 InOutManager::InOutManager()
 {
@@ -221,12 +224,26 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 
 	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
 	PrevDiff = diff;
-	Forward(data.BasePower, steering + data.Steering);
+
+	if(data.BasePower > AccelPower) {
+		// 加速制御
+		double p = AccelPower + BASE_TIME * 100.0 / ACCEL_RATE;
+
+		// 計算結果と目標値のうち、低いほうを出力値とする
+		AccelPower = p > data.BasePower ? data.BasePower : p;
+	} else {
+		// 減速制御
+		double p = AccelPower - BASE_TIME * 100.0 / ACCEL_RATE;
+
+		// 計算結果と目標値のうち、高いほうを出力値とする
+		AccelPower = p < data.BasePower ? data.BasePower : p;
+	}
+
+	Forward(AccelPower, steering + data.Steering);
 
 	// 単純直進時のPID値をクリア
 	PrevForwardDiff = 0;
 	IntegralForwardDiff.clear();
-	
 }
 
 // 広報にライントレースを実施するように、左右モータ値を更新する

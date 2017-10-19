@@ -107,6 +107,10 @@ extern void	gpio_irq_dispatcher(intptr_t exinf);
 //extern void initialize_ev3(intptr_t exinf);
 #endif /* TOPPERS_MACRO_ONLY */
 
+// 制御周期(ms)
+#define BASE_TIME 4
+
+
 #ifdef __cplusplus
 }
 #endif

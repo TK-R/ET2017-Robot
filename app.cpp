@@ -38,9 +38,6 @@ extern "C"{
 #define _debug(x)
 #endif
 
-// 制御周期
-#define BASE_TIME 4
-
 imageData_t* image;
 
 void Draw()

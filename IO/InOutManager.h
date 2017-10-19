@@ -59,8 +59,11 @@ private:
 	// 積分制御用
 	std::vector<int> IntegralForwardDiff = {0};
 
-
+	// コンストラクタ（シングルトンなので外部から呼び出し不可）
 	InOutManager();
+
+	// 加減速制御用の出力値
+	double AccelPower = 0;
 
 	// アーム状態
 	ArmStateEnum ArmState = ArmStateDown;
