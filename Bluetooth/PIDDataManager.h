@@ -33,41 +33,40 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線
-		PIDData lineStraight = {67.9, 0.12, 0, 0.92, LineTraceStraight, 0}; 	// 8.7V
+		PIDData lineStraight = {100, 0.08620686, 0, 0.183908, LineTraceStraight, 0};
 		SetPIDData(lineStraight);
-
+				
 		//Rコース
-		PIDData lineR_B = {61.7, 0.14, 0, 0.63, pR_B, 9};
+		PIDData lineR_B = {100, 0.1551724, 0, 0.3908046, pR_B, 7};
 		SetPIDData(lineR_B);
 
-		PIDData lineR_C = {37, 0.32, 0, 1.22, pR_C, 0};
+		PIDData lineR_C = {80.45978, 0.2586207, 0, 0.2758621, pR_C, -2};
 		SetPIDData(lineR_C);
 
-		PIDData lineR_D = {37, 0.27, 0, 0.9, pR_D, -36};
+		PIDData lineR_D = {80.45977, 0.2586207, 0, 0.6666667, pR_D, -24};
 		SetPIDData(lineR_D);
-
-		PIDData lineR_E = {50.6, 0.18, 0, 0.96, pR_E, 6};
+		
+		PIDData lineR_E = {80.45977, 0.2413793, 0, 0.2988506, pR_E, 8};
 		SetPIDData(lineR_E);
 
 		//Lコース
-		PIDData lineL_B = {51.9, 0.17, 0, 0.81, pL_B, 21};
+		PIDData lineL_B = {80.45978, 0.1896552, 0, 0.2068966, pL_B, 17};
 		SetPIDData(lineL_B);
-
-		PIDData lineL_C = {45.7, 0.2, 0, 1.37, pL_C, -7}; //8.8V
+		
+		PIDData lineL_C = {80.45977, 0.1896552, 0, 0.3908046, pL_C, -6};
 		SetPIDData(lineL_C);
 
-		PIDData lineL_D = {50.6, 0.18, 0, 0.96, pL_D, -13};  // 8.5v
+		PIDData lineL_D = {80.45977, 0.1724138, 0, 0.2988506, pL_D, -15};
 		SetPIDData(lineL_D);
 
-		PIDData lineL_E = {50.6, 0.18, 0, 0.96, pL_E, -9};
+		PIDData lineL_E = {90.8046, 0.1896552, 0, 0.2528736, pL_E, -7};
 		SetPIDData(lineL_E);
 
-		PIDData lineL_F = {44.7, 0.24, 0, 0.99, pL_F, -27};
+		PIDData lineL_F = {77.0115, 0.2068965, 0, 0.2758621, pL_F, -28};
 		SetPIDData(lineL_F);
 
-		PIDData lineL_G = {44.7, 0.21, 0, 0.99, pL_G, 27};
+		PIDData lineL_G = {78.16092, 0.2068965, 0, 0.2988506, pL_G, 28};
 		SetPIDData(lineL_G);
-
 
 		// ブロック並べ中
 		PIDData block = {16, 1, 0, 0.61, BlockMovePIDState, 0};
