@@ -195,8 +195,7 @@ RESTART_:
         
         // ボタン押されたらリスタート
         if(IOManager->InputData.TouchSensor == 1){
-            IOManager->OutputData.LeftMotorPower = 0;
-            IOManager->OutputData.RightMotorPower = 0;
+            IOManager->Stop();
             IOManager->DownARMMotor();
             IOManager->UpTailMotor();
             IOManager->WriteOutputMotor();

@@ -8,8 +8,14 @@
 #include "SerialSendTask.h"
 #include "PIDDataManager.h"
 
-// 加減速制御における0-100到達時間（秒）
-#define ACCEL_RATE 1.0
+// 加速制御における0-100到達時間（ms）
+#define ACCEL_RATE 1000
+
+// 減速制御における0-100到達時間（ms）
+#define BRAKE_RATE 250
+
+// 加減速制御における制御開始速度（%)
+#define ACCEL_START_POWER 20
 
 InOutManager::InOutManager()
 {
@@ -101,6 +107,8 @@ void InOutManager::Back(int power)
 // 移動用モータを停止する
 void InOutManager::Stop()
 {
+	AccelPower = 0;
+
 	OutputData.LeftMotorPower = 0;
 	OutputData.RightMotorPower = 0;
 }
@@ -225,18 +233,30 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
 	PrevDiff = diff;
 
+	 
 	if(data.BasePower > AccelPower) {
+		// 制御開始速度以下なら、開始速度まで一気に引き上げる
+		if(data.BasePower > ACCEL_START_POWER && AccelPower < ACCEL_START_POWER) {
+			AccelPower =  ACCEL_START_POWER;
+		} 
+
 		// 加速制御
 		double p = AccelPower + BASE_TIME * 100.0 / ACCEL_RATE;
 
 		// 計算結果と目標値のうち、低いほうを出力値とする
 		AccelPower = p > data.BasePower ? data.BasePower : p;
 	} else {
+		// 制御開始速度以下なら、目標速度まで一気に下げる
+		if(AccelPower < ACCEL_START_POWER) {
+			AccelPower =  data.BasePower;
+		} 
+
 		// 減速制御
-		double p = AccelPower - BASE_TIME * 100.0 / ACCEL_RATE;
+		double p = AccelPower - BASE_TIME * 100.0 / BRAKE_RATE;
 
 		// 計算結果と目標値のうち、高いほうを出力値とする
 		AccelPower = p < data.BasePower ? data.BasePower : p;
+		AccelPower = data.BasePower;
 	}
 
 	Forward(AccelPower, steering + data.Steering);
