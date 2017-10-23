@@ -39,6 +39,9 @@ void sound_play_task(intptr_t exinf)
             case RuleReceive:
                 Play("/ev3rt/sound/S06.wav");
                 break;        
+            case PIDReceive:
+                Play("/ev3rt/sound/S07.wav");
+                break;
         }
     }
 }
