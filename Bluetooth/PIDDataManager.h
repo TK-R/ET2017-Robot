@@ -33,40 +33,40 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線				
-		PIDData lineLineTraceStraight = {100, 0.08620686, 0, 0.183908, LineTraceStraight, 0};
+		PIDData lineLineTraceStraight = {100, 0.06896548, 0, 0.3218391, LineTraceStraight, 0};
 		SetPIDData(lineLineTraceStraight);
-
-		//Rコース
-		PIDData lineR_B = {100, 0.1551724, 0, 0.3908046, pR_B, 7};
-		SetPIDData(lineR_B);
-
-		PIDData lineR_C = {80.45978, 0.2586207, 0, 0.2758621, pR_C, -2};
-		SetPIDData(lineR_C);
-
-		PIDData lineR_D = {80.45977, 0.2586207, 0, 0.6666667, pR_D, -24};
-		SetPIDData(lineR_D);
 		
-		PIDData lineR_E = {80.45977, 0.2413793, 0, 0.2988506, pR_E, 8};
-		SetPIDData(lineR_E);
+		//Rコース
+		PIDData linepR_B = {89.65517, 0.1551724, 0, 0.4597702, pR_B, 8};
+		SetPIDData(linepR_B);
+
+		PIDData linepR_C = {81.60921, 0.2068965, 0, 0.3448276, pR_C, -4};
+		SetPIDData(linepR_C);
+
+		PIDData linepR_D = {72.4138, 0.2413793, 0, 0.6666667, pR_D, -30};
+		SetPIDData(linepR_D);
+
+		PIDData linepR_E = {80.45977, 0.1724138, 0, 0.2988506, pR_E, 15};
+		SetPIDData(linepR_E);
 
 		//Lコース
-		PIDData lineL_B = {80.45978, 0.1896552, 0, 0.2068966, pL_B, 17};
-		SetPIDData(lineL_B);
+		PIDData linepL_B = {80.45978, 0.1896552, 0, 0.2068966, pL_B, 22};
+		SetPIDData(linepL_B);		
+
+		PIDData linepL_C = {80.45977, 0.2241379, 0, 0.5057471, pL_C, -6};
+		SetPIDData(linepL_C);
+
+		PIDData linepL_D = {78.16092, 0.1724138, 0, 0.4137931, pL_D, -11};
+		SetPIDData(linepL_D);
 		
-		PIDData lineL_C = {80.45977, 0.1896552, 0, 0.3908046, pL_C, -6};
-		SetPIDData(lineL_C);
+		PIDData linepL_E = {83.90804, 0.1896552, 0, 0.3908046, pL_E, -3};
+		SetPIDData(linepL_E);
 
-		PIDData lineL_D = {80.45977, 0.1724138, 0, 0.2988506, pL_D, -15};
-		SetPIDData(lineL_D);
+		PIDData linepL_F = {70.11494, 0.2068965, 0, 0.2758621, pL_F, -30};
+		SetPIDData(linepL_F);
 
-		PIDData lineL_E = {90.8046, 0.1896552, 0, 0.2528736, pL_E, -7};
-		SetPIDData(lineL_E);
-
-		PIDData lineL_F = {77.0115, 0.2068965, 0, 0.2758621, pL_F, -28};
-		SetPIDData(lineL_F);
-
-		PIDData lineL_G = {78.16092, 0.2068965, 0, 0.2988506, pL_G, 28};
-		SetPIDData(lineL_G);
+		PIDData linepL_G = {71.26437, 0.1551724, 0, 0.2758621, pL_G, 30};
+		SetPIDData(linepL_G);
 
 		// ブロック並べ中
 		PIDData block = {16, 1, 0, 0.61, BlockMovePIDState, 0};

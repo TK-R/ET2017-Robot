@@ -15,7 +15,7 @@
 #define BRAKE_RATE 250
 
 // 加減速制御における制御開始速度（%)
-#define ACCEL_START_POWER 20
+#define ACCEL_START_POWER 50
 
 InOutManager::InOutManager()
 {
@@ -167,7 +167,7 @@ void InOutManager::Turn(bool CW, int power)
 
 void InOutManager::Turn(int currentAngle, int targetAngle, int power)
 {
-	if(abs(currentAngle-targetAngle) < 20) power = 10;
+	if(abs(currentAngle-targetAngle) < 20) power = 25;
 
 	if(currentAngle < 180) {
 		// 回転角度が180度を必ず越えない場合
