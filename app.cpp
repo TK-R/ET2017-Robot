@@ -217,8 +217,11 @@ RESTART_:
             }
             goto RESTART_;
         }
-        // 出力情報更新
-        IOManager->WriteOutputMotor();
+
+        if(StManager->CurrentStrategy->OutputMotorValue == true) {
+            // 出力情報更新
+            IOManager->WriteOutputMotor();
+        }
         
         // 制御に掛かった時間を格納
         IOManager->SleepTime = clock->now() - baseTime;

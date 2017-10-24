@@ -22,12 +22,12 @@ void LineTraceStrategy::Run()
 	auto InOut = InOutManager::GetInstance();
 	PIDData pidData;
 	SelfPositionManager* SpManager = SelfPositionManager::GetInstance();
-//	Point p = SpManager->RobotPoint;
-//	int currentAngle = SpManager->RobotAngle;
 	int distance = SpManager->Distance;
 	PIDDataManager* pidManager = PIDDataManager::GetInstance();
 	bool leftEdge = true;
-
+	int currentCenterValue = CenterValue;
+	OutputMotorValue = false;
+	
 RETRY:
 
 	switch(CurrentState) {
@@ -39,7 +39,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_B:
 		if(distance > 5590)	{ 
@@ -48,7 +47,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pR_B);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_C :
 		if(distance > 6520) { 
@@ -57,7 +55,6 @@ RETRY:
 		}		
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pR_C);	
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_D:
 		if(distance > 7410){
@@ -66,7 +63,6 @@ RETRY:
 		}
 		leftEdge = true;			
 		pidData = pidManager->GetPIDData(pR_D);			
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_E:
 		if(distance > 8900) {
@@ -75,7 +71,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pR_E);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_F:
 		if(distance > 10390) {	//ゴール後150mm余分に進む
@@ -85,7 +80,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case R_GRAY:
 		if(distance > 10450 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
@@ -102,7 +96,7 @@ RETRY:
 		// 列車停止時と同じゲインでライントレース
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(ETTrainSlow);
-		InOut->LineTraceAction(pidData, 90, leftEdge);
+		currentCenterValue = 90;
 		break;
 // Lコース
 	case L_A :
@@ -112,7 +106,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_B:
 		if(distance > 3890)	{ 
@@ -121,7 +114,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pL_B);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_C :
 		if(distance > 5270) { 
@@ -130,7 +122,6 @@ RETRY:
 		}		
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pL_C);	
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_D:
 		if(distance > 6120){
@@ -139,7 +130,6 @@ RETRY:
 		}
 		leftEdge = true;			
 		pidData = pidManager->GetPIDData(pL_D);			
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_E:
 		if(distance > 7120) {
@@ -148,7 +138,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pL_E);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_F:
 		if(distance > 7620) {
@@ -157,7 +146,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pL_F);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_G:
 		if(distance > 8620) {
@@ -166,7 +154,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(pL_G);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_H:
 		if(distance > 10010 + 150) {	//ゴール後150mm余分に進む
@@ -176,7 +163,6 @@ RETRY:
 		}
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 	case L_GRAY:
 		if(distance > 10260 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
@@ -192,7 +178,7 @@ RETRY:
 		// ブロック並べ時と同じゲインでライントレース
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
-		InOut->LineTraceAction(pidData, 90, leftEdge);
+		currentCenterValue = 90;
 		break;
 
 		break;
@@ -208,12 +194,12 @@ RETRY:
 		}
 		leftEdge = false;
 		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
-		InOut->LineTraceAction(pidData, CenterValue, leftEdge);
 		break;
 
 	default:
 		break;
 	}	
 
+	InOut->LineTraceSteerAction(pidData, currentCenterValue, leftEdge);
 }
 

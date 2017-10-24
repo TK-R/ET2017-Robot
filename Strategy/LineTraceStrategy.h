@@ -42,9 +42,8 @@ private:
 
 public:
 	// 現在走行中のコース箇所
-//	CurrentStateEnum CurrentState = R_A;
 	CurrentStateEnum CurrentState = L_A;
-
+	
 	int CenterValue = 0;
 
 	void Run();

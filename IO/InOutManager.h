@@ -119,6 +119,9 @@ public:
 	// ライントレースを実施するように左右モータ値を更新する
 	void LineTraceAction(PIDData data, int center, bool LeftEdge);
 
+	// ステアリング操作でモータ出力値を更新する
+	void LineTraceSteerAction(PIDData data, int center, bool LeftEdge);
+
 	// 後退しながらライントレースを実施するように左右モータ値を更新する
 	void BackLineTraceAction(PIDData data, int center, bool LeftEdge);
 

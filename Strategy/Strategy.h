@@ -12,6 +12,9 @@ protected:
 public:	
 	StrategyManager* Manager;
 
+	// 出力処理を実行するか
+	bool OutputMotorValue = true;
+
 	AbstractStrategy(StrategyManager* manager)
 	{
 		Manager = manager;
