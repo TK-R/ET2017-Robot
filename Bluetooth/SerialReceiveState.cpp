@@ -120,7 +120,8 @@ void PIDDataState::Receive(uint8_t data)
 		auto pidManager = PIDDataManager::GetInstance();
 		pidManager->SetPIDData(data);
 
-		//		CurrentPID = data;
+		// 受信したので、音声再生
+		PlaySound(PIDReceive);
 	}
 
 	Context->SetState(new HeaderState(Context));
@@ -208,10 +209,8 @@ void BlockMoveRuleState::Receive(uint8_t data)
 		
 		// 構築したブロック運搬ルールをブロック運搬管理クラスに登録
 		BlockMoveManager::GetInstance()->SetBlockMoveRule(rule);
-		
 		// 受信したので、音声再生
 		PlaySound(RuleReceive);
-
 	}
 	Context->SetState(new HeaderState(Context));
 }

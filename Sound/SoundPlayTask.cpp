@@ -2,6 +2,8 @@
 #include "SoundPlayTask.h"
 #include "app.h"
 
+#define SILENT_MODE 1
+
 void Play(const char* fileName)
 {
     memfile_t mem;
@@ -48,5 +50,7 @@ void sound_play_task(intptr_t exinf)
 
 void PlaySound(SoundType s)
 {
+#ifndef SILENT_MODE
     snd_dtq(DT_QID, s);
+#endif
 }
