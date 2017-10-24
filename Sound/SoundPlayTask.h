@@ -11,7 +11,8 @@ enum SoundType
 	LCourseStart,
 	RCourseStart,
 	BlockEnd,
-	RuleReceive
+	RuleReceive,
+	PIDReceive
 };
 
 extern void PlaySound(SoundType s);

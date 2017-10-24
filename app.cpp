@@ -40,6 +40,11 @@ extern "C"{
 
 imageData_t* image;
 
+void ClearDisplay()
+{
+    ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
+}
+
 void Draw()
 {
     static char buf[256];
@@ -96,8 +101,10 @@ RESTART_:
 
     dly_tsk(100);
 
-    sprintf(buf, "Please Select Course.");
+    sprintf(buf, "Select Course.");
     StManager->SetStrategy(str);    
+
+    
     
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
@@ -116,6 +123,7 @@ RESTART_:
             pData.Distance = 0;
             
             str->CurrentState = L_A;
+            ClearDisplay();
 
             sprintf(buf, "Course: L-N");
         // Rボタンが押されているときは、Rコースの攻略
@@ -133,7 +141,8 @@ RESTART_:
             pData.Distance = 0;
             
             str->CurrentState = R_A;
-            
+            ClearDisplay();
+
             sprintf(buf, "Course: R-N");
 
         // 上ボタンが押されているときには、Lコースの難所攻略
@@ -149,6 +158,7 @@ RESTART_:
             pData.Distance = 10010;
                     
             str->CurrentState = L_A;
+            ClearDisplay();
             
             sprintf(buf, "Course: L-B");
             
@@ -165,7 +175,8 @@ RESTART_:
             pData.Distance = 10240;
         
             str->CurrentState = R_A;
-  
+            ClearDisplay();
+            
             sprintf(buf, "Course: R-B");            
         }
         
