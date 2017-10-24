@@ -79,19 +79,19 @@ void InOutManager::Forward(int power)
 void InOutManager::Forward(int power, int steering)
 {
 	// ステアリング値は0-100の範囲内
-	if(steering > 100) steering = 100;
-	if(steering < -100) steering = -100;
+	if(steering > 100) Steering = 100;
+	if(steering < -100) Steering = -100;
 
 	// 右側へ
 	if (steering > 0)
 	{
 		OutputData.LeftMotorPower = (int8_t)power;
-		OutputData.RightMotorPower = (int8_t)(power * (100.0 - steering) / 100.0);
+		OutputData.RightMotorPower = (int8_t)(power * (100.0 - Steering) / 100.0);
 	}
 	// 左側へ
 	else
 	{
-		OutputData.LeftMotorPower = (int8_t)(power * (100.0 + steering) / 100.0);
+		OutputData.LeftMotorPower = (int8_t)(power * (100.0 + Steering) / 100.0);
 		OutputData.RightMotorPower = (int8_t)power;
 	}
 }
@@ -264,60 +264,14 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	IntegralForwardDiff.clear();
 }
 
-
+// EV3RTが提供するステアリングメソッドでライントレース処理を実行する
 void InOutManager::LineTraceSteerAction(PIDData data, int center, bool LeftEdge)
 {
-	int light = InputData.ReflectLight;
-	
-	int diff = LeftEdge ? (int)light - center :  (int)center - light;
+	// ライントレースメソッドをコールして、内部情報を更新
+	LineTraceAction(data, center, LeftEdge);
 
-	uint IntegralCount = 5;
-	// 積分処理
-	IntegralDiff.push_back(diff);
-	if(IntegralDiff.size() > IntegralCount) IntegralDiff.erase(IntegralDiff.begin());
-
-	// 積分偏差
-	double intDiff = 0.0;
-	for(int d : IntegralDiff)
-		intDiff  += d;
-		intDiff /= IntegralDiff.size();	
-
-	int steering = data.PGain * diff + data.IGain * intDiff + (diff - PrevDiff) * data.DGain;
-	PrevDiff = diff;
-
-	if(data.BasePower > AccelPower) {
-		// 制御開始速度以下なら、開始速度まで一気に引き上げる
-		if(data.BasePower > ACCEL_START_POWER && AccelPower < ACCEL_START_POWER) {
-			AccelPower =  ACCEL_START_POWER;
-		} 
-
-		// 加速制御
-		double p = AccelPower + BASE_TIME * 100.0 / ACCEL_RATE;
-
-		// 計算結果と目標値のうち、低いほうを出力値とする
-		AccelPower = p > data.BasePower ? data.BasePower : p;
-	} else {
-		// 制御開始速度以下なら、目標速度まで一気に下げる
-		if(AccelPower < ACCEL_START_POWER) {
-			AccelPower =  data.BasePower;
-		} 
-
-		// 減速制御
-		double p = AccelPower - BASE_TIME * 100.0 / BRAKE_RATE;
-
-		// 計算結果と目標値のうち、高いほうを出力値とする
-		AccelPower = p < data.BasePower ? data.BasePower : p;
-		AccelPower = data.BasePower;
-	}
-
-	ev3_motor_steer(EV3_PORT_A, EV3_PORT_B, AccelPower, steering + data.Steering);
-
-	OutputData.LeftMotorPower = ev3_motor_get_power(EV3_PORT_A);
-	OutputData.RightMotorPower = ev3_motor_get_power(EV3_PORT_B);
-
-	// 単純直進時のPID値をクリア
-	PrevForwardDiff = 0;
-	IntegralForwardDiff.clear();
+	// 更新された内部情報で、旋回動作を実行
+	ev3_motor_steer(EV3_PORT_A, EV3_PORT_B, AccelPower, Steering);
 }
 
 // 広報にライントレースを実施するように、左右モータ値を更新する

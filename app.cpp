@@ -218,6 +218,8 @@ RESTART_:
             goto RESTART_;
         }
 
+        // 出力フラグがONの場合には、戦略クラス内で出力処理を実行していないため、
+        // 共通の出力処理を実行する
         if(StManager->CurrentStrategy->OutputMotorValue == true) {
             // 出力情報更新
             IOManager->WriteOutputMotor();

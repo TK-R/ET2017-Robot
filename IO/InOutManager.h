@@ -65,6 +65,9 @@ private:
 	// 加減速制御用の出力値
 	double AccelPower = 0;
 
+	// PID制御用の旋回値
+	int Steering = 0;
+
 	// アーム状態
 	ArmStateEnum ArmState = ArmStateDown;
 
