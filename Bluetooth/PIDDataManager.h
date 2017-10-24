@@ -32,10 +32,10 @@ private:
 	PIDDataManager()
 	{
 		// PIDDataの初期値を登録
-		// 直線
-		PIDData lineStraight = {100, 0.08620686, 0, 0.183908, LineTraceStraight, 0};
-		SetPIDData(lineStraight);
-				
+		// 直線				
+		PIDData lineLineTraceStraight = {100, 0.08620686, 0, 0.183908, LineTraceStraight, 0};
+		SetPIDData(lineLineTraceStraight);
+
 		//Rコース
 		PIDData lineR_B = {100, 0.1551724, 0, 0.3908046, pR_B, 7};
 		SetPIDData(lineR_B);
