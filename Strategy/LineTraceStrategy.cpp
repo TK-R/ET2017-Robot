@@ -75,9 +75,14 @@ RETRY:
 	case R_F:
 		if(distance > 10390) {	//ゴール後150mm余分に進む
 			 CurrentState = R_GRAY;
+		
+			// 速度制御に切り替え
+			InOut->ResetMotor();
+		
 			 goto RETRY;
 			break;
 		}
+
 		leftEdge = true;
 		pidData = pidManager->GetPIDData(LineTraceStraight);
 		break;
@@ -91,11 +96,13 @@ RETRY:
 			train->Initialize();
 			Manager->SetStrategy(train);
 			break;
-		}
+		}		
+		// 速度制御に切り替え
+		OutputMotorValue = true;
 
 		// 列車停止時と同じゲインでライントレース
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(pLast);
+		pidData = pidManager->GetPIDData(ETTrainSlow);
 		currentCenterValue = 90;
 		break;
 // Lコース
@@ -158,6 +165,8 @@ RETRY:
 	case L_H:
 		if(distance > 10010 + 150) {	//ゴール後150mm余分に進む
 			CurrentState = L_GRAY;
+			
+			InOut->ResetMotor();
 			goto RETRY;
 			break;
 		}
@@ -175,8 +184,13 @@ RETRY:
 			break;
 		}
 
+		// 速度制御に切り替え
+		OutputMotorValue = true;
+		
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(pLast);
+		
+		// ブロック並べ時と同じゲインでライントレース
+		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
 		currentCenterValue = 90;
 		break;
 
@@ -191,6 +205,10 @@ RETRY:
 			Manager->SetStrategy(new BlockMoveStrategy(Manager));
 			break;
 		}
+
+		// 速度制御に切り替え
+		OutputMotorValue = true;
+				
 		leftEdge = false;
 		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
 		break;

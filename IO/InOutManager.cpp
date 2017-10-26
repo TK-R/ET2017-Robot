@@ -496,6 +496,10 @@ void InOutManager::ResetMotor()
 
 	RightMotor = new Motor(PORT_A, false, LARGE_MOTOR);
 	LeftMotor = new Motor(PORT_B, false, LARGE_MOTOR);	
+
+	LeftMotor->setCount(0);
+	RightMotor->setCount(0);
+
 }
 
 void InOutManager::WriteOutputMotor()
