@@ -48,6 +48,13 @@ public:
 
 	void Run();
 	using AbstractStrategy::AbstractStrategy;
+
+	
+	~LineTraceStrategy()
+	{
+		auto InOut = InOutManager::GetInstance();	
+		InOut->ResetMotor();
+	}
 };
 
 

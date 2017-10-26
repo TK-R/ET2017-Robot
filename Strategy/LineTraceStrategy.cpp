@@ -95,7 +95,7 @@ RETRY:
 
 		// 列車停止時と同じゲインでライントレース
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(ETTrainSlow);
+		pidData = pidManager->GetPIDData(pLast);
 		currentCenterValue = 90;
 		break;
 // Lコース
@@ -175,9 +175,8 @@ RETRY:
 			break;
 		}
 
-		// ブロック並べ時と同じゲインでライントレース
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
+		pidData = pidManager->GetPIDData(pLast);
 		currentCenterValue = 90;
 		break;
 
@@ -200,6 +199,6 @@ RETRY:
 		break;
 	}	
 
-	InOut->LineTraceSteerAction(pidData, currentCenterValue, leftEdge);
+	InOut->LineTraceAction(pidData, currentCenterValue, leftEdge);
 }
 

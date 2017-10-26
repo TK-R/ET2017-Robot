@@ -77,7 +77,10 @@ void InOutManager::Forward(int power)
 
 // 出力値と操舵角から左右モータの値を更新する（0：直進 100：右方向へ -100：左方向へ）
 void InOutManager::Forward(int power, int steering)
-{
+{	
+	Steering = steering;
+
+
 	// ステアリング値は0-100の範囲内
 	if(steering > 100) Steering = 100;
 	if(steering < -100) Steering = -100;
@@ -262,16 +265,6 @@ void InOutManager::LineTraceAction(PIDData data, int center, bool LeftEdge)
 	// 単純直進時のPID値をクリア
 	PrevForwardDiff = 0;
 	IntegralForwardDiff.clear();
-}
-
-// EV3RTが提供するステアリングメソッドでライントレース処理を実行する
-void InOutManager::LineTraceSteerAction(PIDData data, int center, bool LeftEdge)
-{
-	// ライントレースメソッドをコールして、内部情報を更新
-	LineTraceAction(data, center, LeftEdge);
-
-	// 更新された内部情報で、旋回動作を実行
-	ev3_motor_steer(EV3_PORT_A, EV3_PORT_B, AccelPower, Steering);
 }
 
 // 広報にライントレースを実施するように、左右モータ値を更新する
@@ -496,8 +489,25 @@ void InOutManager::ReadInputSensor()
 	memcpy(buff_hsl_color, &HSLData, sizeof(HSLColorData));
 }
 
+void InOutManager::ResetMotor()
+{
+	delete RightMotor;
+	delete LeftMotor;
+
+	RightMotor = new Motor(PORT_A, false, LARGE_MOTOR);
+	LeftMotor = new Motor(PORT_B, false, LARGE_MOTOR);	
+}
 
 void InOutManager::WriteOutputMotor()
+{
+	ev3_motor_set_speed(EV3_PORT_A, OutputData.RightMotorPower);
+	ev3_motor_set_speed(EV3_PORT_B, OutputData.LeftMotorPower);
+
+	//出力信号電文構造体と同サイズの出力電文バッファに出力電文をコピー
+	memcpy(buff_output_signal, &OutputData, sizeof(OutputSignalData));
+}
+
+void InOutManager::WriteRawOutputMotor()
 {
 	LeftMotor->setPWM(OutputData.LeftMotorPower);
 	RightMotor->setPWM(OutputData.RightMotorPower);

@@ -104,8 +104,6 @@ RESTART_:
     sprintf(buf, "Select Course.");
     StManager->SetStrategy(str);    
 
-    
-    
     while(IOManager->InputData.TouchSensor == 0){
         Refresh();
         // Lボタンが押されているときは、Lコースの攻略
@@ -210,6 +208,8 @@ RESTART_:
             IOManager->DownARMMotor();
             IOManager->UpTailMotor();
             IOManager->WriteOutputMotor();
+            IOManager->WriteRawOutputMotor();
+            IOManager->ResetMotor();
 
             while(IOManager->InputData.TouchSensor == 1) {
                 Refresh();                                
@@ -223,6 +223,8 @@ RESTART_:
         if(StManager->CurrentStrategy->OutputMotorValue == true) {
             // 出力情報更新
             IOManager->WriteOutputMotor();
+        } else {
+            IOManager->WriteRawOutputMotor();
         }
         
         // 制御に掛かった時間を格納
