@@ -33,9 +33,9 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線				
-		PIDData lineLineTraceStraight = {100, 0.1206897, 0, 0.4597701, LineTraceStraight, 0};
+		PIDData lineLineTraceStraight = {100, 0.1034483, 0, 0.4597701, LineTraceStraight, 0};
 		SetPIDData(lineLineTraceStraight);
-								
+		
 		//Rコース
 		PIDData linepR_B = {85.05747, 0.2241379, 0, 0.4597702, pR_B, 9};
 		SetPIDData(linepR_B);

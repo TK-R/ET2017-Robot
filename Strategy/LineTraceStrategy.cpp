@@ -49,7 +49,7 @@ RETRY:
 		pidData = pidManager->GetPIDData(pR_B);
 		break;
 	case R_C :
-		if(distance > 6520) { 
+		if(distance > 6440) { 
 			CurrentState = R_D;
 			goto RETRY;		
 		}		
