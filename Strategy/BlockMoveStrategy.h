@@ -31,11 +31,12 @@ class BlockMoveStrategy;
 class AbstractMoveState
 {
 protected:
-	// サブステートの最初は必ず初回旋回
-	BlockMoveStateEnum SubState = Initialize;
 	BlockMoveStrategy* ParentStrategy;
 
 public:
+	// サブステートの最初は必ず初回旋回
+	BlockMoveStateEnum SubState = Initialize;
+		
 	// 次の旋回が時計回りか示す
 	bool CW;
 		

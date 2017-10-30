@@ -186,11 +186,10 @@ RETRY:
 
 		// 速度制御に切り替え
 		OutputMotorValue = true;
-		
 		leftEdge = true;
 		
 		// ブロック並べ時と同じゲインでライントレース
-		pidData = pidManager->GetPIDData(BlockMoveHighPIDState);
+		pidData = pidManager->GetPIDData(BlockMovePIDState);
 		currentCenterValue = 90;
 		break;
 

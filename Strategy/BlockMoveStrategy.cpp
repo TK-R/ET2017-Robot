@@ -16,8 +16,8 @@
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
-#define APPROACH_OFFSET 0
-#define MOVE_OFFSET 40
+#define APPROACH_OFFSET 60
+#define MOVE_OFFSET 50
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
@@ -138,56 +138,44 @@ void ApproachState::Run()
 		}
 
 		if(ColorDetectCount == 10) {
-			ColorDetectCount++;
-			SpManager->Distance = 0;
-			break;
-		}
-		
-		IoManager->Forward(BlockMovePID.BasePower);
-		{
-			int moveDistance = 58;
-			if(CurrentWayPointNo == 21 || (CurrentWayPointNo == 22 && BtManager->CurrentCommand.SourceBlockPosition == 14)) {
-				moveDistance = 160;
-			}
+			IoManager->Stop();
+			IoManager->WriteOutputMotor();
+			dly_tsk(200);
 
+			// ブロック置き場の座標に修正
+			Point *p = BtManager->GetSrcBlockPoint();
+			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
+			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
 
-			if(SpManager->Distance > moveDistance) { 			
-				IoManager->Stop();
-				IoManager->WriteOutputMotor();
-				dly_tsk(200);
+			dly_tsk(100);
 
-				// ブロック置き場の座標に修正
-				Point *p = BtManager->GetSrcBlockPoint();
-				SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
-				SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
+			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
+			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
+				// ブロック置き場到達メッセージ
+				BtManager->ArrivalSrcBlockPosition();
 
-				dly_tsk(100);
+				auto moveState = new MoveState(ParentStrategy);
+				moveState->LeftEdge = LeftEdge;
+				int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+				
+				// ブロック運搬は初回直進処理
+				moveState->SubState = FirstStraight;
 
-				// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
-				if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
-					// ブロック置き場到達メッセージ
-					BtManager->ArrivalSrcBlockPosition();
-
-					auto moveState = new MoveState(ParentStrategy);
-					moveState->LeftEdge = LeftEdge;
-					int nextWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
-					
-					if(CurrentWayPointNo == 26) {
-						moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
-					} else {
-						moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
-					}
-
-					moveState->CurrentWayPointNo = CurrentWayPointNo;
-					ParentStrategy->ChangeState(moveState);	
-
-					// 積算距離をリセット
-					SpManager->Distance = 0;
+				if(CurrentWayPointNo == 26) {
+					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
 				} else {
-					IoManager->Stop();
+					moveState->CW = IoManager->JudgeTurnCW(currentAngle, nextWaypointAngle);		
 				}
-				break;
+
+				moveState->CurrentWayPointNo = CurrentWayPointNo;
+				ParentStrategy->ChangeState(moveState);	
+
+				// 積算距離をリセット
+				SpManager->Distance = 0;
+			} else {
+				IoManager->Stop();
 			}
+			break;
 		}
 		break;
 	
@@ -213,8 +201,31 @@ void MoveState::Run()
 	int moveDistance = 0;
 	int targetWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetDstBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
+	
+	int diffAngle = abs(targetWaypointAngle - currentAngle);
+	if(diffAngle > 180) {
+		diffAngle = 360 - diffAngle;	
+	}
 
 	switch(SubState){
+	// 初回直進処理 
+	case FirstStraight:
+		// 次の移動先ウェイポイントとの為す角度によって、全身距離を切り替える
+		if(diffAngle > 90) {
+			moveDistance = 45;
+		} else if (diffAngle > 20) {
+			moveDistance = 80;
+		} else {
+			moveDistance = 80;
+		}
+	
+		if(SpManager->Distance > moveDistance) {
+			// 初回処理に遷移する
+			SubState = Initialize;
+		}
+		IoManager->Forward(BlockMovePID.BasePower);
+		break;
+
 	// 初回処理
 	case Initialize:
 		// ラインの角度を目標値として設定
@@ -222,7 +233,7 @@ void MoveState::Run()
 	
 		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
 		if (abs(targetWaypointAngle - currentAngle) < 3) {
-			SubState = FirstStraight;
+			SubState = FirstLineTrace;
 			SpManager->Distance = 0;			
 			break;
 		}
@@ -237,38 +248,10 @@ void MoveState::Run()
 		// 旋回動作を実行
 		IoManager->TurnWithBlock(CW, TURN_POWER ,  -0.3);
 		break;
-	case FirstStraight:
-		if(dstWayPointNo == 0 || dstWayPointNo == 1 || dstWayPointNo == 2){
-			moveDistance = 200;
-		} else {
-			moveDistance = 70;
-		}
-	
-		if(SpManager->Distance > moveDistance) {
-			SubState = FirstLineTrace;
-		}
-		IoManager->Forward(BlockMovePID.BasePower);
-		break;
 
-	// 仮想ウェイポイント間を移動中の動作
-	case FirstTurn:
-		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
-		if (abs(targetWaypointAngle - currentAngle) < 2) {
-			SubState = ImaginaryWaypoint;				
-
-			// 移動距離をクリア
-			SpManager->Distance = 0;
-			break;
-		}
-		CW = IoManager->JudgeTurnCW(currentAngle, targetWaypointAngle);
-
-		// 旋回動作を実行
-		IoManager->TurnWithBlock(CW, TURN_POWER, -0.3);
-		break;
 	case FirstLineTrace:
-	//	// 10cm程度進む
-//		if(SpManager->Distance > 150) 
-		{
+	//	ラインに沿って進む
+		if(SpManager->Distance > 120) {
 			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
 			CurrentWayPointNo = BtManager->GetDstWayPointNo();
 			
@@ -283,8 +266,32 @@ void MoveState::Run()
 				// 初回旋回に遷移
 				SubState = FirstTurn;
 			}
+			break;
 		}
-//		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+
+		// ライントレース中は、ラインの角度に修正
+		{
+			int angle = BtManager->GetLine(dstWayPointNo)->GetAngleWithSource(BtManager->CurrentCommand.SourceBlockPosition);
+			SpManager->ResetAngle(angle);
+		}			
+		
+		IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+		break;
+	
+	// 仮想ウェイポイント間を移動中の動作
+	case FirstTurn:
+		// 角度が一致したため、仮想ウェイポイント間の移動に遷移	
+		if (abs(targetWaypointAngle - currentAngle) < 2) {
+			SubState = ImaginaryWaypoint;				
+
+			// 移動距離をクリア
+			SpManager->Distance = 0;
+			break;
+		}
+		CW = IoManager->JudgeTurnCW(currentAngle, targetWaypointAngle);
+
+		// 旋回動作を実行
+		IoManager->TurnWithBlock(CW, TURN_POWER, -0.3);
 		break;
 	// ウェイポイントに向かって移動する動作
 	case ImaginaryWaypoint:
@@ -370,9 +377,6 @@ void MoveState::Run()
 			break;
 		}
 		
-		// 特定の移動では、角度を強制的に変更
-
-
 		// ライントレース中は、ラインの角度に修正
 		{
 			int angle = BtManager->GetLine(CurrentWayPointNo)->GetAngle(BtManager->CurrentCommand.DestinationBlockPosition);
