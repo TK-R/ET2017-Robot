@@ -19,6 +19,8 @@
 #define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
 
+#define BASE_DISTANCE 455
+
 void ETTrainStrategy::Run()
 {
 	// 使用するシングルトンクラスのインスタンスを取得
@@ -37,6 +39,8 @@ ACTION :
 	case TurnToBack:
 		if (abs(currentAngle - BACK_ANGLE) < 10) {
 			CurrentState = BackToStation;
+			// 距離を初期化
+			SpManager->Distance = 0;
 			goto ACTION;
 		}
 		IOManager->TurnCCW(FIRST_TURN_SPEED);
@@ -45,7 +49,7 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (currentPoint.X > (1640 + KillCount * 30)) {
+		if (SpManager->Distance > (BASE_DISTANCE + KillCount * 27)) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
