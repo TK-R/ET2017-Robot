@@ -103,7 +103,7 @@ ACTION :
 
 	case BackPrize:
 		// 一定距離後退したら、懸賞置き場に向かう直線の方向に旋回
-		if(currentPoint.Y < 2950) {
+		if(currentPoint.Y < 2800) {
 			CurrentState = TurnPrizePlaceLine;
 			goto ACTION;
 		}
@@ -143,7 +143,7 @@ ACTION :
 		break;
 
 	case LastForwardPrizePlace:
-		if(SpManager->Distance > 85) {
+		if(SpManager->Distance > 235) {
 			// アームを下げて後退する
 			SpManager->Distance = 1000;
 			IOManager->Stop();
@@ -178,7 +178,8 @@ ACTION :
 	case ForwardGurage:
 		if(SpManager->Distance > 840) {
 			IOManager->Stop();
-							
+			IOManager->WriteOutputMotor();
+			
 			Manager->SetStrategy(NULL);
 			break;
 		}
