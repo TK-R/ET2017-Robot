@@ -33,7 +33,7 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線				
-		PIDData lineLineTraceStraight = {100, 0.2142857, 0, 0.4615385, LineTraceStraight, 0};
+		PIDData lineLineTraceStraight = {100, 0.1813187, 0, 0.4615385, LineTraceStraight, 0};
 		SetPIDData(lineLineTraceStraight);
 		
 		//Rコース
@@ -50,16 +50,16 @@ private:
 		SetPIDData(linepR_E);
 
 		//Lコース
-		PIDData linepL_B = {80.45978, 0.1896552, 0, 0.2068966, pL_B, 22};
-		SetPIDData(linepL_B);		
+		PIDData linepL_B = {89.25098, 0.1896552, 0, 0.2068966, pL_B, 22};
+		SetPIDData(linepL_B);
 
-		PIDData linepL_C = {80.45977, 0.2241379, 0, 0.5057471, pL_C, -6};
+		PIDData linepL_C = {80.45977, 0.2877984, 0, 0.3678161, pL_C, -6};
 		SetPIDData(linepL_C);
 
 		PIDData linepL_D = {78.16092, 0.1724138, 0, 0.4137931, pL_D, -11};
 		SetPIDData(linepL_D);
 		
-		PIDData linepL_E = {83.90804, 0.1896552, 0, 0.3908046, pL_E, -3};
+		PIDData linepL_E = {88.30365, 0.1896552, 0, 0.3908046, pL_E, -3};
 		SetPIDData(linepL_E);
 
 		PIDData linepL_F = {70.11494, 0.2068965, 0, 0.2758621, pL_F, -30};
