@@ -84,7 +84,7 @@ RETRY:
 		}
 
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceStraight);
+		pidData = pidManager->GetPIDData(LastStraight);
 		break;
 	case R_GRAY:
 		if(distance > 10450 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;
@@ -171,7 +171,7 @@ RETRY:
 			break;
 		}
 		leftEdge = true;
-		pidData = pidManager->GetPIDData(LineTraceStraight);
+		pidData = pidManager->GetPIDData(LastStraight);
 		break;
 	case L_GRAY:
 		if(distance > 10260 && InOut->InputData.ReflectLight > GRAY_VALUE)  GrayCount++;

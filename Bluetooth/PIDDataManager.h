@@ -16,6 +16,7 @@ enum StateNo {
 	pL_E,
 	pL_F,
 	pL_G,
+	LastStraight,
 	BlockMovePIDState = 30,
 	BlockMoveHighPIDState,
 	ETSumoPIDState,
@@ -33,8 +34,11 @@ private:
 	{
 		// PIDDataの初期値を登録
 		// 直線				
-		PIDData lineLineTraceStraight = {100, 0.1813187, 0, 0.4615385, LineTraceStraight, 0};
+		PIDData lineLineTraceStraight = {100, 0.08241761, 0, 0.4175824, LineTraceStraight, 0};
 		SetPIDData(lineLineTraceStraight);
+
+		PIDData lineLastStraight = {91.20879, 0.1648352, 0, 0.4835165, LastStraight, 0};
+		SetPIDData(lineLastStraight);
 		
 		//Rコース
 		PIDData linepR_B = {100, 0.2068965, 0, 0.4597702, pR_B, 9};
@@ -50,22 +54,22 @@ private:
 		SetPIDData(linepR_E);
 
 		//Lコース
-		PIDData linepL_B = {89.25098, 0.1896552, 0, 0.2068966, pL_B, 22};
+		PIDData linepL_B = {87.05318, 0.1896552, 0, 0.4486548, pL_B, 22};
 		SetPIDData(linepL_B);
 
-		PIDData linepL_C = {80.45977, 0.2877984, 0, 0.3678161, pL_C, -6};
+		PIDData linepL_C = {79.36087, 0.2713149, 0, 0.7194644, pL_C, -10};
 		SetPIDData(linepL_C);
 
-		PIDData linepL_D = {78.16092, 0.1724138, 0, 0.4137931, pL_D, -11};
+		PIDData linepL_D = {79.25983, 0.2053808, 0, 0.5017052, pL_D, -11};
 		SetPIDData(linepL_D);
 		
-		PIDData linepL_E = {88.30365, 0.1896552, 0, 0.3908046, pL_E, -3};
+		PIDData linepL_E = {80.61135, 0.2061387, 0, 0.4567387, pL_E, -3};
 		SetPIDData(linepL_E);
 
-		PIDData linepL_F = {70.11494, 0.2068965, 0, 0.2758621, pL_F, -30};
+		PIDData linepL_F = {76.70835, 0.2728306, 0, 0.8033346, pL_F, -30};
 		SetPIDData(linepL_F);
 
-		PIDData linepL_G = {71.26437, 0.1551724, 0, 0.2758621, pL_G, 30};
+		PIDData linepL_G = {80.05557, 0.204623, 0, 0.3417961, pL_G, 30};
 		SetPIDData(linepL_G);
 
 		// ブロック並べ中
