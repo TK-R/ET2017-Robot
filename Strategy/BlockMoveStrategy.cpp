@@ -204,22 +204,27 @@ void MoveState::Run()
 	int moveDistance = 0;
 	int targetWaypointAngle = BtManager->GetDstWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetDstBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
-	
-	int diffAngle = abs(targetWaypointAngle - currentAngle);
+
+	int diffAngle = abs(BtManager->GetLine(CurrentWayPointNo)->GetAngle(BtManager->CurrentCommand.SourceBlockPosition)
+			 			- BtManager->GetLine(dstWayPointNo)->GetAngleWithSource(BtManager->CurrentCommand.SourceBlockPosition));
+
 	if(diffAngle > 180) {
 		diffAngle = 360 - diffAngle;	
 	}
 
+	
 	switch(SubState){
 	// 初回直進処理 
 	case FirstStraight:
 		// 次の移動先ウェイポイントとの為す角度によって、前進距離を切り替える
-		if(diffAngle > 90) {
-			moveDistance = 45;
-		} else if (diffAngle > 20) {
+		if(diffAngle < 75) {
 			moveDistance = 55;
-		} else {
-			moveDistance = 80;
+		} else if (diffAngle > 20) {
+			if(LeftEdge == CW) {
+				moveDistance = 65;		
+			} else {
+				moveDistance = 55;
+			}
 		}
 	
 		if(SpManager->Distance > moveDistance) {
@@ -240,21 +245,18 @@ void MoveState::Run()
 			SpManager->Distance = 0;			
 			break;
 		}
-
-		if(CurrentWayPointNo == 22 && BtManager->CurrentCommand.SourceBlockPosition == 10) {
-			CW = false;
-		} else if(CurrentWayPointNo == 5 && BtManager->CurrentCommand.SourceBlockPosition == 1 ) {
-			CW = false;
+		if(diffAngle < 75) {
+			LeftEdge = !CW;
+		} else {
+			LeftEdge = CW;
 		}
-
-		LeftEdge = CW;
 		// 旋回動作を実行
 		IoManager->TurnWithBlock(CW, TURN_POWER ,  -0.3);
 		break;
 
 	case FirstLineTrace:
 	//	ラインに沿って進む
-		if(SpManager->Distance > 120) {
+		if(SpManager->Distance > 180) {
 			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
 			CurrentWayPointNo = BtManager->GetDstWayPointNo();
 			
@@ -341,21 +343,25 @@ void MoveState::Run()
 		break;
 	// ライントレース前の旋回動作
 	case LineTurn:
-		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) < 70 &&
-			(IoManager->InputData.ReflectLight < EDGE_LINE || IoManager->HSLKind == BtManager->GetDstBlockPositionColor()))
 		{
-			// 角度が一致したため、ライントレースに遷移
-			SubState = LineTrace;
-			
-			// 旋回方向によって、ラインのどちら側を走行するか決定	
-			LeftEdge = CW;
-			break;
-		}
+			int diff = abs(targetBlockAngle - currentAngle);
+			if(diff > 180)
+				diff = 360 - diff; 
 
+			if(diff < 70 && (IoManager->InputData.ReflectLight < EDGE_LINE || IoManager->HSLKind == BtManager->GetDstBlockPositionColor()))
+			{
+				// 角度が一致したため、ライントレースに遷移
+				SubState = LineTrace;
+				
+				// 旋回方向によって、ラインのどちら側を走行するか決定	
+				LeftEdge = CW;
+				break;
+			}
+		}
+			
+		// 旋回動作を実行	
 		IoManager->TurnWithBlock(CW, TURN_POWER, -0.3);
 		break;	
-
 	// ライントレースする動作	
 	case LineTrace:
 		//目標とするブロック置き場の色を取得したら、現在のステートをブロック運搬中に変更
