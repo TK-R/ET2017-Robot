@@ -199,7 +199,6 @@ RETRY:
 			SpManager->ResetX(450);
 			SpManager->ResetY(1450);
 			SpManager->ResetAngle(90); 
-			InOut->Stop();
 
 			Manager->SetStrategy(new BlockMoveStrategy(Manager));
 			break;

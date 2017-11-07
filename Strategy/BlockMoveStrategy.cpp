@@ -12,7 +12,7 @@
 
 #define FIELD 	220
 #define EDGE_LINE 120 // 黒線との境界線
-#define TURN_POWER 11 // 旋回時のパワー
+#define TURN_POWER 20 // 旋回時のパワー
 #define ONLINE 25	  // 黒線上での輝度値
 #define NotONLINE 60  // 黒線以外での輝度値
 
@@ -133,21 +133,24 @@ void ApproachState::Run()
 			int angle = BtManager->GetLine(BtManager->GetSrcWayPointNo())->GetAngle(BtManager->CurrentCommand.SourceBlockPosition);
 			SpManager->ResetAngle(angle);
 
-			IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);
+			// 初回のみ高速移動
+			if(BtManager->CurrentCommand.SourceBlockPosition == 9) {
+				IoManager->LineTraceAction(BlockMoveHighPID, EDGE_LINE, LeftEdge);		
+			} else {
+				IoManager->LineTraceAction(BlockMovePID, EDGE_LINE, LeftEdge);		
+			}
 			break;
 		}
 
 		if(ColorDetectCount == 10) {
 			IoManager->Stop();
 			IoManager->WriteOutputMotor();
-			dly_tsk(200);
+			dly_tsk(150);
 
 			// ブロック置き場の座標に修正
 			Point *p = BtManager->GetSrcBlockPoint();
 			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
 			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * APPROACH_OFFSET);
-
-			dly_tsk(100);
 
 			// ブロック運搬時の経路がある（最終コマンドではない）場合には、ブロック運搬ステートに遷移
 			if(BtManager->CurrentCommand.BlockMoveWaypointCount != 0) {
@@ -210,11 +213,11 @@ void MoveState::Run()
 	switch(SubState){
 	// 初回直進処理 
 	case FirstStraight:
-		// 次の移動先ウェイポイントとの為す角度によって、全身距離を切り替える
+		// 次の移動先ウェイポイントとの為す角度によって、前進距離を切り替える
 		if(diffAngle > 90) {
 			moveDistance = 45;
 		} else if (diffAngle > 20) {
-			moveDistance = 80;
+			moveDistance = 55;
 		} else {
 			moveDistance = 80;
 		}
@@ -363,14 +366,12 @@ void MoveState::Run()
 		{
 			IoManager->Stop();
 			IoManager->WriteOutputMotor();
-			dly_tsk(300);
+			dly_tsk(150);
 
 			// ブロック置き場の座標に修正			
 			Point *p = BtManager->GetDstBlockPoint();
 			SpManager->ResetX(p->X - cos(SpManager->RobotAngle * M_PI / 180.0) * MOVE_OFFSET);
 			SpManager->ResetY(p->Y + sin(SpManager->RobotAngle * M_PI / 180.0) * MOVE_OFFSET);
-
-			dly_tsk(200);
 
 			SpManager->Distance = 400;
 			SubState = Back;
@@ -387,7 +388,7 @@ void MoveState::Run()
 		break;
 	// 後退する動作
 	case Back:
-		if(SpManager->Distance < 230) {
+		if(SpManager->Distance < 320) {
 			// 17cm後退したら、アプローチに遷移する
 
 			// ブロック置き場到達メッセージ

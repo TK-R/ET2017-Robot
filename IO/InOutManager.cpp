@@ -170,7 +170,7 @@ void InOutManager::Turn(bool CW, int power)
 
 void InOutManager::Turn(int currentAngle, int targetAngle, int power)
 {
-	if(abs(currentAngle-targetAngle) < 20) power = 25;
+	if(abs(currentAngle-targetAngle) < 20) power = 15;
 
 	if(currentAngle < 180) {
 		// 回転角度が180度を必ず越えない場合
