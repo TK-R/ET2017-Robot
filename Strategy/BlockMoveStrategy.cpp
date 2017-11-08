@@ -218,13 +218,11 @@ void MoveState::Run()
 	case FirstStraight:
 		// 次の移動先ウェイポイントとの為す角度によって、前進距離を切り替える
 		if(diffAngle < 75) {
-			moveDistance = 55;
-		} else if (diffAngle > 20) {
-			if(LeftEdge == CW) {
-				moveDistance = 65;		
-			} else {
-				moveDistance = 55;
-			}
+			moveDistance = 45;
+		} else if (diffAngle < 110) {
+				moveDistance = 45;
+		} else {
+			moveDistance = 45;
 		}
 	
 		if(SpManager->Distance > moveDistance) {

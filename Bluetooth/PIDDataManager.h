@@ -73,9 +73,10 @@ private:
 		SetPIDData(linepL_G);
 
 		// ブロック並べ中
-		PIDData block = {16, 1, 0, 0.61, BlockMovePIDState, 0};
-		SetPIDData(block);
+		PIDData lineBlockMovePIDState = {16.48352, 0.8901099, 0, 0.5714286, BlockMovePIDState, 0};
+		SetPIDData(lineBlockMovePIDState);
 
+		
 		// ブロック並べ中（高速）
 		PIDData blockH = {28.4, 0.43, 0, 1.25, BlockMoveHighPIDState, 8};
 		SetPIDData(blockH);
