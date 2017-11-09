@@ -87,7 +87,7 @@ ACTION :
 			// アームを上げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();	
-			dly_tsk(500);
+			dly_tsk(200);
 			
 			// アームを上げて、後退状態に遷移
 			IOManager->UpARMMotor(40);
@@ -108,7 +108,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Back(pid.BasePower);
+		IOManager->Back(28);
 		break;
 	
 	case TurnPrizePlaceLine:
@@ -128,7 +128,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Forward(25);
+		IOManager->Forward(35);
 		break;
 	
 	case TurnPrizePlace:
@@ -148,13 +148,14 @@ ACTION :
 			SpManager->Distance = 1000;
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
-			IOManager->DownARMMotor(55);	
+			dly_tsk(300);			
+			IOManager->DownARMMotor(45);	
 
 			CurrentState = BackLastLine;
 			goto ACTION;
 		}
 
-		IOManager->Forward(25);
+		IOManager->Forward(30);
 		break;
 
 	case BackLastLine:
@@ -164,7 +165,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Back(25);
+		IOManager->Back(35);
 		break;
 	case TurnGurage:
 		if(currentAngle < 180) {
@@ -176,7 +177,7 @@ ACTION :
 		IOManager->TurnCCW(TURN_SPEED);
 		break;
 	case ForwardGurage:
-		if(SpManager->Distance > 840) {
+		if(SpManager->Distance > 810) {
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 			

@@ -2,7 +2,7 @@
 #include "SoundPlayTask.h"
 #include "app.h"
 
-#define SILENT_MODE 1
+//#define SILENT_MODE 1
 
 void Play(const char* fileName)
 {
