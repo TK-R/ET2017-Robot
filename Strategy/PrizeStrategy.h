@@ -20,7 +20,9 @@ enum PrizeStrategyStateEnum
 	LastForwardPrizePlace,	// 懸賞置き場の直進	
 	BackLastLine,		// 最後の直線の方向まで後退
 	TurnGurage,			// ガレージに向くまで旋回
-	ForwardGurage
+	ForwardGurage,		// 直角カーブまで直進
+	TurnCurve,			// 旋回動作
+	LastGarageStraight		// 最終直進
 };
 
 class PrizeStrategy: public AbstractStrategy
@@ -29,7 +31,8 @@ private:
 
 	// 現在のステート情報
 	PrizeStrategyStateEnum CurrentState = TurnOnLine;
-	
+	int GarageGrayCount = 0;
+
 public:
 	void Run();
 	using AbstractStrategy::AbstractStrategy;

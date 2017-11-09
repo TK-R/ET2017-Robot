@@ -52,7 +52,7 @@ private:
 
 		PIDData linepR_E = {80.45978, 0.1888973, 0, 0.4395604, pR_E, 15};
 		SetPIDData(linepR_E);
-		
+
 		//Lコース
 		PIDData linepL_B = {87.05318, 0.1896552, 0, 0.4486548, pL_B, 22};
 		SetPIDData(linepL_B);
@@ -82,7 +82,7 @@ private:
 		SetPIDData(blockH);
 
 		// ET相撲中
-		PIDData sumo = {16.1, 2.7, 0, 1.0, ETSumoPIDState, 0};
+		PIDData sumo = {16.1, 2.7, 0, 0.8, ETSumoPIDState, 0};
 		SetPIDData(sumo);
 
 		// ET相撲中(高速）	

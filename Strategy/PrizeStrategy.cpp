@@ -63,7 +63,7 @@ ACTION :
 	
 	// 懸賞の方向に旋回
 	case TurnToPrize:
-		if(currentAngle > (PRIZE_ANGLE - 6)) {
+		if(currentAngle > (PRIZE_ANGLE - 8)) {
 			// アームを下げるまで、いったん停止する
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
@@ -105,10 +105,16 @@ ACTION :
 		// 一定距離後退したら、懸賞置き場に向かう直線の方向に旋回
 		if(currentPoint.Y < 2800) {
 			CurrentState = TurnPrizePlaceLine;
+
+			IOManager->Stop();
+			IOManager->WriteOutputMotor();
+			dly_tsk(200);			
+	
 			goto ACTION;
 		}
 
-		IOManager->Back(28);
+		IOManager->Back(25);
+
 		break;
 	
 	case TurnPrizePlaceLine:
@@ -128,7 +134,7 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->Forward(35);
+		IOManager->Forward(30);
 		break;
 	
 	case TurnPrizePlace:
@@ -174,10 +180,30 @@ ACTION :
 			goto ACTION;
 		}
 
-		IOManager->TurnCCW(TURN_SPEED);
+		IOManager->TurnWithBlock(false, 25, -0.5);				
 		break;
 	case ForwardGurage:
-		if(SpManager->Distance > 810) {
+		if(SpManager->Distance > 80 && IOManager->InputData.ReflectLight > 200)  GarageGrayCount++;
+		else GarageGrayCount = 0;
+
+		// 灰色検出
+		if(GarageGrayCount > 30) {
+			CurrentState = TurnCurve;
+			break;
+		}		
+
+		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState), 120, true);			
+		break;
+	case TurnCurve:
+		if(IOManager->InputData.ReflectLight < 120) {
+			CurrentState = LastGarageStraight;
+			SpManager->Distance = 0;
+		}		
+
+		IOManager->TurnWithBlock(true, 25, -0.8);		
+		break;
+	case LastGarageStraight:
+		if(SpManager->Distance > 380) {
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 			
