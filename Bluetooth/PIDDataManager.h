@@ -50,9 +50,9 @@ private:
 		PIDData linepR_D = {82.3039, 0.2413793, 0, 0.6666667, pR_D, -25};
 		SetPIDData(linepR_D);
 
-		PIDData linepR_E = {89.25098, 0.2218643, 0, 0.1538462, pR_E, 15};
+		PIDData linepR_E = {80.45978, 0.1888973, 0, 0.4395604, pR_E, 15};
 		SetPIDData(linepR_E);
-
+		
 		//Lコース
 		PIDData linepL_B = {87.05318, 0.1896552, 0, 0.4486548, pL_B, 22};
 		SetPIDData(linepL_B);

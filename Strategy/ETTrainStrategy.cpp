@@ -19,7 +19,7 @@
 #define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
 
-#define BASE_DISTANCE 455
+#define BASE_DISTANCE 452
 
 void ETTrainStrategy::Run()
 {
@@ -49,14 +49,14 @@ ACTION :
 	// 駅の前まで移動中
 	case BackToStation:
 		// 駅の前に到達したので、駅に尻尾を向けるまで旋回中に遷移
-		if (SpManager->Distance > (BASE_DISTANCE + KillCount * 27)) {
+		if (SpManager->Distance > (BASE_DISTANCE + KillCount * 16)) {
 			CurrentState = TurnToStation;
 			// ライントレース終了時にはまっすぐ後ろ向き
 			SpManager->ResetAngle(BACK_ANGLE);
 			goto ACTION;
 		}
 		// 前に到達するまで後退
-		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 120, false);		
+		IOManager->LineTraceAction(pid->GetPIDData(ETTrainSlow), 100, false);		
 		break;
 
 	// 駅に尻尾を向けるまで旋回中
@@ -149,7 +149,7 @@ ACTION :
 
 	// たどり着くまで、ライントレースを実施する
 	case LineTraceToArena:
-		if(SpManager->Distance > 2750) {
+		if(SpManager->Distance > 2720) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
 			return;
 		}

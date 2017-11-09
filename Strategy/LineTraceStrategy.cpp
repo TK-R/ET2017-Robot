@@ -14,7 +14,7 @@
 #include "BlockMoveStrategy.h"
 
 #define EDGE_LINE 120 // 黒線との境界線
-#define AVERAGE_POINT 120 // 灰色検出の平均化回数
+#define AVERAGE_POINT 110 // 灰色検出の平均化回数
 #define GRAY_VALUE	100 // 灰色検出の境界値
 
 void LineTraceStrategy::Run()

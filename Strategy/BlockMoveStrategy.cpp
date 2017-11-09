@@ -17,7 +17,7 @@
 #define NotONLINE 60  // 黒線以外での輝度値
 
 #define APPROACH_OFFSET 60
-#define MOVE_OFFSET 50
+#define MOVE_OFFSET 60
 
 // 次のステートに切り替える
 void BlockMoveStrategy::ChangeState(AbstractMoveState* nextState)
