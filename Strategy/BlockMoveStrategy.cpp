@@ -48,7 +48,7 @@ void ApproachState::Run()
 	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 
 	int diffAngle = abs(targetBlockAngle - currentAngle);
-	
+
 	if(diffAngle > 180) {
 		diffAngle = 360 - diffAngle;	
 	}
@@ -224,7 +224,9 @@ void MoveState::Run()
 	// 初回直進処理 
 	case FirstStraight:
 		// 次の移動先ウェイポイントとの為す角度によって、前進距離を切り替える
-		if(diffAngle < 75) {
+		if(diffAngle < 5){
+			moveDistance = 80;
+		} else if(diffAngle < 75) {
 			moveDistance = 45;
 		} else if (diffAngle < 110) {
 				moveDistance = 45;
@@ -261,7 +263,17 @@ void MoveState::Run()
 
 	case FirstLineTrace:
 	//	ラインに沿って進む
-		if(SpManager->Distance > 180) {
+		{
+		int moveDistance = 180;
+		
+		// 長いラインの場合には存分に移動する
+		if(BtManager->GetDstWayPointNo() == 9 || BtManager->GetDstWayPointNo() == 14) {
+			moveDistance = 270;
+		} else if(BtManager->GetDstWayPointNo() == 24) {
+			moveDistance = 150;
+		}
+
+		if(SpManager->Distance > moveDistance) {
 			// ウェイポイントに到達したので、現在いるウェイポイントNoを更新
 			CurrentWayPointNo = BtManager->GetDstWayPointNo();
 			
@@ -278,7 +290,7 @@ void MoveState::Run()
 			}
 			break;
 		}
-
+		}
 		// ライントレース中は、ラインの角度に修正
 		{
 			int angle = BtManager->GetLine(dstWayPointNo)->GetAngleWithSource(BtManager->CurrentCommand.SourceBlockPosition);

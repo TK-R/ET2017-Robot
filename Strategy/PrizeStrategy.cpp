@@ -129,7 +129,7 @@ ACTION :
 
 	case ForwardPrizePlace:
 		// 懸賞置き場の前まで移動したら、懸賞置き場の方向を向く
-		if(currentPoint.X > 2870) {
+		if(currentPoint.X > 2850) {
 			CurrentState = TurnPrizePlace;
 			goto ACTION;
 		}
@@ -155,7 +155,7 @@ ACTION :
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 			dly_tsk(300);			
-			IOManager->DownARMMotor(45);	
+			IOManager->DownARMMotor(25);	
 
 			CurrentState = BackLastLine;
 			goto ACTION;
