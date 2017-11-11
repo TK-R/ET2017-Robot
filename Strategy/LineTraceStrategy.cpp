@@ -195,7 +195,7 @@ RETRY:
 
 		break;
 	case L_I:
-		if(distance > 820){
+		if(distance > 880){
 			SpManager->ResetX(450);
 			SpManager->ResetY(1450);
 			SpManager->ResetAngle(90); 

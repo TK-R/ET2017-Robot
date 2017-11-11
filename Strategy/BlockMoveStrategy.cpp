@@ -47,6 +47,13 @@ void ApproachState::Run()
 	int targetWaypointAngle = BtManager->GetSrcWaypointAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 	int targetBlockAngle = BtManager->GetSrcBlockAngle(SpManager->RobotPoint.X, SpManager->RobotPoint.Y);
 
+	int diffAngle = abs(targetBlockAngle - currentAngle);
+	
+	if(diffAngle > 180) {
+		diffAngle = 360 - diffAngle;	
+	}
+
+
 	switch(SubState){
 	// 初回処理
 	case Initialize:
@@ -114,7 +121,7 @@ void ApproachState::Run()
 	// ライントレース前の旋回動作
 	case LineTurn:
 		// 旋回動作を実行
-		if(abs(targetBlockAngle - currentAngle) > 60 || IoManager->InputData.ReflectLight > EDGE_LINE){
+		if(diffAngle > 60 || IoManager->InputData.ReflectLight > EDGE_LINE){
 			IoManager->Turn(CW, TURN_POWER);
 		} else {
 			// 角度が一致したため、ライントレースに遷移
