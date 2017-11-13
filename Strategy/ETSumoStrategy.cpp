@@ -45,8 +45,8 @@ ACTION :
 	switch (CurrentState) {
 	// 初回土俵入り時
 	case FirstOnArena:
-		// 黒線認識したら、初回黒線横断中に遷移
-		if (IOManager->InputData.ReflectLight < ONLINE) {
+		// 不感領域を走行してから黒線認識したら、初回黒線横断中に遷移
+		if (IOManager->InputData.ReflectLight < ONLINE && SpManager->Distance > 30) {
 			// ライントレース中なので、角度は常にライン方向
 			SpManager->ResetAngle(FORWARD_ANGLE);
 			SpManager->ResetY(2920);
@@ -295,10 +295,11 @@ ACTION :
 //		if (currentAngle > 305 && currentAngle < 355) {
 		if (currentAngle < 6 || currentAngle > 350) {	
 			CurrentArena++;
-				
+			
+			// 積算移動距離をクリア
+			SpManager->Distance = 0;	
 			// 2枚目の攻略が完了した場合には、線路をまたぐ直進処理に遷移
 			if(CurrentArena == 2) {
-				SpManager->Distance = 0;
 				CurrentState = ForwardRail;
 				// 座標修正
 				SpManager->ResetX(1920);
@@ -321,6 +322,10 @@ ACTION :
 		if(currentPoint.X > 2120) {
 			// 線路を跨いだので、通常のライントレースに遷移
 			CurrentState = FirstOnArena;
+			
+			// 積算移動距離をクリア
+			SpManager->Distance = 0;	
+
 			goto ACTION;
 		}
 
