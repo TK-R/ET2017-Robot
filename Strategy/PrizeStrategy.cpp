@@ -203,7 +203,7 @@ ACTION :
 		IOManager->TurnWithBlock(true, 25, -0.8);		
 		break;
 	case LastGarageStraight:
-		if(SpManager->Distance > 380) {
+		if(SpManager->Distance > 400) {
 			IOManager->Stop();
 			IOManager->WriteOutputMotor();
 			
