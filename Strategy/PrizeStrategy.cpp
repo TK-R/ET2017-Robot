@@ -192,7 +192,7 @@ ACTION :
 			break;
 		}		
 
-		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState), 120, true);			
+		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoHighPIDState), 120, true);			
 		break;
 	case TurnCurve:
 		if(IOManager->InputData.ReflectLight < 120) {
@@ -211,7 +211,7 @@ ACTION :
 			break;
 		}
 		
-		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState), 120, true);
+		IOManager->LineTraceAction(PIDDataManager::GetInstance()->GetPIDData(ETSumoHighPIDState), 120, true);
 		break;
 	default:
 		break;

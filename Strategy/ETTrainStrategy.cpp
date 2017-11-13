@@ -86,8 +86,8 @@ ACTION :
 			IOManager->UpTailMotor();
 			
 			KillCount++;
-			// 3回実行したら前を向く
-			if(KillCount == 3) CurrentState = TurnFront;
+			// 2回実行したら前を向く
+			if(KillCount == 2) CurrentState = TurnFront;
 			else CurrentState = TurnNextBack;
 
 			goto ACTION;

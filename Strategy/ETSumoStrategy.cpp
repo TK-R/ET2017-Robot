@@ -37,7 +37,7 @@ void ETSumoStrategy::Run()
 ACTION :
 
 	PIDData pid = PIDDataManager::GetInstance()->GetPIDData(ETSumoPIDState);
-	PIDData pidH = PIDDataManager::GetInstance()->GetPIDData(ETSumoHighPIDState);
+	PIDData pidH = PIDDataManager::GetInstance()->GetPIDData(ETTrainHigh);
 	
 	int currentAngle = SpManager->RobotAngle;
 	Point currentPoint = SpManager->RobotPoint;
@@ -158,7 +158,7 @@ ACTION :
 	// 左ブロックを押し出し
 	case OSHIDASHILeft:
 		// 一定距離進んだら後退
-		if(currentPoint.Y < 2750) {
+		if(currentPoint.Y < 2760) {
 			CurrentState = OSHIDASHILeftBack;
 			IOManager->UpARMMotor();
 			IOManager->DownARMMotor();			
@@ -247,7 +247,7 @@ ACTION :
 	// 右ブロックを押し出し
 	case OSHIDASHIRight:
 		// 一定距離進んだら後退
-		if(currentPoint.Y > 3090) {
+		if(currentPoint.Y > 3080) {
 			IOManager->UpARMMotor();
 			CurrentState = OSHIDASHIRightBack;
 			IOManager->DownARMMotor();			
