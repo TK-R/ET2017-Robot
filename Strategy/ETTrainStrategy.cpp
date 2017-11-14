@@ -149,7 +149,7 @@ ACTION :
 
 	// たどり着くまで、ライントレースを実施する
 	case LineTraceToArena:
-		if(SpManager->Distance > 2720) {
+		if(SpManager->Distance > 2680) {
 			Manager->SetStrategy(new ETSumoStrategy(Manager));
 			return;
 		}

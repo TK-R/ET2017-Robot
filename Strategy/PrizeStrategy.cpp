@@ -156,7 +156,7 @@ ACTION :
 			IOManager->WriteOutputMotor();
 			dly_tsk(300);			
 			IOManager->DownARMMotor(25);	
-
+			dly_tsk(500);			
 			CurrentState = BackLastLine;
 			goto ACTION;
 		}
