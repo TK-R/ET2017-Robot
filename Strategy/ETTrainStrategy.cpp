@@ -19,7 +19,9 @@
 #define SWITCH_OFF_ANGLE 30 // スイッチを切れる角度
 #define FORWARD_ANGLE 180 // 正面方向
 
-#define BASE_DISTANCE 452
+//#define BASE_DISTANCE 452
+#define BASE_DISTANCE 435
+
 
 void ETTrainStrategy::Run()
 {
@@ -86,8 +88,8 @@ ACTION :
 			IOManager->UpTailMotor();
 			
 			KillCount++;
-			// 2回実行したら前を向く
-			if(KillCount == 2) CurrentState = TurnFront;
+			// 3回実行したら前を向く
+			if(KillCount == 3) CurrentState = TurnFront;
 			else CurrentState = TurnNextBack;
 
 			goto ACTION;

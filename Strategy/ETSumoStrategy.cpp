@@ -207,7 +207,11 @@ ACTION :
 				IOManager->DownARMMotor();
 				// フィールドの色と土俵の色が一致した場合、寄り切り
 				if (ArenaArray[CurrentArena].RightPlaceColor == DetectColor) {
-					CurrentState = YORIKIRIRight;
+					if (CurrentArena == 2) {
+						CurrentState = OSHIDASHIRight;
+					} else {
+						CurrentState = YORIKIRIRight;
+					}	
 				} else {
 					// フィールドの色と土俵の色が異なる場合、押し出し
 					CurrentState = OSHIDASHIRight;

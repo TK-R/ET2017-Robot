@@ -3,6 +3,7 @@
 #include "HSLColor.h"
 #include "ColorDecision.h"
 
+/*
 // フィールドの床の色認識に使用する基準色
 struct HSLColors ColorDecision::FieldColors = 
 {
@@ -13,18 +14,18 @@ struct HSLColors ColorDecision::FieldColors =
     {218,   81,   42},  // Blue
     {125,   56,   35}   // Green
 };
-/*
+*/
 // フィールドの床の色認識に使用する基準色（本番フィールド）
 struct HSLColors ColorDecision::FieldColors = 
 {
     {300,   5,   100},  // White
     {252,   24,    4},  // Black
-    {4,     78,   46},  // Red
-    {43,    49,   50},  // Yellow
-    {219,   84,   42},  // Blue
+    {3,     75,   45},  // Red
+    {44,    49,   50},  // Yellow
+    {220,   85,   41},  // Blue
     {126,   56,   35}   // Green
 };
-*/
+
 
 // ブロックの色認識に使用する基準色
 struct HSLColors ColorDecision::BlockColors = 
